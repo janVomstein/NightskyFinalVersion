@@ -100,9 +100,10 @@ function main() {
 
     for (let i = 0; i < stars.length; i++) {
         const index = gaia[0].length;
-        gaia[0].push(stars[i][1]);
-        gaia[1].push([0.4, 0.1, 0.9,1]);
-        gaia[2].push(5);
+        gaia[0].push(stars[i][1]);          //Push position
+        gaia[1].push([0.4, 0.1, 0.9,1]);    //Push color
+        gaia[2].push(5);                    //Push scale for radius
+        gaia[3].push(stars[i][2]);          //Push velocity
         const signsList = starMap.get(stars[i][0]);
         for (let j = 0; j < signsList.length; j++) {
             const indexList = signs.get(signsList[j]);
@@ -116,6 +117,7 @@ function main() {
     gaia[0].push([0, 0, 0]);
     gaia[1].push([1,.5, 1, 1]);
     gaia[2].push(5);
+    gaia[3].push([0.0, 0.0, 0.0]);
     startScene(gaia, signs);
     const nameList = [];
     signs.forEach((val, key) => {

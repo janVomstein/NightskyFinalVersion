@@ -626,7 +626,7 @@ class OrbitingObjects extends CelestialBody {
 
 class BackgroundStar extends CelestialBody {
     constructor(
-        index, cam, model, texture, position, 
+        index, cam, model, texture, position, velocity,
         scale, material, ambColor, difColor, 
         speColor, brightness
     ) {
@@ -645,6 +645,12 @@ class BackgroundStar extends CelestialBody {
         );
         this.index = index;
         this.cam = cam;
+        this.velocity = velocity;
+    }
+    update(dt) {
+        this.position[0] += this.velocity[0] * dt;
+        this.position[1] += this.velocity[1] * dt;
+        this.position[2] += this.velocity[2] * dt;
     }
     getWorldMats() {
         let posToView = vec3.create();
@@ -694,7 +700,7 @@ class Connector extends CelestialBody {
             getModel('cylinder'), 
             null,
             position, 
-            [2, length - inset, 2], 
+            [2, length - inset, 2],
             basicMaterials.amb, 
             color, 
             color, 
@@ -703,10 +709,20 @@ class Connector extends CelestialBody {
             0, 0, 0,
             0, 0, 0
         );
+        this.inset = inset;
         this.star1 = star1;
         this.star2 = star2;
         this.pos1 = vec3.clone(star1.position);
         this.length = length;
+    }
+
+    updatePositions() {
+        vec3.sub(this.position, this.star1.position, this.star2.position);
+        this.length = vec3.length(this.position);
+        vec3.scale(this.position, this.position, 0.5);
+        vec3.add(this.position, this.position, this.star2.position);
+        this.pos1 = vec3.clone(this.star1.position);
+        this.scale = [2, this.length - this.inset, 2]
     }
 
     getWorldMats() {

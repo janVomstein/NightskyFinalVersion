@@ -1,14 +1,22 @@
 {
-    //text dispaying iformation about the selected object
+    //text displaying information about the selected object
     const infoText = document.getElementById('infoText');
     
     // button to pause and unpause the objects orbiting the sun
     const pauseButton = document.getElementById('pause');
     pauseButton.onclick = onPause.bind(this);
-    // imiage dispaying the pause button
+    // image displaying the pause button
     const pauseImg = document.getElementById('pauseImg');
     // current pause state - true if paused
     let pause = false;
+
+    // button to pause and unpause the Stars from drifting
+    const pauseStarsButton = document.getElementById('pauseStars');
+    pauseStarsButton.onclick = onPauseStars.bind(this);
+    // image displaying the pause button
+    const pauseStarsImg = document.getElementById('pauseStarsImg');
+    // current pause state - true if paused
+    let pauseStars = true;
     
     // slider controlling orbit speed
     const speedSlider = document.getElementById('speed');
@@ -80,13 +88,36 @@
         // pause / unpause
         pause = !pause;
     }
-    
+
     /**
-    * getter function for the pause state
-    * @returns {boolean} current pause state
-    */
+     * getter function for the pause state
+     * @returns {boolean} current pause state
+     */
     function getPause() {
         return pause;
+    }
+
+    /**
+     * Gets called by the onclick event of the pauseStars button.
+     * The function changes the pauseStars image and pauses / unpauses the star drifting
+     */
+    function onPauseStars() {
+        // change the image
+        if (pauseStars) {
+            pauseStarsImg.src = "./images/pause.png";
+        } else {
+            pauseStarsImg.src = "./images/start.png";
+        }
+        // pause / unpause
+        pauseStars = !pauseStars;
+    }
+
+    /**
+     * getter function for the pauseStars state
+     * @returns {boolean} current pauseStars state
+     */
+    function getPauseStars() {
+        return pauseStars;
     }
     
     /**

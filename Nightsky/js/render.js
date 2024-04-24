@@ -60,7 +60,7 @@ const { vec2, vec3, vec4, mat3, mat4, quat} = glMatrix;
     let shadowGenProgram;
     let renderSolidProgram;
     let renderShadedProgram;
-    let textureSize = 4096;
+    let textureSize = 512;
     let clip = [.5, 10000.0];
     let idTexture = gl.createTexture();
     let shadowMapCube = gl.createTexture();

@@ -4,7 +4,7 @@ varying vec3 vertNormal;
 varying vec2 vertTexCoord;
 varying vec3 vertCoord;
 
-uniform int enableTexture;
+//uniform int enableTexture;
 uniform sampler2D texture;
 uniform float kAmb;
 uniform float kDif;
@@ -20,7 +20,8 @@ uniform samplerCube lightShadowMap;
 uniform vec2 shadowClip;
 uniform float bias;
 
-void main() { 
+void main() {
+    int enableTexture = 0;
     vec3 N = normalize(vertNormal);
     vec3 L = normalize(lightPosition - vertCoord);
     float lambertian = max(dot(N, L), 0.0);
@@ -31,8 +32,8 @@ void main() {
         float specAngle = max(dot(R, V), 0.0);
         specular = pow(specAngle, shininess);
     }
-    float depth =  
-        (length(vertCoord - lightPosition) - shadowClip.x) / 
+    float depth =
+        (length(vertCoord - lightPosition) - shadowClip.x) /
         (shadowClip.y - shadowClip.x);
     float shadowMapValue = textureCube(lightShadowMap, -L).r;
     if ((shadowMapValue + bias) >= depth) {

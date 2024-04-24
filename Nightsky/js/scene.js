@@ -30,6 +30,7 @@
     function startScene(gaiaVal, signsVal) {
         gaia = gaiaVal;
         signs = signsVal;
+        console.log(gaia)
         signs.forEach((val, key) => {
             signsVisibility.set(key, false);
         });
@@ -183,9 +184,11 @@
         orbits = sun.getObjectsToRender()[1];
         
         let position;
+        let velocity;
         let direction;
         for (let i = 0; i < gaia[0].length-1; i++) {
             position = vec3.clone(gaia[0][i]);
+            velocity = vec3.clone(gaia[3][i]);
             direction = vec3.clone(position);
             vec3.normalize(direction, direction);
             vec3.scale(direction, direction, 100);
@@ -197,6 +200,7 @@
                 getModel('circle'),
                 null,
                 position,
+                velocity,
                 [gaia[2][i], gaia[2][i], gaia[2][i]],
                 basicMaterials.amb,
                 [gaia[1][i][0], gaia[1][i][1], gaia[1][i][2]],
@@ -235,6 +239,13 @@
         }
         if (!getPause()) {
             sun.update(dt, getSpeed());
+        }
+
+        if(!getPauseStars()) {
+            for(let i = 0; i < backgroundObjects.length; i++) {
+                backgroundObjects[i].update(dt);
+                updateSignsConnections();
+            }
         }
         
         clickableObjects = [];
@@ -443,10 +454,12 @@
             connectors = [];
             let origin = vec3.clone(gaia[0][index]);
             let position;
+            let velocity;
             let direction;
             for (let i = 0; i < gaia[0].length; i++) {
                 if(i != index) {
                     position = vec3.clone(gaia[0][i]);
+                    velocity = vec3.clone(gaia[3][i]);
                     vec3.sub(position, position, origin);
                     direction = vec3.clone(position);
                     vec3.normalize(direction, direction);
@@ -459,6 +472,7 @@
                         getModel('circle'),
                         null,
                         position,
+                        velocity,
                         [gaia[2][i], gaia[2][i], gaia[2][i]],
                         basicMaterials.amb,
                         [gaia[1][i][0], gaia[1][i][1], gaia[1][i][2]],
@@ -502,6 +516,13 @@
         return gaia;
     }
 
+    //Only updates Positions. Does NOT update selected Star Sign Connections
+    function updateSignsConnections() {
+        signsConnectors.forEach((connector) => {
+            connector.updatePositions();
+        });
+    }
+
     function calcSignsConnections() {
         signsConnectors = [];
         signsVisibility.forEach((val, key) => {
@@ -526,7 +547,7 @@
                             [0.4, 0.1, 0.9],
                             1
                         ));
-                        signsConnectors[
+                        /*signsConnectors[
                             signsConnectors.length-1
                         ].keyClick = function () {};
                         signsConnectors[
@@ -540,11 +561,12 @@
                         ].unselect = function () {
                             vec3.scale(this.scale, this.scale, 1/4);
                             this.scale[1] *= 4;
-                        };
+                        };*/
                     }
                 }
             }
         });
+        updateSignsConnections()
     }
 
     function changeSigns(name) {

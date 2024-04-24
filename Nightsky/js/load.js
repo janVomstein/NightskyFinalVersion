@@ -117,9 +117,9 @@
     }
 
     function parseStarSignData(data, connectionData) {
-        const stars = [];
-        const sings = new Map();
-        const starMap = new Map();
+        const stars = [];   //List of all stars containing [HIP, [x, y, z], [v_x, v_y, v_z]]
+        const sings = new Map();    //Map of all star signs to conns between stars Map<Cst, List<(HIP, HIP)>>
+        const starMap = new Map();  //Map of all stars Map<HIP, Cst> e.g. (14135 -> Cet)
         let lines = connectionData.split('\n');
         for (let i = 1; i < lines.length; i++) {
             let parts = lines[i].trim().split(',');
@@ -151,12 +151,20 @@
         for (let i = 1; i < lines.length; i++) {
             let parts = lines[i].trim().split(',');
             if (starMap.get(parseFloat(parts[0])) !== undefined) {
+
                 stars.push([
-                    parseFloat(parts[0]), 
+                    parseFloat(parts[0]),
+                    //Push [x, y, z] (Positions)
                     [
                         parseFloat(parts[27]), 
                         parseFloat(parts[28]), 
                         parseFloat(parts[29])
+                    ],
+                    //Push [v_x, v_y, v_z] (Velocities)
+                    [
+                        parseFloat(parts[30]),
+                        parseFloat(parts[31]),
+                        parseFloat(parts[32])
                     ]
                 ]);
             }
@@ -168,6 +176,7 @@
 	    let positions = [];
 	    let colors = [];
         let sizes = [];
+        let velocities = [];
 	    let lines = data.split('\n');
 	    for (let i = 1; i < lines.length; i++) {
 		    let parts = lines[i].trim().split(',');
@@ -224,9 +233,10 @@
                 positions.push(pos);
                 colors.push([r/5, g/5, b/5, bri]);
                 sizes.push(5);
+                velocities.push([0.0, 0.0, 0.0])
             }
         
 	    }
-        return [positions, colors, sizes];
+        return [positions, colors, sizes, velocities];
     }
 }
