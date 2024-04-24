@@ -626,7 +626,7 @@ class OrbitingObjects extends CelestialBody {
 
 class BackgroundStar extends CelestialBody {
     constructor(
-        index, cam, model, texture, position, velocity,
+        index, cam, model, texture, position, velo_data,
         scale, material, ambColor, difColor, 
         speColor, brightness
     ) {
@@ -645,12 +645,19 @@ class BackgroundStar extends CelestialBody {
         );
         this.index = index;
         this.cam = cam;
-        this.velocity = velocity;
+        this.velo_data = velo_data;
+
+        this.v_x = calcXFromProperMotion([this.velo_data[0], this.velo_data[1], this.velo_data[2]], [this.velo_data[3], this.velo_data[4]]);
+        this.v_y = calcYFromProperMotion([this.velo_data[0], this.velo_data[1], this.velo_data[2]], [this.velo_data[3], this.velo_data[4]]);
+        this.v_z = calcZFromProperMotion([this.velo_data[0], this.velo_data[1], this.velo_data[2]], [this.velo_data[3], this.velo_data[4]]);
     }
     update(dt) {
-        this.position[0] += this.velocity[0] * dt;
-        this.position[1] += this.velocity[1] * dt;
-        this.position[2] += this.velocity[2] * dt;
+        //velo_data is [radius, DE, RA, pmDE, pmRA] (Proper Motion Velocities in milli-arcsec, DE & RA in degrees)
+        //radius in ?
+        //ToDo: Check for right units and timing
+        this.position[0] = this.position[0] + this.v_x * dt;
+        this.position[1] = this.position[1] + this.v_y * dt;
+        this.position[2] = this.position[2] + this.v_z * dt;
     }
     getWorldMats() {
         let posToView = vec3.create();
@@ -808,4 +815,24 @@ class StaticOrbit extends CelestialBody {
     }
     select() {}
     unselect() {}
+}
+
+function xyzToSphericalCoordinates(vector) {
+    const r = Math.sqrt(Math.pow(vector[0], 2) + Math.pow(vector[1], 2) + Math.pow(vector[2], 2));
+    const theta = Math.acos(vector[2] / r);
+    const phi = Math.atan2(vector[1], vector[0]);
+
+    return [r, theta, phi];
+}
+
+function calcXFromProperMotion(pos, vel) {
+    return (1/3600) * pos[0] * (Math.cos(pos[1] + 90) * vel[0] * Math.cos(pos[2]) - Math.sin(pos[1] + 90) * Math.sin(pos[2]) * vel[1]);
+}
+
+function calcYFromProperMotion(pos, vel) {
+    return (1/3600) * pos[0] * (Math.cos(pos[1] + 90) * vel[0] * Math.sin(pos[2]) + Math.sin(pos[1] + 90) * Math.cos(pos[2]) * vel[1]);
+}
+
+function calcZFromProperMotion(pos, vel) {
+    return (-1/3600) * pos[0] * Math.sin(pos[1] + 90) * vel[0];
 }

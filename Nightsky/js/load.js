@@ -160,23 +160,26 @@
                         parseFloat(parts[28]), 
                         parseFloat(parts[29])
                     ],
-                    //Push [v_x, v_y, v_z] (Velocities)
+                    //Push [radius, DE, RA, pmDE, pmRA] (Proper Motion Velocities in milli-arcsec, DE & RA in degrees)
                     [
-                        parseFloat(parts[30]),
-                        parseFloat(parts[31]),
-                        parseFloat(parts[32])
+                        parseFloat(parts[26]),
+                        parseFloat(parts[7]),
+                        parseFloat(parts[6]),
+                        parseFloat(parts[20]),
+                        parseFloat(parts[19])
                     ]
                 ]);
             }
         }
+        console.log(stars);
         return [stars, sings, starMap];
     }
 
     function parseStarData(data) {
 	    let positions = [];
 	    let colors = [];
-        let sizes = [];
-        let velocities = [];
+      let sizes = [];
+      let velocities = [];
 	    let lines = data.split('\n');
 	    for (let i = 1; i < lines.length; i++) {
 		    let parts = lines[i].trim().split(',');
@@ -233,7 +236,7 @@
                 positions.push(pos);
                 colors.push([r/5, g/5, b/5, bri]);
                 sizes.push(5);
-                velocities.push([0.0, 0.0, 0.0])
+                velocities.push([0.0, 0.0, 0.0, 0.0, 0.0])
             }
         
 	    }
