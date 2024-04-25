@@ -160,18 +160,18 @@
                         parseFloat(parts[28]), 
                         parseFloat(parts[29])
                     ],
-                    //Push [radius, DE, RA, pmDE, pmRA] (Proper Motion Velocities in milli-arcsec, DE & RA in degrees)
+                    //Push [radius, DE, RA, RV, pmDE, pmRA] (Proper Motion Velocities in milli-arcsec, DE & RA in degrees)
                     [
                         parseFloat(parts[26]),
                         parseFloat(parts[7]),
                         parseFloat(parts[6]),
+                        0.0,
                         parseFloat(parts[20]),
                         parseFloat(parts[19])
                     ]
                 ]);
             }
         }
-        console.log(stars);
         return [stars, sings, starMap];
     }
 
@@ -183,8 +183,10 @@
 	    let lines = data.split('\n');
 	    for (let i = 1; i < lines.length; i++) {
 		    let parts = lines[i].trim().split(',');
-            let mag = parseFloat(parts[6]);
-            let bp_rp = parseFloat(parts[4]);
+            let mag = parseFloat(parts[8]);
+            let bp = parseFloat(parts[6]);
+            let rp = parseFloat(parts[5]);
+            let bp_rp = bp - rp;    //bp_rp is difference of bp and rp
             let r = Math.fround(
                 mag
                 +0.10979647
@@ -223,20 +225,30 @@
                 -0.01821150*Math.pow(bp_rp, 5)
             );
             if (
-                parts.length == 10 
+                parts.length == 15
                 && parts[7] != 'N/A' 
                 && parts[8] != 'N/A' 
                 && parts[9] != 'N/A'
             ) {
                 let pos = vec3.fromValues(
-                    parseFloat(parts[7]),
-                    parseFloat(parts[8]),
-                    parseFloat(parts[9])
+                    parseFloat(parts[12]),
+                    parseFloat(parts[13]),
+                    parseFloat(parts[14])
                 );
                 positions.push(pos);
                 colors.push([r/5, g/5, b/5, bri]);
                 sizes.push(5);
-                velocities.push([0.0, 0.0, 0.0, 0.0, 0.0])
+
+                let radius = parseFloat(parts[7]);   //Radius / Distance of object
+                let de = parseFloat(parts[3]);       //declination of object in deg
+                let ra = parseFloat(parts[2]);       //right ascension of object in deg
+
+                let rv = parseFloat(parts[11]);       //radial velocity of object in mas/yr
+                let pmra = parseFloat(parts[9]);     //proper motion right ascension in mas/yr
+                let pmde = parseFloat(parts[10]);     //proper motion declination in mas/yr
+
+                velocities.push([radius, de, ra, rv, pmde, pmra])   //[radius, DE, RA, RV, pmDE, pmRA]
+                //velocities.push([0.0, 0.0, 0.0, 0.0, 0.0])        //[radius, DE, RA, pmDE, pmRA]
             }
         
 	    }

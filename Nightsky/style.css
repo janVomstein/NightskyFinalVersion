@@ -12,6 +12,10 @@ body
     background-color: #1D2B36;
     width: max-content;
 }
+#d2
+{
+    width: 475px;
+}
 #d3
 {
     z-index: 3;
@@ -139,6 +143,12 @@ img
     transform: scale(1.5,1.5);
 }
 #speedText
+{
+    margin-left: 10px;
+    color: #FDE6B0;
+    text-shadow: #D35944 2px 2px;
+}
+#speedStarsText
 {
     margin-left: 10px;
     color: #FDE6B0;

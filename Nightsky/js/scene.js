@@ -30,7 +30,6 @@
     function startScene(gaiaVal, signsVal) {
         gaia = gaiaVal;
         signs = signsVal;
-        console.log(gaia)
         signs.forEach((val, key) => {
             signsVisibility.set(key, false);
         });
@@ -238,7 +237,7 @@
             cam.update(dt);
         }
         if (!getPause()) {
-            sun.update(dt, getSpeed());
+            sun.update(dt, getSpeed() / 100);
         }
 
         if(!getPauseStars()) {

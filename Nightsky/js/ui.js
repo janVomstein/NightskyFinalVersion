@@ -26,7 +26,16 @@
     // current speed
     let speed = speedSlider.value;
     speedText.textContent = speed;
-    
+
+    // slider controlling orbit speed
+    const speedStarsSlider = document.getElementById('speedStars');
+    speedStarsSlider.oninput = onStarsSlider.bind(this);
+    // text displaying current orbit speed
+    const speedStarsText = document.getElementById('speedStarsText');
+    // current speed
+    let speedStars = speedStarsSlider.value;
+    speedStarsText.textContent = speedStars;
+
     // text input for importing a list of connections between stars
     const impInput = document.getElementById('impStarSignText');
     // button to start the import
@@ -127,6 +136,15 @@
     function onSlider() {
         speedText.textContent = speedSlider.value;
         speed = speedSlider.value;
+    }
+
+    /**
+     * Gets called by the oninput event of the speed slider.
+     * The function changes the speed and the speedStarstext according to the slider
+     */
+    function onStarsSlider() {
+        speedStarsText.textContent = speedStarsSlider.value;
+        speedStars = speedStarsSlider.value;
     }
     
     /**

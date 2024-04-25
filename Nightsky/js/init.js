@@ -16,7 +16,7 @@ function init() {
         './models/circle.obj',
         './models/cylinder.obj',
         './models/orbit.obj',
-        './starData/TOP 10000 bright.csv with coordinates.csv.csv',
+        './starData/GAIA_refined.csv',     //'./starData/TOP 10000 bright.csv with coordinates.csv.csv',
         './starData/joined_distance_pc_xyz.csv',
         './starData/conns_HIP.csv',
         './starData/stars(1).csv'
@@ -87,12 +87,14 @@ function main() {
     addTextureFromPath('gasGiant15', './textures/gasGiant15.png');
 
     const gaia = parseStarData(getDataMap(
-        './starData/TOP 10000 bright.csv with coordinates.csv.csv'
+        './starData/GAIA_refined.csv'
     ));
+    console.log(gaia)
     const starSigns = parseStarSignData(
         getDataMap('./starData/stars(1).csv'),
         getDataMap('./starData/conns_HIP.csv')
     );
+    console.log(starSigns)
 
     const stars = starSigns[0];
     const signs = starSigns[1];
@@ -117,7 +119,7 @@ function main() {
     gaia[0].push([0, 0, 0]);
     gaia[1].push([1,.5, 1, 1]);
     gaia[2].push(5);
-    gaia[3].push([0.0, 0.0, 0.0]);
+    gaia[3].push([0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
     startScene(gaia, signs);
     const nameList = [];
     signs.forEach((val, key) => {
