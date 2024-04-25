@@ -94,7 +94,6 @@ function main() {
         getDataMap('./starData/stars(1).csv'),
         getDataMap('./starData/conns_HIP.csv')
     );
-    console.log(starSigns)
 
     const stars = starSigns[0];
     const signs = starSigns[1];

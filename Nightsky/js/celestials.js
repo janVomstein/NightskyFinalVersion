@@ -649,7 +649,7 @@ class BackgroundStar extends CelestialBody {
 
 
     }
-    update(dt) {
+    update(dt, speed) {
         //velo_data is [radius, DE, RA, RV, pmDE, pmRA]
         //units: [pc, deg (-90 <-> +90), deg (0 <-> 360), km/s, mas/yr, mas/yr]
 
@@ -657,9 +657,9 @@ class BackgroundStar extends CelestialBody {
         let v_y = calcYFromProperMotion([this.velo_data[0], this.velo_data[1], this.velo_data[2]], [this.velo_data[3], this.velo_data[4], this.velo_data[5]]);
         let v_z = calcZFromProperMotion([this.velo_data[0], this.velo_data[1], this.velo_data[2]], [this.velo_data[3], this.velo_data[4], this.velo_data[5]]);
 
-        this.position[0] = this.position[0] + v_x * dt;
-        this.position[1] = this.position[1] + v_y * dt;
-        this.position[2] = this.position[2] + v_z * dt;
+        this.position[0] = this.position[0] + v_x * speed * dt;
+        this.position[1] = this.position[1] + v_y * speed * dt;
+        this.position[2] = this.position[2] + v_z * speed * dt;
     }
     getWorldMats() {
         let posToView = vec3.create();
@@ -675,9 +675,13 @@ class BackgroundStar extends CelestialBody {
         return[worldMat, normalWorldMat];
     }
     select() {
+        //Need to get GAIA-Position because of perspectivic phenomenons/scaling in this.position
+        const gaiaPos = getGaia()[0][this.index];
+        const distance = Math.sqrt(gaiaPos[0] * gaiaPos[0] + gaiaPos[1] * gaiaPos[1] + gaiaPos[2] * gaiaPos[2]);
         super.select();
         setInfoText("STAR\r\n" + 
-            getInfoText() + 
+            getInfoText() +
+            `\r\ndistance ${distance} pc` +
             "\r\nmiddle mouse button on 2 stars to connect them"
         );
         vec3.scale(this.scale, this.scale, 4);

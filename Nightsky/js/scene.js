@@ -199,7 +199,7 @@
                 getModel('circle'),
                 null,
                 position,
-              velo_data,
+                velo_data,
                 [gaia[2][i], gaia[2][i], gaia[2][i]],
                 basicMaterials.amb,
                 [gaia[1][i][0], gaia[1][i][1], gaia[1][i][2]],
@@ -241,8 +241,9 @@
         }
 
         if(!getPauseStars()) {
+            updateMillennium(dt, getStarsSpeed());
             for(let i = 0; i < backgroundObjects.length; i++) {
-                backgroundObjects[i].update(dt);
+                backgroundObjects[i].update(dt, getStarsSpeed());
                 updateSignsConnections();
             }
         }
@@ -546,21 +547,6 @@
                             [0.4, 0.1, 0.9],
                             1
                         ));
-                        /*signsConnectors[
-                            signsConnectors.length-1
-                        ].keyClick = function () {};
-                        signsConnectors[
-                            signsConnectors.length-1
-                        ].select = function () {
-                            vec3.scale(this.scale, this.scale, 4);
-                            this.scale[1] /= 4;
-                         };
-                        signsConnectors[
-                            signsConnectors.length-1
-                        ].unselect = function () {
-                            vec3.scale(this.scale, this.scale, 1/4);
-                            this.scale[1] *= 4;
-                        };*/
                     }
                 }
             }

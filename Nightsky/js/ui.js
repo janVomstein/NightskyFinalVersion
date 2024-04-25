@@ -51,6 +51,10 @@
     const colorPickerWrapper = document.getElementById('color-wrapper');
     colorPicker.onchange = onColorChange.bind(this);
     onColorChange();
+
+    const millenniumText = document.getElementById("millennium");
+    let currentMillennium = 2;     //The current Millennium of the visualization (data from year 2000 -> Mil 2)
+
     /**
     * returns the color of the color picker in rgb
     * @returns {[number, number, number]} color currently selected
@@ -140,7 +144,7 @@
 
     /**
      * Gets called by the oninput event of the speed slider.
-     * The function changes the speed and the speedStarstext according to the slider
+     * The function changes the speed and the speedStarsText according to the slider
      */
     function onStarsSlider() {
         speedStarsText.textContent = speedStarsSlider.value;
@@ -153,6 +157,33 @@
     */
     function getSpeed() {
         return speed;
+    }
+
+    /**
+     * getter function for the stars speed
+     * @returns {number} current speed
+     */
+    function getStarsSpeed() {
+        return speedStars;
+    }
+
+    function updateMillennium(dt, speed) {
+        currentMillennium += speed * dt;
+
+        const orderMagnitude = Math.log10(currentMillennium);
+
+        if (orderMagnitude < 3) {
+            millenniumText.textContent = `${parseInt(currentMillennium)} Millennium`;
+        }
+        else if (orderMagnitude < 6) {
+            millenniumText.textContent = `${parseInt(currentMillennium / 1000)}k Millennium`;
+        }
+        else if (orderMagnitude < 9) {
+            millenniumText.textContent = `${parseInt(currentMillennium / 1000000)}M Millennium`;
+        }
+        else {
+            millenniumText.textContent = `${parseInt(currentMillennium / 1000000000)}B Millennium`;
+        }
     }
     
     /**

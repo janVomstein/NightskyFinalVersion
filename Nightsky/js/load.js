@@ -248,7 +248,6 @@
                 let pmde = parseFloat(parts[10]);     //proper motion declination in mas/yr
 
                 velocities.push([radius, de, ra, rv, pmde, pmra])   //[radius, DE, RA, RV, pmDE, pmRA]
-                //velocities.push([0.0, 0.0, 0.0, 0.0, 0.0])        //[radius, DE, RA, pmDE, pmRA]
             }
         
 	    }
