@@ -17,7 +17,6 @@ function init() {
         './models/cylinder.obj',
         './models/orbit.obj',
         './starData/GAIA_refined.csv',     //'./starData/TOP 10000 bright.csv with coordinates.csv.csv',
-        './starData/joined_distance_pc_xyz.csv',
         './starData/conns_HIP.csv',
         './starData/stars(1).csv'
     ];
@@ -105,6 +104,7 @@ function main() {
         gaia[1].push([0.4, 0.1, 0.9,1]);    //Push color
         gaia[2].push(5);                    //Push scale for radius
         gaia[3].push(stars[i][2]);          //Push velocity
+        gaia[4].push(stars[i][3]);          //Push names
         const signsList = starMap.get(stars[i][0]);
         for (let j = 0; j < signsList.length; j++) {
             const indexList = signs.get(signsList[j]);

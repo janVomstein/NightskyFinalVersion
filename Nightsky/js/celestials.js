@@ -159,9 +159,9 @@ class CelestialBody {
 
     select() {
         setInfoText(
-            "position: [" + Math.round(this.position[0]) +
+            "Position: [" + Math.round(this.position[0]) +
             ", " + Math.round(this.position[1]) +
-            ", " + Math.round(this.position[2]) + "]\r\nscale: " + 
+            ", " + Math.round(this.position[2]) + "]\r\nScale: " +
             "[" + Math.round(this.scale[0]) +
             ", " + Math.round(this.scale[1]) +
             ", " + Math.round(this.scale[2]) + "]"
@@ -169,7 +169,7 @@ class CelestialBody {
     }
 
     unselect() {
-        setInfoText("nothing selected");
+        setInfoText("Nothing selected");
     }
 
     click(button) {}
@@ -626,7 +626,7 @@ class OrbitingObjects extends CelestialBody {
 
 class BackgroundStar extends CelestialBody {
     constructor(
-        index, cam, model, texture, position, velo_data,
+        index, name_info, cam, model, texture, position, velo_data,
         scale, material, ambColor, difColor, 
         speColor, brightness
     ) {
@@ -646,6 +646,9 @@ class BackgroundStar extends CelestialBody {
         this.index = index;
         this.cam = cam;
         this.velo_data = velo_data;
+        this.name = name_info[0];
+        this.cst = name_info[1];
+        this.bayer = name_info[2];
 
 
     }
@@ -679,10 +682,10 @@ class BackgroundStar extends CelestialBody {
         const gaiaPos = getGaia()[0][this.index];
         const distance = Math.sqrt(gaiaPos[0] * gaiaPos[0] + gaiaPos[1] * gaiaPos[1] + gaiaPos[2] * gaiaPos[2]);
         super.select();
-        setInfoText("STAR\r\n" + 
+        setInfoText(`${this.name == "" ? "Star" : this.name} | ${this.cst} ${this.bayer}\r\n` +
             getInfoText() +
-            `\r\ndistance ${distance} pc` +
-            "\r\nmiddle mouse button on 2 stars to connect them"
+            `\r\nDistance ${distance} pc` +
+            "\r\nMiddle Mouse Button on 2 Stars to connect them"
         );
         vec3.scale(this.scale, this.scale, 4);
     }
@@ -755,8 +758,8 @@ class Connector extends CelestialBody {
     }
 
     select() {
-        setInfoText("CONNECTOR\r\n" + "length: " + 
-            Math.round(this.length) + "\r\np to delete the connector"
+        setInfoText("CONNECTOR\r\n" + "Length: " +
+            Math.round(this.length) + "\r\nP to delete the Connector"
         );
         vec3.scale(this.scale, this.scale, 4);
         this.scale[1] /= 4;

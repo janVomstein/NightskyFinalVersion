@@ -195,6 +195,7 @@
             vec3.scale(position, position, 20);
             backgroundObjects.push(new BackgroundStar(
                 i,
+                gaia[4][i],
                 cam,
                 getModel('circle'),
                 null,
@@ -468,6 +469,7 @@
                     vec3.add(position, position, direction);
                     backgroundObjects.push(new BackgroundStar(
                         i,
+                        gaia[4][i],
                         cam,
                         getModel('circle'),
                         null,

@@ -40,6 +40,7 @@ text{
 #infoText
 {
     color: #FDE6B0;
+    font: bold 20px/1 sans-serif;
     text-shadow: #D35944 2px 2px;
     white-space: pre-line;
 }

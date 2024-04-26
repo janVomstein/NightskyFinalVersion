@@ -1,3 +1,30 @@
+let greekLettersMap = new Map([
+  ["tau", "\u03C4"],
+  ["the", "\u03B8"],
+  ["zet", "\u03B6"],
+  ["alf", "\u03B1"],
+  ["bet", "\u03B2"],
+  ["kap", "\u03BA"],
+  ["eps", "\u03B5"],
+  ["gam", "\u03B3"],
+  ["chi", "\u03C7"],
+  ["sig", "\u03C3"],
+  ["iot", "\u03B9"],
+  ["pi.", "\u03C0"],
+  ["rho", "\u03C1"],
+  ["eta", "\u03B7"],
+  ["lam", "\u03BB"],
+  ["del", "\u03B4"],
+  ["mu.", "\u03BC"],
+  ["ksi", "\u03BE"],
+  ["phi", "\u03C6"],
+  ["omi", "\u03BF"],
+  ["nu.", "\u03BD"],
+  ["ups", "\u03C5"],
+  ["ome", "\u03C9"],
+  ["psi", "\u03C8"]
+])
+
 {
     // Load a text resource from a file over the network (stolen :3)
     function loadTextResource(url, callback) {
@@ -168,6 +195,12 @@
                         0.0,
                         parseFloat(parts[20]),
                         parseFloat(parts[19])
+                    ],
+                    //Push name_info [Trivial Name, Cst, Bayer Name]
+                    [
+                      parts[30],
+                      parts[11],
+                      bulkReplace(parts[10], greekLettersMap)
                     ]
                 ]);
             }
@@ -180,6 +213,7 @@
 	    let colors = [];
       let sizes = [];
       let velocities = [];
+      let name_info = [];
 	    let lines = data.split('\n');
 	    for (let i = 1; i < lines.length; i++) {
 		    let parts = lines[i].trim().split(',');
@@ -248,9 +282,27 @@
                 let pmde = parseFloat(parts[10]);     //proper motion declination in mas/yr
 
                 velocities.push([radius, de, ra, rv, pmde, pmra])   //[radius, DE, RA, RV, pmDE, pmRA]
+                name_info.push(["", "", ""]);                       //[Trivial Name, Cst, Bayer Name]
             }
         
 	    }
-        return [positions, colors, sizes, velocities];
+        return [positions, colors, sizes, velocities, name_info];
+    }
+
+  /**
+   * Replaces all char-sequences in map's keys by map's values
+   * inp_str is String which is a primitive and is thus copied
+   *
+   * @param inp_str
+   * @param map
+   * @returns String
+   */
+    function bulkReplace(inp_str, map) {
+      console.log(typeof(inp_str));
+      map.forEach((val, key) => {
+        inp_str = inp_str.replace(key, val);
+      });
+
+      return inp_str;
     }
 }

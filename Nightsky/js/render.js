@@ -609,11 +609,10 @@ const { vec2, vec3, vec4, mat3, mat4, quat} = glMatrix;
         //validate program
         gl.validateProgram(program);
         if (!gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
-            console.error(
-                'ERROR validating program!', 
+            console.warn(
+                'WARN: Issue validating program!',
                 gl.getProgramInfoLog(program)
             );
-            return;
         }
 	    return program;
     }
