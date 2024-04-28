@@ -212,7 +212,7 @@
 	    let positions = [];
 	    let colors = [];
       let sizes = [];
-      let velocities = [];
+      let velo_info = [];
       let name_info = [];
 	    let lines = data.split('\n');
 	    for (let i = 1; i < lines.length; i++) {
@@ -281,12 +281,12 @@
                 let pmra = parseFloat(parts[9]);     //proper motion right ascension in mas/yr
                 let pmde = parseFloat(parts[10]);     //proper motion declination in mas/yr
 
-                velocities.push([radius, de, ra, rv, pmde, pmra])   //[radius, DE, RA, RV, pmDE, pmRA]
+                velo_info.push([radius, de, ra, rv, pmde, pmra])   //[radius, DE, RA, RV, pmDE, pmRA]
                 name_info.push(["", "", ""]);                       //[Trivial Name, Cst, Bayer Name]
             }
         
 	    }
-        return [positions, colors, sizes, velocities, name_info];
+        return [positions, colors, sizes, velo_info, name_info];
     }
 
   /**

@@ -184,15 +184,10 @@
         
         let position;
         let velo_data;
-        let direction;
         for (let i = 0; i < gaia[0].length-1; i++) {
             position = vec3.clone(gaia[0][i]);
             velo_data = gaia[3][i];
-            direction = vec3.clone(position);
-            vec3.normalize(direction, direction);
-            vec3.scale(direction, direction, 100);
-            vec3.add(position, position, direction);
-            vec3.scale(position, position, 20);
+
             backgroundObjects.push(new BackgroundStar(
                 i,
                 gaia[4][i],

@@ -645,11 +645,19 @@ class BackgroundStar extends CelestialBody {
         );
         this.index = index;
         this.cam = cam;
-        this.velo_data = velo_data;
-        this.name = name_info[0];
-        this.cst = name_info[1];
-        this.bayer = name_info[2];
 
+        this.velo_data = velo_data;                 //velo_data contains information about movement of object
+        this.real_position = vec3.clone(position);  //position in real cosmic units; this.position is scaled for visualization
+        this.name = name_info[0];                   //Trivial name of object; "" if not known
+        this.cst = name_info[1];                    //StarSign of this object; "" if not known
+        this.bayer = name_info[2];                  //Bayer designation of this object; "" if not known
+
+        //this.position has been initialized with real cosmic values. Need to scale them for good visualization
+        let direction = vec3.clone(position);
+        vec3.normalize(direction, direction);
+        vec3.scale(direction, direction, 100);
+        vec3.add(this.position, this.position, direction);
+        vec3.scale(this.position, this.position, 20);
 
     }
     update(dt, speed) {
@@ -660,9 +668,18 @@ class BackgroundStar extends CelestialBody {
         let v_y = calcYFromProperMotion([this.velo_data[0], this.velo_data[1], this.velo_data[2]], [this.velo_data[3], this.velo_data[4], this.velo_data[5]]);
         let v_z = calcZFromProperMotion([this.velo_data[0], this.velo_data[1], this.velo_data[2]], [this.velo_data[3], this.velo_data[4], this.velo_data[5]]);
 
-        this.position[0] = this.position[0] + v_x * speed * dt;
-        this.position[1] = this.position[1] + v_y * speed * dt;
-        this.position[2] = this.position[2] + v_z * speed * dt;
+        this.real_position = vec3.fromValues(
+            this.real_position[0] + v_x * speed * dt,
+            this.real_position[1] + v_y * speed * dt,
+            this.real_position[2] + v_z * speed * dt
+        );
+
+        //Set this.position to scaled position for visualization
+        let direction = vec3.clone(this.real_position);
+        vec3.normalize(direction, direction);
+        vec3.scale(direction, direction, 100);
+        vec3.add(this.position, this.real_position, direction);
+        vec3.scale(this.position, this.position, 20);
     }
     getWorldMats() {
         let posToView = vec3.create();
@@ -678,9 +695,12 @@ class BackgroundStar extends CelestialBody {
         return[worldMat, normalWorldMat];
     }
     select() {
-        //Need to get GAIA-Position because of perspectivic phenomenons/scaling in this.position
-        const gaiaPos = getGaia()[0][this.index];
-        const distance = Math.sqrt(gaiaPos[0] * gaiaPos[0] + gaiaPos[1] * gaiaPos[1] + gaiaPos[2] * gaiaPos[2]);
+        //Use this.real_position for position in real cosmic data (unit: pc)
+        const distance = Math.sqrt(
+            this.real_position[0] * this.real_position[0] +
+            this.real_position[1] * this.real_position[1] +
+            this.real_position[2] * this.real_position[2]
+        );
         super.select();
         setInfoText(`${this.name == "" ? "Star" : this.name} ${this.cst} ${this.bayer}\r\n` +
             getInfoText() +
@@ -824,14 +844,6 @@ class StaticOrbit extends CelestialBody {
     }
     select() {}
     unselect() {}
-}
-
-function xyzToSphericalCoordinates(vector) {
-    const r = Math.sqrt(Math.pow(vector[0], 2) + Math.pow(vector[1], 2) + Math.pow(vector[2], 2));
-    const theta = Math.acos(vector[2] / r);
-    const phi = Math.atan2(vector[1], vector[0]);
-
-    return [r, theta, phi];
 }
 
 function deg2rad(deg) {
