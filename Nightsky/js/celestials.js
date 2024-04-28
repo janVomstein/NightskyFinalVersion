@@ -682,7 +682,7 @@ class BackgroundStar extends CelestialBody {
         const gaiaPos = getGaia()[0][this.index];
         const distance = Math.sqrt(gaiaPos[0] * gaiaPos[0] + gaiaPos[1] * gaiaPos[1] + gaiaPos[2] * gaiaPos[2]);
         super.select();
-        setInfoText(`${this.name == "" ? "Star" : this.name} | ${this.cst} ${this.bayer}\r\n` +
+        setInfoText(`${this.name == "" ? "Star" : this.name} ${this.cst} ${this.bayer}\r\n` +
             getInfoText() +
             `\r\nDistance ${distance} pc` +
             "\r\nMiddle Mouse Button on 2 Stars to connect them"

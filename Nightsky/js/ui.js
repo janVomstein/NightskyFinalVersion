@@ -1,3 +1,6 @@
+//Global information
+let searchMap;
+
 {
     //text displaying information about the selected object
     const infoText = document.getElementById('infoText');
@@ -36,6 +39,7 @@
     let speedStars = speedStarsSlider.value;
     speedStarsText.textContent = speedStars;
 
+    /*
     // text input for importing a list of connections between stars
     const impInput = document.getElementById('impStarSignText');
     // button to start the import
@@ -50,10 +54,31 @@
     const colorPicker = document.getElementById('color');
     const colorPickerWrapper = document.getElementById('color-wrapper');
     colorPicker.onchange = onColorChange.bind(this);
-    onColorChange();
+    onColorChange();*/
 
     const millenniumText = document.getElementById("millennium");
     let currentMillennium = 2;     //The current Millennium of the visualization (data from year 2000 -> Mil 2)
+
+    const searchField = document.getElementById("searchField");
+    searchField.onkeyup = onSearchFieldButtonDown.bind(this);
+    const searchFieldButton = document.getElementById("searchFieldButton");
+    searchFieldButton.onclick = onSearchButton.bind(this);
+
+    function onSearchFieldButtonDown(event) {
+        if (event.key === "Enter") {
+            onSearchButton();
+        }
+    }
+
+    function onSearchButton() {
+        const searchValue = searchField.value.toLowerCase();
+
+        if (searchMap.has(searchValue)) {
+            const newLookAt = searchMap.get(searchValue);
+            const cam = getCam();
+            cam.newLookAt(newLookAt);
+        }
+    }
 
     /**
     * returns the color of the color picker in rgb
@@ -309,4 +334,52 @@
         }
         signList.style.opacity = "1";
     }
+}
+
+function generateSearchMap() {
+    let searchMap = new Map();      //The Map, containing all names and mapping them to the middle point of the object
+    let signMap = new Map();        //Contains all starSigns with all of their stars
+    for(let i = 0; i < gaia[4].length; i++) {
+        //If Trivial Name of star is not "", add it with current Position
+        if (gaia[4][i][0].length != 0) {
+            let position = vec3.fromValues(gaia[0][i][0], gaia[0][i][1], gaia[0][i][2]);
+            let direction = vec3.clone(position);
+            vec3.normalize(direction, direction);
+            vec3.scale(direction, direction, 100);
+            vec3.add(position, position, direction);
+            vec3.scale(position, position, 20);
+            searchMap.set(gaia[4][i][0].toLowerCase(), position);
+        }
+        //If Cst is not "" and signMap doesn't contain the current Cst, add it with current Position
+        if (gaia[4][i][1].length != 0) {
+            let position = vec3.fromValues(gaia[0][i][0], gaia[0][i][1], gaia[0][i][2]);
+            let direction = vec3.clone(position);
+            vec3.normalize(direction, direction);
+            vec3.scale(direction, direction, 100);
+            vec3.add(position, position, direction);
+            vec3.scale(position, position, 20);
+            if (signMap.has(gaia[4][i][1].toLowerCase())) {
+                signMap.get(gaia[4][i][1].toLowerCase()).push(position);
+            }
+            else {
+                signMap.set(gaia[4][i][1].toLowerCase(), [position]);
+            }
+        }
+    }
+
+    //Calculate the middle point of each star sign and append it to the searchMap
+    signMap.forEach((val, key) => {
+        const sum = vec3.create();
+        val.forEach((vec) => {
+            vec3.add(sum, sum, vec);
+        });
+        vec3.divide(sum, sum, vec3.fromValues(val.length, val.length, val.length));
+        searchMap.set(key, sum);
+    });
+
+    return searchMap;
+}
+
+function initUI() {
+    searchMap = generateSearchMap();
 }

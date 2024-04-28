@@ -57,7 +57,7 @@ class Camera {
         vec3.negate(worldDown, worldDown);
         const check1 = (Math.acos(vec3.dot(this.z, this.worldUp)) > Math.PI/18 || 
             rad / Math.abs(rad) == -1);
-            const check2 = (Math.acos(vec3.dot(this.z, worldDown)) > Math.PI/18 || 
+        const check2 = (Math.acos(vec3.dot(this.z, worldDown)) > Math.PI/18 ||
             rad / Math.abs(rad) == 1);
         if (check1 && check2) { 
             let rotMat = mat4.create();
@@ -120,6 +120,16 @@ class Camera {
      */
     moveZ(distance) {
         this.move(this.z, distance);
+    }
+
+    newLookAt(lookAt) {
+        this.z = vec3.create();
+        vec3.sub(this.z, lookAt, this.position);
+        vec3.normalize(this.z, this.z);
+        this.x = vec3.create();
+        vec3.cross(this.x, this.z, this.worldUp);
+        this.y = vec3.create();
+        vec3.cross(this.y, this.x, this.z);
     }
 }
 

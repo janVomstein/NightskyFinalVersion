@@ -518,6 +518,10 @@
         return gaia;
     }
 
+    function getCam() {
+        return cam;
+    }
+
     //Only updates Positions. Does NOT update selected Star Sign Connections
     function updateSignsConnections() {
         signsConnectors.forEach((connector) => {

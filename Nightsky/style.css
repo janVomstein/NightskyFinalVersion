@@ -179,6 +179,12 @@ img
     font-size: 30px
 }
 
+#searchFieldButton
+{
+    color: #FDE6B0;
+    text-shadow: #D35944 2px 2px;
+}
+
 ::-webkit-scrollbar {
     width: 20px;
   }

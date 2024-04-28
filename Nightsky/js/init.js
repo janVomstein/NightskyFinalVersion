@@ -1,3 +1,7 @@
+//Global Data
+let gaia;
+let starSigns;
+
 /**
 * This initial function is called on startup.
 * It loads needed text and image files.
@@ -85,11 +89,11 @@ function main() {
     addTextureFromPath('gasGiant14', './textures/gasGiant14.png');
     addTextureFromPath('gasGiant15', './textures/gasGiant15.png');
 
-    const gaia = parseStarData(getDataMap(
+    gaia = parseStarData(getDataMap(
         './starData/GAIA_refined.csv'
     ));
     console.log(gaia)
-    const starSigns = parseStarSignData(
+    starSigns = parseStarSignData(
         getDataMap('./starData/stars(1).csv'),
         getDataMap('./starData/conns_HIP.csv')
     );
@@ -119,7 +123,9 @@ function main() {
     gaia[1].push([1,.5, 1, 1]);
     gaia[2].push(5);
     gaia[3].push([0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
+    gaia[4].push(["", "", ""]);
     startScene(gaia, signs);
+    initUI();
     const nameList = [];
     signs.forEach((val, key) => {
         nameList.push(key);

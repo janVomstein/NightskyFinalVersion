@@ -1,31 +1,31 @@
-let greekLettersMap = new Map([
-  ["tau", "\u03C4"],
-  ["the", "\u03B8"],
-  ["zet", "\u03B6"],
-  ["alf", "\u03B1"],
-  ["bet", "\u03B2"],
-  ["kap", "\u03BA"],
-  ["eps", "\u03B5"],
-  ["gam", "\u03B3"],
-  ["chi", "\u03C7"],
-  ["sig", "\u03C3"],
-  ["iot", "\u03B9"],
-  ["pi.", "\u03C0"],
-  ["rho", "\u03C1"],
-  ["eta", "\u03B7"],
-  ["lam", "\u03BB"],
-  ["del", "\u03B4"],
-  ["mu.", "\u03BC"],
-  ["ksi", "\u03BE"],
-  ["phi", "\u03C6"],
-  ["omi", "\u03BF"],
-  ["nu.", "\u03BD"],
-  ["ups", "\u03C5"],
-  ["ome", "\u03C9"],
-  ["psi", "\u03C8"]
-])
-
 {
+    let greekLettersMap = new Map([
+        ["tau", "\u03C4"],
+        ["the", "\u03B8"],
+        ["zet", "\u03B6"],
+        ["alf", "\u03B1"],
+        ["bet", "\u03B2"],
+        ["kap", "\u03BA"],
+        ["eps", "\u03B5"],
+        ["gam", "\u03B3"],
+        ["chi", "\u03C7"],
+        ["sig", "\u03C3"],
+        ["iot", "\u03B9"],
+        ["pi.", "\u03C0"],
+        ["rho", "\u03C1"],
+        ["eta", "\u03B7"],
+        ["lam", "\u03BB"],
+        ["del", "\u03B4"],
+        ["mu.", "\u03BC"],
+        ["ksi", "\u03BE"],
+        ["phi", "\u03C6"],
+        ["omi", "\u03BF"],
+        ["nu.", "\u03BD"],
+        ["ups", "\u03C5"],
+        ["ome", "\u03C9"],
+        ["psi", "\u03C8"]
+    ])
+
     // Load a text resource from a file over the network (stolen :3)
     function loadTextResource(url, callback) {
         let request = new XMLHttpRequest();
@@ -298,7 +298,6 @@ let greekLettersMap = new Map([
    * @returns String
    */
     function bulkReplace(inp_str, map) {
-      console.log(typeof(inp_str));
       map.forEach((val, key) => {
         inp_str = inp_str.replace(key, val);
       });
