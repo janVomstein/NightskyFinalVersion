@@ -179,6 +179,14 @@ img
     font-size: 30px
 }
 
+#searchField
+{
+    background: inherit;
+    border-color: #FDE6B0;
+    color: #FDE6B0;
+    border-radius: 10px;
+}
+
 #searchFieldButton
 {
     color: #FDE6B0;

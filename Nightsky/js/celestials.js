@@ -310,7 +310,7 @@ class Star extends CelestialBody {
 
     select() {
         super.select();
-        setInfoText("STAR\r\n" + getInfoText());
+        setInfoText("OBJECT\r\n" + getInfoText());
     }
 
     addObject(
