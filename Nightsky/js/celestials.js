@@ -681,6 +681,7 @@ class BackgroundStar extends CelestialBody {
         vec3.add(this.position, this.real_position, direction);
         vec3.scale(this.position, this.position, 20);
     }
+
     getWorldMats() {
         let posToView = vec3.create();
         vec3.sub(posToView, this.position, this.cam.position);

@@ -15,64 +15,34 @@
       </canvas>
     </div>
     <div id="controls" class="uiDiv">
-      <text class="title">
-        CONTROLS:
-      </text>
-      <br /><br />
+      <text class="title">CONTROLS:</text><br /><br />
       <text class="content">
-        WASD for basic movement
-        <br />
-        QE for up and down movement
-        <br />
-        SPACE for boost
-        <br />
-        ARROW KEYS for camera movement
+        WASD for basic movement<br />
+        QE for up and down movement<br />
+        SPACE for boost<br />
+        ARROW KEYS for camera movement<br /><br />
       </text>
-      <br /><br />
-      <text class="content">SPEED:</text>
-      <text id="speedText" class="content">1</text>
-      <br />
-      <input id="speed" class="slider" type="range" min="1" max="100" value="1" style="margin-top: 10px;">
-      <br /><br />
+      <text class="content">speed</text> <text class="content" id="millennium">2000 A.D.</text> <br /> <br />
+      <text class="content">Planets</text>
+      <input type="range" min="1" max="100" value="1" class="slider" id="speed">
+      <text id="speedText">1</text><br /><br />
+      <text class="content">Stars</text>
+      <input type="range" min="1" max="1000" value="1" class="slider" id="speedStars">
+      <text id="speedStarsText">1</text><br /><br />
       <button id="pause">
-        <img id="pauseImg" src="./images/pause.png" class="btn"/>
+        <img id="pauseImg" src="./images/pause.png"/>
       </button>
-      <text class="content" style="margin-left: 5px;">PAUSE</text>
+      <text class="content">PAUSE Planets</text>
+      <button id="pauseStars">
+        <img id="pauseStarsImg" src="./images/start.png"/>
+      </button>
+      <text class="content">PAUSE Stars</text>
     <canvas id="c1">
       your browser needs to support html5!
     </canvas>
     <canvas id="c2">
       your browser needs to support html5!
     </canvas>
-    <div id="d1">
-      <div id="d2">
-        <text>CONTROLS:</text><br /><br />
-        WASD for basic movement<br />
-        QE for up and down movement<br />
-        SPACE for boost<br />
-        ARROW KEYS for camera movement<br /><br />
-        speed <text id="millennium">2000 A.D.</text> <br /> <br />
-        Planets
-        <input type="range" min="1" max="100" value="1" class="slider" id="speed">
-        <text id="speedText">1</text><br /><br />
-        Stars
-        <input type="range" min="1" max="1000" value="1" class="slider" id="speedStars">
-        <text id="speedStarsText">1</text><br /><br />
-        <button id="pause">
-          <img id="pauseImg" src="./images/pause.png"/>
-        </button>
-        PAUSE Planets
-        <button id="pauseStars">
-          <img id="pauseStarsImg" src="./images/start.png"/>
-        </button>
-        PAUSE Stars
-      </div>
-    </div>
-    <div id="d3">
-      <div>
-        <text>INFO:</text><br /><br />
-        <text id="infoText">Nothing selected</text>
-      </div>
     <div id="info" class="uiDiv">
         <text class="title">INFO:</text><br /><br />
         <text id="infoText" class="content">nothing selected</text>
@@ -130,7 +100,7 @@
     <script src="js/material.js"></script>
     <script src="js/load.js"></script>
     <script src="js/render.js"></script>
-    <script src="js/celestials.js"></script>
+    <script src="js/celestial.js"></script>
     <script src="js/model.js"></script>
     <script src="js/camera.js"></script>
     <script src="js/scene.js"></script>

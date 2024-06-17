@@ -16,10 +16,9 @@ body {
     width: 475px;
 }
 
-#d3
-{
+#d3 {
     z-index: 3;
-    position:fixed;
+    position: fixed;
     bottom: 20px;
     left: 20px;
     background-color: #1D2B36;

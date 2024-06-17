@@ -821,16 +821,18 @@ class OrbitingObject extends CelestialBody {
 class BackgroundStar extends CelestialBody {
     /**
      * @constructor
+     * @param {![string, string, string]} name_info - Names of the object [Trivial Name, Star-Sign-Name, Bayer-Designation]
      * @param {!Camera} cam - the camera of the scene
      * @param {![number, number, number]} position - position in 
      *      world-xyz-coordinates
+     * @param {![number, number, number, number, number, number]} velo_data - [Radius, Declination, Right Ascension, Radial Velocity, Proper Motion DE, Proper Motion RA]
      * @param {![number, number, number]} scale - scaling of the model
      * @param {![number, number, number]} color - color in rgb [0,1]
      * @param {!number} alpha - alpha value of the color of this object
      * @param {!number} index - index to identify this object
      */
     constructor(
-        cam, position, scale, 
+        name_info, cam, position, velo_data, scale,
         color, alpha, index
     ) {
         super(
@@ -848,6 +850,27 @@ class BackgroundStar extends CelestialBody {
         // The Camera-object is required to rotate the circle in the 
         // direction of the camera.
         this.cam = cam;
+
+        this.name_info = name_info;
+        this.velo_data = velo_data;                 //velo_data contains information about movement of object
+        this.name = name_info[0];                   //Trivial name of object; "" if not known
+        this.cst = name_info[1];                    //StarSign of this object; "" if not known
+        this.bayer = name_info[2];                  //Bayer designation of this object; "" if not known
+    }
+
+    update(dt, speed) {
+        //velo_data is [radius, DE, RA, RV, pmDE, pmRA]
+        //units: [pc, deg (-90 <-> +90), deg (0 <-> 360), km/s, mas/yr, mas/yr]
+
+        let v_x = calcXFromProperMotion([this.velo_data[0], this.velo_data[1], this.velo_data[2]], [this.velo_data[3], this.velo_data[4], this.velo_data[5]]);
+        let v_y = calcYFromProperMotion([this.velo_data[0], this.velo_data[1], this.velo_data[2]], [this.velo_data[3], this.velo_data[4], this.velo_data[5]]);
+        let v_z = calcZFromProperMotion([this.velo_data[0], this.velo_data[1], this.velo_data[2]], [this.velo_data[3], this.velo_data[4], this.velo_data[5]]);
+
+        this.position = vec3.fromValues(
+            this.position[0] + v_x * speed * dt,
+            this.position[1] + v_y * speed * dt,
+            this.position[2] + v_z * speed * dt
+        );
     }
 
     /**
@@ -1006,6 +1029,25 @@ class Connector extends CelestialBody {
         return[worldMat, normalWorldMat];
     }
 
+    updatePositions() {
+        // The connector is positioned in the middle between the two objects.
+        vec3.sub(this.position, this.obj1.position, this.obj2.position);
+        // Save the length for scaling.
+        this.length = vec3.length(this.position) ;
+        vec3.scale(this.position, this.position, 0.5);
+        vec3.add(this.position, this.position, this.obj2.position);
+        // Scale the length of the connector.
+        this.scale[1] = this.length - this.inset;
+        // Vector from the position to obj1.
+        const posToObj = vec3.create();
+        // Calculate rotation axis and angle, so the connector is lined up
+        // between the two objects.
+        vec3.sub(posToObj, this.position, this.obj1.position);
+        this.rotAxis = vec3.create();
+        vec3.cross(this.rotAxis, vec3.fromValues(0,1,0), posToObj);
+        this.angle = vec3.angle(vec3.fromValues(0,1,0), posToObj);
+    }
+
     /**
      * @override
      * Add information about the connector. Also add instructions about
@@ -1112,4 +1154,64 @@ class StaticOrbit extends CelestialBody {
      * so they also can not be unselected. This does nothing.
      */
     unselect() {}
+}
+
+function deg2rad(deg) {
+    return 2 * Math.PI * deg / 360;
+}
+
+function mas2deg(mas) {
+    let arcsecond = mas / 1000;
+    return arcsecond / 3600;
+}
+
+function km2pc(km) {
+    return km / 30856769049426;
+}
+
+function calcXFromProperMotion(pos, vel) {
+    let radius = pos[0];                                 //pc
+    let theta = deg2rad(pos[1] + 90);               //rad
+    let phi = deg2rad(pos[2]);                           //rad
+
+    let rv = km2pc(vel[0]);                              //pc
+    let pm_theta = deg2rad(mas2deg(vel[1]));             //rad/yr
+    let pm_phi = deg2rad(mas2deg(vel[2]));               //rad/yr
+
+    let a = rv * Math.sin(theta) * Math.cos(phi);
+    let b = radius * Math.cos(theta) * pm_theta * Math.cos(phi);
+    let c = radius * Math.sin(theta) * Math.sin(phi) * pm_phi;
+
+    return a + b + c;
+}
+
+function calcYFromProperMotion(pos, vel) {
+    let radius = pos[0];                                 //pc
+    let theta = deg2rad(pos[1] + 90);               //rad
+    let phi = deg2rad(pos[2]);                           //rad
+
+    let rv = km2pc(vel[0]);                              //pc
+    let pm_theta = deg2rad(mas2deg(vel[1]));             //rad/yr
+    let pm_phi = deg2rad(mas2deg(vel[2]));               //rad/yr
+
+    let a = rv * Math.sin(theta) * Math.sin(phi);
+    let b = radius * Math.cos(theta) * pm_theta * Math.sin(phi);
+    let c = radius * Math.sin(theta) * Math.cos(phi) * pm_phi;
+
+    return a + b + c;
+}
+
+function calcZFromProperMotion(pos, vel) {
+    let radius = pos[0];                                 //pc
+    let theta = deg2rad(pos[1] + 90);               //rad
+    let phi = deg2rad(pos[2]);                           //rad
+
+    let rv = km2pc(vel[0]);                              //pc
+    let pm_theta = deg2rad(mas2deg(vel[1]));             //rad/yr
+    let pm_phi = deg2rad(mas2deg(vel[2]));               //rad/yr
+
+    let a = rv * Math.cos(theta);
+    let b = (-1) * radius * Math.sin(theta) * pm_theta;
+
+    return a + b;
 }

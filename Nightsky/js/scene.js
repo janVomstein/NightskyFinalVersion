@@ -1,7 +1,7 @@
 {
     // WebGL context.
     /** @type {WebGLRenderingContext} */
-    const gl = getCanvas().getContext("webgl");
+    let gl = getCanvas().getContext("webgl");
     // Most modern browsers should support webGL, but it is better
     // to be safe than sorry.
     if (!gl) {
@@ -340,9 +340,7 @@
             vec3.add(position, position, direction);
             // Add the new BackgroundStar (celestial.js) to the
             // list of backgroundObjects.
-            //ToDo: Check Constructor-Parameters
             backgroundObjects.push(new BackgroundStar(
-                i,
                 gaia[4][i],
                 cam,
                 position,
@@ -812,7 +810,6 @@
                     // Add the new BackgroundStar (celestial.js) to the
                     // list of backgroundObjects.
                     backgroundObjects.push(new BackgroundStar(
-                        i,
                         gaia[4][i],
                         cam,
                         position,
@@ -890,6 +887,7 @@
         return cam;
     }
 
+    //ToDo: Remove Deprecated
     //Only updates Positions. Does NOT update selected Star Sign Connections
     function updateSignsConnections() {
         signsConnectors.forEach((connector) => {
@@ -956,7 +954,6 @@
                 }
             }
         });
-        updateSignsConnections()
     }
 
     /**
