@@ -910,11 +910,17 @@ class BackgroundStar extends CelestialBody {
      * Also change the scaling for a better Visualization of the selection.
      */
     select() {
+        //Use this.real_position for position in real cosmic data (unit: pc)
+        const distance = Math.sqrt(
+            this.position[0] * this.position[0] +
+            this.position[1] * this.position[1] +
+            this.position[2] * this.position[2]
+        );
         super.select();
-        setInfoText(
-            "STAR\r\n" + 
-            getInfoText() + 
-            "\r\nmiddle mouse button on 2 stars to connect them "
+        setInfoText(`${this.name == "" ? "Star" : this.name} ${this.cst} ${this.bayer}\r\n` +
+            getInfoText() +
+            `\r\nDistance ${distance} pc` +
+            "\r\nMiddle Mouse Button on 2 Stars to connect them"
         );
         vec3.scale(this.scale, this.scale, 4);
     }
@@ -937,7 +943,7 @@ class BackgroundStar extends CelestialBody {
     click(button) {
         if (button == 1) {
             // The function addConnector() is defined in scene.js.
-            addConnector(this.index, getColor(), false);
+            addConnector(this.index, new Float32Array([1.0, 1.0, 1.0]), false);
         }
     }
 

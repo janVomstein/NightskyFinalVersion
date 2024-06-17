@@ -698,9 +698,9 @@ class BackgroundStar extends CelestialBody {
     select() {
         //Use this.real_position for position in real cosmic data (unit: pc)
         const distance = Math.sqrt(
-            this.real_position[0] * this.real_position[0] +
-            this.real_position[1] * this.real_position[1] +
-            this.real_position[2] * this.real_position[2]
+            this.position[0] * this.position[0] +
+            this.position[1] * this.position[1] +
+            this.position[2] * this.position[2]
         );
         super.select();
         setInfoText(`${this.name == "" ? "Star" : this.name} ${this.cst} ${this.bayer}\r\n` +

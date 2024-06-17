@@ -30,24 +30,18 @@
       <input type="range" min="1" max="1000" value="1" class="slider" id="speedStars">
       <text id="speedStarsText">1</text><br /><br />
       <button id="pause">
-        <img id="pauseImg" src="./images/pause.png"/>
+        <img id="pauseImg" class="btn" src="./images/pause.png"/>
       </button>
       <text class="content">PAUSE Planets</text>
       <button id="pauseStars">
-        <img id="pauseStarsImg" src="./images/start.png"/>
+        <img id="pauseStarsImg" class="btn" src="./images/start.png"/>
       </button>
       <text class="content">PAUSE Stars</text>
-    <canvas id="c1">
-      your browser needs to support html5!
-    </canvas>
-    <canvas id="c2">
-      your browser needs to support html5!
-    </canvas>
     <div id="info" class="uiDiv">
         <text class="title">INFO:</text><br /><br />
         <text id="infoText" class="content">nothing selected</text>
     </div>
-    <div id="starSign" class="uiDiv">
+    <!--
       <text class="content">IMPORT STAR SIGNS</text>
       <br />
       <button id="impStarSign">
@@ -65,35 +59,19 @@
         <input type="color" id="color" name="color" value="#D35944"/>
       </div>
       <br /><br /><br />
-      <text class="title">SIGNS:</text>
-      <br /><br />
-      <div id="signList">
-    <div id="d4">
-      <div>
-        <!--IMPORT STAR SIGNS<br />
-        <input type="text" id="impStarSignText"><button id="impStarSign">
-          <img src="./images/copy.png"/>
-        </button><br /><br />
-        COPY CURRENT STAR SIGNS
-        <button id="expStarSign">
-          <img src="./images/copy.png"/>
-        </button><br />
-        STAR SIGN COLOR
-        <div id="color-wrapper">
-          <input type="color" id="color" name="color" value="#D35944"/>
-        </div><br /> -->
-        Search
+      -->
+      <div id="starSign" class="uiDiv">
+        <text class="title">Search</text>
         <div>
           <input type="text" id="searchField">
           <button type="button" id="searchFieldButton" value="Start">
-            <img id="lookAtImg" src="./images/copy.png">
+            <img id="lookAtImg" class="btn" src="./images/copy.png">
           </button>
         </div> <br />
-        SIGNS<br />
+        <text class="title">SIGNS</text><br />
         <div id="signList">
         </div>
       </div>
-    </div>
     <script src="js/texture.js"></script>
     <script src="js/init.js"></script>
     <script src="js/gl-matrix-min.js"></script>
