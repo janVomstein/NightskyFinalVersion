@@ -8,10 +8,12 @@ import {Popover, PopoverContent, PopoverTrigger} from "./components/ui/popover";
 import {Button} from "./components/ui/button";
 import {Label} from "./components/ui/label";
 import {Input} from "./components/ui/input";
-import {Pencil2Icon, ReloadIcon} from "@radix-ui/react-icons";
+import {ScrollArea} from "./components/ui/scroll-area";
+import {Pencil2Icon, ReloadIcon, PlusCircledIcon, TrashIcon} from "@radix-ui/react-icons";
 
 //Simulation/Rendering
 import {Simulator} from "./Simulator/Simulator";
+import {SolarSystemSimulator} from "./Simulator/SolarSystemSimulator";
 import {Renderer} from "./Rendering/Renderer";
 
 //Utils
@@ -78,7 +80,7 @@ export function ObjectRepresentator({data, mutateData}) {
       <TableCell className="w-[150px] text-center">{`[${data.pos[0]}, ${data.pos[1]}, ${data.pos[2]}] m`}</TableCell>
       <TableCell className="w-[150px] text-center">{`[${data.vel[0]}, ${data.vel[1]}, ${data.vel[2]}] m/s`}</TableCell>
       <TableCell className="w-[100px] text-center">{`${data.mass} kg`}</TableCell>
-      <TableCell className="w-[100px] text-center">
+      <TableCell className="w-[160px] text-center">
         <Popover open={popoverOpen} onOpenChange={handlePopoverToggle}>
           <PopoverTrigger asChild>
             <Button variant="outline"><Pencil2Icon/></Button>
@@ -144,6 +146,8 @@ export function ObjectRepresentator({data, mutateData}) {
             </div>
           </PopoverContent>
         </Popover>
+        {" "}
+        <Button variant="outline" onClick={() => {mutateData(new Map(), tempData.id)}}><TrashIcon></TrashIcon></Button>
       </TableCell>
     </TableRow>
   );
@@ -157,94 +161,28 @@ export function ObjectRepresentator({data, mutateData}) {
  * @constructor
  */
 export function SideMenu({getGL}) {
-  //Parameters which get set through the corresponding ObjectRepresentator
-  //These Parameters are per Object
-  const initData = [
-    {
-      "id": 0,
-      "mass": 1000,
-      "pos": [0, 0, 0],
-      "vel": [0, 0, 0]
-    },
-    {
-      "id": 1,
-      "mass": 1,
-      "pos": [0, 10, 0],
-      "vel": [10, 0, 0]
-    },
-    {
-      "id": 2,
-      "mass": 15,
-      "pos": [0, 0, 0],
-      "vel": [0, 0, 0]
-    },
-    {
-      "id": 3,
-      "mass": 0,
-      "pos": [0, 0, 0],
-      "vel": [0, 0, 0]
-    },
-    {
-      "id": 4,
-      "mass": 0,
-      "pos": [0, 0, 0],
-      "vel": [0, 0, 0]
-    },
-    {
-      "id": 5,
-      "mass": 0,
-      "pos": [0, 0, 0],
-      "vel": [0, 0, 0]
-    },
-    {
-      "id": 6,
-      "mass": 0,
-      "pos": [0, 0, 0],
-      "vel": [0, 0, 0]
-    },
-    {
-      "id": 7,
-      "mass": 0,
-      "pos": [0, 0, 0],
-      "vel": [0, 0, 0]
-    },
-    {
-      "id": 8,
-      "mass": 0,
-      "pos": [0, 0, 0],
-      "vel": [0, 0, 0]
-    },
-    {
-      "id": 9,
-      "mass": 0,
-      "pos": [0, 0, 0],
-      "vel": [0, 0, 0]
-    }
-  ]
-  const [data, setData] = useState(initData);
+  const [data, setData] = useState([]);
 
   //Parameters that get set directly in the SideMenu
-  //These Parameters are per Simulation
+  //These Parameters are for the Simulation
   const [g, setG] = useState(1);
-  const [steps, setSteps] = useState(10);
-  const [t, setT] = useState(1);
-  const [iterations, setIterations] = useState(1000);
 
-  //States which represent if the SideMenu is opened and whether the Simulation/Animation is running/paused
+  //States which represent if the SideMenu is opened and whether the Animation is running/paused
   const [open, setOpen] = useState(true);
-  const [simulating, setSimulating] = useState(false);
   const [animating, setAnimating] = useState(false);
-  const [animationPaused, setAnimationPaused] = useState(true);
 
   //States which represent the current Simulator/Renderer
-  const [simulator, setSimulator] = useState(null);
-  const [renderer, setRenderer] = useState(null);
-
-  //State which represents the current Result of the last Simulation
-  const [results, setResults] = useState([]);
+  let sim = new SolarSystemSimulator(1.0);
+  let ren = new Renderer(getGL, sim);
+  const [simulator, setSimulator] = useState(sim);
+  const [renderer, setRenderer] = useState(ren);
 
   //Toggle the SideMenu whenever the CTRL-Key is pressed
   useEventListener("keydown", (e) => {if(e.ctrlKey) setOpen(!open)});
+
+  function setAttributes() {
+    simulator.gamma = g;
+  }
 
   /**
    * Mutates the data stored in the App-Component
@@ -253,113 +191,60 @@ export function SideMenu({getGL}) {
    * @param {number} id           The object-ID of the newDataPart
    */
   function mutateData(newDataPart, id) {
-    let updatedData = data.map((elem, idx) => idx === id ? {...data[id], ...newDataPart} : data[idx])
+    //Copy the Contents of the Data prop (for re-render to trigger)
+    let updatedData = [...data];
+
+    //If newDataPart == {}, then this id should be deleted
+    if (newDataPart.size === 0) {
+      updatedData.splice(id, 1);    //Delete object from List
+      updatedData.map((elem, idx) => {elem.id = idx});    //Update the indices of other elements in list
+    }
+    //Else, just data update
+    else {
+      updatedData = updatedData.map((elem, idx) => idx === id ? newDataPart : data[idx]);
+    }
     setData(updatedData);
   }
 
   //Fill in ObjectRepresentators to represent Objects in the Simulation/Animation
   let elements = [];
-  for(let i = 0; i < data.filter(elem => elem.mass !== 0).length; i++) {
+  for(let i = 0; i < data.length; i++) {
     elements.push(<ObjectRepresentator key={i} data={data[i]} mutateData={mutateData}/>);
   }
 
-  /**
-   * Checks if the data inputted directly to the SideMenu (g, steps, t, iterations) is numeric and casts it to Number
-   *
-   * @param {number} g
-   * @param {number} steps
-   * @param {number} t
-   * @param {number} iterations
-   */
-  function validateData(g, steps, t, iterations) {
-    if(!isNumeric(g)) {
-      return false;
-    }
-    if(!isNumeric(steps) || steps < 1 || steps % 1 !== 0) {
-      return false;
-    }
-    if(!isNumeric(t) || t < 0) {
-      return false
-    }
-    if(!isNumeric(iterations) || iterations < 1 || iterations % 1 !== 0) {
-      return false
-    }
-    return {
-      "g": parseFloat(g),
-      "steps": parseInt(steps),
-      "t": parseFloat(t),
-      "iterations": parseInt(iterations)
-    }
-  }
-
-  /**
-   * Function that gets called whenever the Start-Simulation-Button is clicked
-   */
-  function handleSimulate() {
-    if(animating) {
-      return;
-    }
-    setSimulating(true);
-    let parameters = validateData(g, steps, t, iterations);
-    if(parameters === false) {  //must be "===" instead of "=="
-      setSimulating(false);
-      return;
-    }
-    let sim = new Simulator(getGL());
-
-    for(let i = 0; i < sim.max_objs; i++) {
-      sim.pos[3 * i] = data[i].pos[0];
-      sim.pos[3 * i + 1] = data[i].pos[1];
-      sim.pos[3 * i + 2] = data[i].pos[2];
-
-      sim.vel[3 * i] = data[i].vel[0];
-      sim.vel[3 * i + 1] = data[i].vel[1];
-      sim.vel[3 * i + 2] = data[i].vel[2];
-
-      sim.mass[i] = data[i].mass;
-    }
-
-    sim.g = g;
-    sim.steps = steps;
-    sim.t = t;
-
-    sim.updateUniforms();
-
-    setResults(sim.simulateMultiple(iterations));
-    setSimulator(sim);
-    setSimulating(false);
+  function addNewObject() {
+    let updatedData = [...data];
+    updatedData.push({
+      "id": updatedData.length,
+      "pos": [0, 0, 0],
+      "vel": [0, 0, 0],
+      "mass": 0
+    })
+    setData(updatedData);
   }
 
   /**
    * Function that gets called whenever the Start-Stop-Animation-Button is clicked
    */
   function handleAnimate() {
-    if(simulating) {
-      return;
-    }
-    let ren = new Renderer(getGL());
     if(animating) {
       //Stop Animation
-      setRenderer(ren);
+      /*let ren = new Renderer(getGL(), null);
+      setRenderer(ren);*/
+      renderer.stopRender();
       setAnimating(false);
     }
     else {
+      setAttributes();
       //Start Animation
-      ren.setPositionalData(results, [5, 2, 5, 5, 5, 5, 5, 5, 5, 5], t);
-      ren.startRender();
-      ren.doAnimation = !animationPaused;
-      setRenderer(ren);
+      renderer.startRender();
       setAnimating(true);
     }
   }
 
-  /**
-   * Pauses/Unpauses the Animation
-   */
-  function setPauseAnimation(paused) {
-    renderer.doAnimation = !paused;
-    setAnimationPaused(paused);
-  }
+  const tags = Array.from({ length: 50 }).map(
+      (_, i, a) => `v1.2.0-beta.${a.length - i}`
+  )
 
   return (
     <div>
@@ -375,59 +260,39 @@ export function SideMenu({getGL}) {
                 <TableHead className="w-[150px] text-center">Position</TableHead>
                 <TableHead className="w-[150px] text-center">Velocity</TableHead>
                 <TableHead className="w-[100px] text-center">Mass</TableHead>
-                <TableHead className="w-[100px] text-center">Edit</TableHead>
+                <TableHead className="w-[160px] text-center">Edit</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {elements.length === 0 ? <TableRow><TableCell className="text-center">No Items</TableCell></TableRow> : elements}
+              <TableRow>
+                <TableCell className="w-[10px] text-center"/>
+                <TableCell className="w-[150px] text-center"/>
+                <TableCell className="w-[150px] text-center"/>
+                <TableCell className="w-[100px] text-center"/>
+                <TableCell className="w-[160px] text-center">
+                  <Button variant="outline" onClick={addNewObject}><PlusCircledIcon/></Button>
+                </TableCell>
+              </TableRow>
             </TableBody>
           </Table>
 
           <br/>
 
-          <div className="grid gap-2 items-center grid-cols-2">
-            <div className="grid gap-2 items-center grid-cols-2">
-              <Label className="text-center" htmlFor="g">G</Label>
-              <Input
+          <div className="grid gap-2 items-center grid-cols-10">
+            <Label className="text-center" htmlFor="g">Gamma</Label>
+            <Input
                 id="g"
+                type="number"
                 value={g}
-                onChange={(e) => {setG(e.target.value)}}
-                className="col-span-1 h-8 w-30"
-              />
-
-              <Label className="text-center" htmlFor="iterations">Iterations</Label>
-              <Input
-                id="iterations"
-                value={iterations}
-                onChange={(e) => {setIterations(e.target.value)}}
-                className="col-span-1 h-8 w-30"
-              />
-            </div>
-            <div className="grid gap-2 items-center grid-cols-2">
-              <Label className="text-center" htmlFor="t">t</Label>
-              <Input
-                id="t"
-                value={t}
-                onChange={(e) => {setT(e.target.value)}}
-                className="col-span-1 h-8 w-30"
-              />
-
-              <Label className="text-center" htmlFor="steps">Steps</Label>
-              <Input
-                id="steps"
-                value={steps}
-                onChange={(e) => {setSteps(e.target.value)}}
-                className="col-span-1 h-8 w-30"
-              />
-            </div>
-          </div>
-
-          <br/>
-
-          <div className="grid gap-2 items-center grid-cols-3">
-            <Button disabled={simulating} onClick={handleSimulate}>{simulating ? <><ReloadIcon className="animate-spin"/> &nbsp; Please Wait</> : "Start Simulation"}</Button>
-            <Button variant={animating ? "destructive" : ""} onClick={handleAnimate}>{animating ? "Abort Animation" : "Start Animation"}</Button>
-            <Button variant={animationPaused ? "" : "destructive"} onClick={() => {setPauseAnimation(!animationPaused)}}>{animationPaused ? "Start" : "Pause"}</Button>
+                onChange={(e) => {
+                  setG(e.target.value)
+                }}
+                className="col-span-2 h-8 w-30"
+            />
+            <div className="col-span-4 h-8 w-30"/>
+            <Button variant={animating ? "destructive" : ""} className="col-span-3 h-8 w-30"
+                    onClick={handleAnimate}>{animating ? "Abort Animation" : "Start Animation"}</Button>
           </div>
         </SheetContent>
       </Sheet>

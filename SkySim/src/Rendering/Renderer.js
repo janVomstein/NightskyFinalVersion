@@ -5,7 +5,7 @@ import {glMatrix, mat4, vec3} from "gl-matrix";
 
 
 export class Renderer {
-  constructor(gl) {
+  constructor(getGL, simulator) {
     this.vs = `#version 300 es
 
       in vec3 a;
@@ -37,17 +37,25 @@ export class Renderer {
       }
       `;
 
-    this.gl = gl;
+    //this.gl = gl;
+    this.getGL = getGL;
+    this.simulator = simulator;
+    this.doSimulationStep = false;
 
-    this.animationTimeMultiplicator = 1;
-    this.animationTime = 0;
-    this.doAnimation = false;
+    this.time = performance.now();
+
+    this.isInitted = false;
+    //initObject();
+  }
+
+  initObject() {
+    this.gl = this.getGL();
 
     this.cam = new Camera(
-      this.gl.canvas,
-      [0, 0, 10],
-      [-1, 0, 0],
-      [0, 1, 0]
+        this.gl.canvas,
+        [0, 0, 10],
+        [-1, 0, 0],
+        [0, 1, 0]
     );
 
     this.cam.update(0.0);
@@ -56,7 +64,6 @@ export class Renderer {
     this.setupInputBuffers(3);
     this.assembleProgram();
     this.setupUniforms();
-
 
     this.clearCanvas();
   }
@@ -128,7 +135,74 @@ export class Renderer {
     this.gl.enable(this.gl.DEPTH_TEST);
   }
 
-  setPositionalData(positions, radiuses, stepWidth) {
+  clearCanvas() {
+    this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+  }
+
+  startRender() {
+    if (!this.isInitted) {
+      this.initObject();
+      this.isInitted = true;
+    }
+
+    this.doSimulationStep = true;
+    this.time = performance.now();
+    requestAnimationFrame(this.render.bind(this));
+  }
+
+  stopRender() {
+    this.doSimulationStep = false;
+  }
+
+  /**
+   * Set Data to Render from an Array of GravitationalObjects
+   * @param {GravitationalObject[]} objects
+   */
+  setRenderData(objects) {
+    this.vertexBufferContents = [];
+    this.positions = []
+
+    for (let item of objects) {
+      this.vertexBufferContents.push(item.bufferContent);
+      this.positions.push(item.position);
+    }
+  }
+
+  draw() {
+    this.setRenderData(this.simulator.objects);
+    this.clearCanvas();
+
+    for (let i = 0; i < this.vertexBufferContents.length; i++) {
+      this.a = this.vertexBufferContents[i];
+      this.updateInputBuffers();
+
+      mat4.fromTranslation(this.worldMat, vec3.fromValues(this.positions[i][0], this.positions[i][1], this.positions[i][2]));
+      this.updateUniforms();
+
+      this.gl.drawArrays(this.gl.TRIANGLES, 0, Math.floor(this.vertexBufferContents[i].length / 3));
+    }
+  }
+
+  render(time) {
+    //Perform Simulator Step
+    const dt = performance.now() - this.time;
+    this.time = performance.now();
+
+    if (this.doSimulationStep) {
+      this.simulator.simulate(0.0001 * dt);
+    }
+
+
+    this.cam.update(dt);
+    this.viewMat = this.cam.getViewMat();
+    this.updateUniforms();
+    this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
+    this.draw();
+    requestAnimationFrame(this.render.bind(this));
+  }
+
+  /*setPositionalData(positions, radiuses, stepWidth) {
     // positions = [[x0, y0, z0, x1, y1, z1, ...], [x0, y0, z0, x1, y1, z1, ...]] = [[Data at t_0], [Data at t_1]]
     this.positionalData = positions;
     this.radiuses = radiuses;
@@ -161,14 +235,11 @@ export class Renderer {
 
     mat4.fromTranslation(this.worldMat, vec3.fromValues(x, y, z));
     this.updateUniforms();
-  }
+  }*/
 
-  clearCanvas() {
-    this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-  }
 
-  draw(dt) {
+
+  /*draw(dt) {
     if (this.doAnimation) {
       this.animationTime += this.animationTimeMultiplicator * dt;
     }
@@ -204,9 +275,7 @@ export class Renderer {
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
     this.draw(dt);
     requestAnimationFrame(this.render.bind(this));
-  }
+  }*/
 
-  startRender() {
-    requestAnimationFrame(this.renderFirst.bind(this));
-  }
+
 }

@@ -8,6 +8,7 @@ import { SideMenu } from "./SideMenu";
 //Utils
 import {canvasFullscreen, canvasIdleColor} from "./utils/glUtils";
 
+
 function App() {
   const canvasRef = useRef(null);
   let canvas = null;
