@@ -37,7 +37,7 @@ export function ObjectRepresentator({data, mutateData}) {
   /**
    * Checks if the data inputted to the Popover (id, mass, pos, vel) is numeric and casts it to Number
    *
-   * @param data
+   * @param {{pos: string[]|number[], mass: string|number, id: string|number, vel: string[]|number[]}} data - Data to validate
    * @returns {{pos: number[], mass: number, id: number, vel: number[]}|boolean}
    */
   function validateData(data) {
@@ -51,10 +51,10 @@ export function ObjectRepresentator({data, mutateData}) {
       return false
     }
     return {
-      "id": parseFloat(tempData.id),
-      "mass": parseFloat(tempData.mass),
-      "pos": [parseFloat(tempData.pos[0]), parseFloat(tempData.pos[1]), parseFloat(tempData.pos[2])],
-      "vel": [parseFloat(tempData.vel[0]), parseFloat(tempData.vel[1]), parseFloat(tempData.vel[2])]
+      "id": parseFloat(data.id),
+      "mass": parseFloat(data.mass),
+      "pos": [parseFloat(data.pos[0]), parseFloat(data.pos[1]), parseFloat(data.pos[2])],
+      "vel": [parseFloat(data.vel[0]), parseFloat(data.vel[1]), parseFloat(data.vel[2])]
     }
   }
 
@@ -204,6 +204,7 @@ export function SideMenu({getGL}) {
       updatedData = updatedData.map((elem, idx) => idx === id ? newDataPart : data[idx]);
     }
     setData(updatedData);
+    simulator.applyDataUpdate(updatedData);
   }
 
   //Fill in ObjectRepresentators to represent Objects in the Simulation/Animation
@@ -286,7 +287,8 @@ export function SideMenu({getGL}) {
                 type="number"
                 value={g}
                 onChange={(e) => {
-                  setG(e.target.value)
+                  setG(e.target.value);
+                  simulator.gamma = e.target.value;
                 }}
                 className="col-span-2 h-8 w-30"
             />

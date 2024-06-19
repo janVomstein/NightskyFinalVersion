@@ -71,17 +71,29 @@ export class SolarSystemSimulator {
     deleteObject(index) {
         this.objects.splice(index, 1);
     }
+
+    applyDataUpdate(data) {
+        let newObjects = data.map((elem, idx) => new ArtificalObject(elem.id, elem.mass, 1, elem.pos, elem.vel));
+        let objectsCopy = this.objects.filter((elem, idx) => elem.id === -1);
+        for (let item of newObjects) {
+            objectsCopy.push(item);
+        }
+
+        this.objects = objectsCopy;
+    }
 }
 
 class GravitationalObject {
     /**
      * Represents an Object with gravitational properties.
+     * @param {number} id - ID of the Object
      * @param {number} mass - Mass of the Object
      * @param {number} radius - Radius of the Object
      * @param {[number, number, number]} position - Position of the Object
      * @param {[number, number, number]} velocity - Velocity of the Object
      */
-    constructor(mass, radius, position, velocity) {
+    constructor(id, mass, radius, position, velocity) {
+        this.id = id;
         this.mass = mass;
         this.radius = radius;
         this.position = position;
@@ -107,7 +119,7 @@ class NaturalObject extends GravitationalObject {
      * @param {[number, number, number]} velocity - Velocity of the Object
      */
     constructor(mass, radius, position, velocity) {
-        super(mass, radius, position, velocity);
+        super(-1, mass, radius, position, velocity);
     }
 }
 
@@ -115,12 +127,13 @@ class ArtificalObject extends GravitationalObject {
     /**
      * Represents an artificial Object with gravitational properties.
      * Artificial Objects are Objects that are inserted by the User (e.g. Space probe).
+     * @param {number} id - ID of the Object
      * @param {number} mass - Mass of the Object
      * @param {number} radius - Radius of the Object
      * @param {[number, number, number]} position - Position of the Object
      * @param {[number, number, number]} velocity - Velocity of the Object
      */
-    constructor(mass, radius, position, velocity) {
-        super(mass, radius, position, velocity);
+    constructor(id, mass, radius, position, velocity) {
+        super(id, mass, radius, position, velocity);
     }
 }
