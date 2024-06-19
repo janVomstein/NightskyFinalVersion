@@ -41,6 +41,7 @@ export class Renderer {
     this.getGL = getGL;
     this.simulator = simulator;
     this.doSimulationStep = false;
+    this.timestep = 1;
 
     this.time = performance.now();
 
@@ -53,7 +54,7 @@ export class Renderer {
 
     this.cam = new Camera(
         this.gl.canvas,
-        [0, 0, 10],
+        [0, 0, 0],
         [-1, 0, 0],
         [0, 1, 0]
     );
@@ -103,7 +104,7 @@ export class Renderer {
     this.worldMatLocation = this.gl.getUniformLocation(this.program, "u_worldmat");
 
     this.projMat = mat4.create();
-    mat4.perspective(this.projMat, glMatrix.toRadian(90), this.gl.canvas.width / this.gl.canvas.height, 0.00001, 1000.0);
+    mat4.perspective(this.projMat, glMatrix.toRadian(90), this.gl.canvas.width / this.gl.canvas.height, 0.1, 10000.0);
 
     this.viewMat = this.cam.getViewMat();
 
@@ -190,7 +191,8 @@ export class Renderer {
     this.time = performance.now();
 
     if (this.doSimulationStep) {
-      this.simulator.simulate(0.0001 * dt);
+      //10 * 86.4 *
+      this.simulator.simulate(0.001 * this.timestep * dt);
     }
 
 

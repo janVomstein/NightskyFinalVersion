@@ -27,3 +27,29 @@ export function directedAcceleration(pos_target, pos_other, acceleration) {
         acceleration * (pos_other[2] - pos_target[2]) / length_of_vector
     ];
 }
+
+/**
+ * Calculates a vector in Astronomical Units (AE) to kilometers
+ * @param {number[]} vector - Vector in AE
+ * @returns {number[]}
+ */
+export function AEToM(vector) {
+    return [
+        149597870000 * vector[0],
+        149597870000 * vector[1],
+        149597870000 * vector[2]
+    ]
+}
+
+/**
+ * Calculates a vector in kilometers to Astronomical Units (AE)
+ * @param {number[]} vector - Vector in kilometers
+ * @returns {number[]}
+ */
+export function MToAE(vector) {
+    return [
+        vector[0] / 149597870000,
+        vector[1] / 149597870000,
+        vector[2] / 149597870000
+    ]
+}

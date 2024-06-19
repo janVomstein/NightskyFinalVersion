@@ -1,5 +1,6 @@
 //ReactJS
 import './App.css';
+import '@radix-ui/themes/styles.css';
 import React, {useEffect, useRef} from "react";
 
 //UI
@@ -7,6 +8,8 @@ import { SideMenu } from "./SideMenu";
 
 //Utils
 import {canvasFullscreen, canvasIdleColor} from "./utils/glUtils";
+import {Theme} from "@radix-ui/themes";
+
 
 
 function App() {

@@ -2,3 +2,11 @@
     width: 1920px;
     height: 1080px;
 }
+
+.box {
+    float: left;
+    height: 20px;
+    width: 20px;
+    clear: both;
+    color: white;
+}

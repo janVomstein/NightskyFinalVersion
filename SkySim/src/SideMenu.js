@@ -9,7 +9,12 @@ import {Button} from "./components/ui/button";
 import {Label} from "./components/ui/label";
 import {Input} from "./components/ui/input";
 import {ScrollArea} from "./components/ui/scroll-area";
+import {Slider} from "./components/ui/slider";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "./components/ui/select";
+
 import {Pencil2Icon, ReloadIcon, PlusCircledIcon, TrashIcon} from "@radix-ui/react-icons";
+import {Theme, Badge} from '@radix-ui/themes';
+
 
 //Simulation/Rendering
 import {Simulator} from "./Simulator/Simulator";
@@ -18,6 +23,7 @@ import {Renderer} from "./Rendering/Renderer";
 
 //Utils
 import {isNumeric, useEventListener} from "./utils/uiUtils";
+
 
 /**
  * Component which represents one Object in the data-table in the SideMenu
@@ -37,8 +43,8 @@ export function ObjectRepresentator({data, mutateData}) {
   /**
    * Checks if the data inputted to the Popover (id, mass, pos, vel) is numeric and casts it to Number
    *
-   * @param {{pos: string[]|number[], mass: string|number, id: string|number, vel: string[]|number[]}} data - Data to validate
-   * @returns {{pos: number[], mass: number, id: number, vel: number[]}|boolean}
+   * @param {{pos: string[]|number[], mass: string|number, name: string, id: string|number, vel: string[]|number[]}} data - Data to validate
+   * @returns {{pos: number[], mass: number, name: string, id: number, vel: number[]}|boolean}
    */
   function validateData(data) {
     if(!isNumeric(data.pos[0]) || !isNumeric(data.pos[1]) || !isNumeric(data.pos[2])) {
@@ -53,9 +59,15 @@ export function ObjectRepresentator({data, mutateData}) {
     return {
       "id": parseFloat(data.id),
       "mass": parseFloat(data.mass),
+      "name": data.name,
       "pos": [parseFloat(data.pos[0]), parseFloat(data.pos[1]), parseFloat(data.pos[2])],
       "vel": [parseFloat(data.vel[0]), parseFloat(data.vel[1]), parseFloat(data.vel[2])]
     }
+  }
+
+  function idToColor(id) {
+    let availableColors = ["red", "green", "blue", "aqua", "blueviolet", "gray", "chartreuse", "cadetblue", "darkmagenta", "gold", "gainsboro", "firebrick", "indigo", "lightsalmon", "magenta", "tomato", "yellow", "powderblue"];
+    return availableColors[id % availableColors.length];
   }
 
   /**
@@ -76,10 +88,9 @@ export function ObjectRepresentator({data, mutateData}) {
 
   return (
     <TableRow>
-      <TableCell className="w-[10px] text-center">{data.id}</TableCell>
-      <TableCell className="w-[150px] text-center">{`[${data.pos[0]}, ${data.pos[1]}, ${data.pos[2]}] m`}</TableCell>
-      <TableCell className="w-[150px] text-center">{`[${data.vel[0]}, ${data.vel[1]}, ${data.vel[2]}] m/s`}</TableCell>
-      <TableCell className="w-[100px] text-center">{`${data.mass} kg`}</TableCell>
+      <TableCell className="w-[10px] text-center"><div className="box" style={{backgroundColor: idToColor(data.id)}}>{data.id}</div></TableCell>
+      <TableCell className="w-[200px] text-center">{data.name}</TableCell>
+      <TableCell className="w-[50px] text-center">{`${data.mass} kg`}</TableCell>
       <TableCell className="w-[160px] text-center">
         <Popover open={popoverOpen} onOpenChange={handlePopoverToggle}>
           <PopoverTrigger asChild>
@@ -91,6 +102,15 @@ export function ObjectRepresentator({data, mutateData}) {
                 <h4 className="font-medium leading-none">Edit Object</h4>
               </div>
               <div className="grid gap-2">
+                <div className="grid grid-cols-4 items-center gap-x-2">
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    id="name"
+                    value={tempData.name}
+                    onChange={(e) => {setTempData({...tempData, "name": e.target.value})}}
+                    className="col-span-3 h-8"
+                  />
+                </div>
                 <div className="grid grid-cols-4 items-center gap-x-2">
                   <Label htmlFor="posx">Position</Label>
                   <Input
@@ -139,7 +159,7 @@ export function ObjectRepresentator({data, mutateData}) {
                     id="mass"
                     value={tempData.mass}
                     onChange={(e) => {setTempData({...tempData, "mass": e.target.value})}}
-                    className="col-span-3 h-8"
+                    className="col-span-1 h-8 w-20"
                   />
                 </div>
               </div>
@@ -165,24 +185,23 @@ export function SideMenu({getGL}) {
 
   //Parameters that get set directly in the SideMenu
   //These Parameters are for the Simulation
-  const [g, setG] = useState(1);
+  const [gBase, setGBase] = useState(6.674);
+  const [gExp, setGExp] = useState(-11);
+  const [timeSliderValue, setTimeSliderValue] = useState([1]);
+  const [timeFactor, setTimeFactor] = useState("1")
 
   //States which represent if the SideMenu is opened and whether the Animation is running/paused
   const [open, setOpen] = useState(true);
   const [animating, setAnimating] = useState(false);
 
   //States which represent the current Simulator/Renderer
-  let sim = new SolarSystemSimulator(1.0);
+  let sim = new SolarSystemSimulator(gBase * Math.pow(10, gExp));
   let ren = new Renderer(getGL, sim);
   const [simulator, setSimulator] = useState(sim);
   const [renderer, setRenderer] = useState(ren);
 
   //Toggle the SideMenu whenever the CTRL-Key is pressed
   useEventListener("keydown", (e) => {if(e.ctrlKey) setOpen(!open)});
-
-  function setAttributes() {
-    simulator.gamma = g;
-  }
 
   /**
    * Mutates the data stored in the App-Component
@@ -217,6 +236,7 @@ export function SideMenu({getGL}) {
     let updatedData = [...data];
     updatedData.push({
       "id": updatedData.length,
+      "name": "UFO",
       "pos": [0, 0, 0],
       "vel": [0, 0, 0],
       "mass": 0
@@ -236,16 +256,33 @@ export function SideMenu({getGL}) {
       setAnimating(false);
     }
     else {
-      setAttributes();
       //Start Animation
       renderer.startRender();
       setAnimating(true);
     }
   }
 
-  const tags = Array.from({ length: 50 }).map(
-      (_, i, a) => `v1.2.0-beta.${a.length - i}`
-  )
+  function gBaseChange(e) {
+    setGBase(e.target.value);
+    simulator.gamma = e.target.value * Math.pow(10, gExp);
+  }
+
+  function gExpChange(e) {
+    setGExp(e.target.value);
+    simulator.gamma = gBase * Math.pow(10, e.target.value);
+  }
+
+  function timeSliderValueChange(newValue) {
+    setTimeSliderValue(newValue);
+    renderer.timestep = parseFloat(timeFactor) * timeSliderValue[0];
+  }
+
+  function timeFactorChange(newValue) {
+    console.log(newValue);
+    setTimeFactor(newValue);
+    renderer.timestep = parseFloat(newValue) * timeSliderValue[0];
+    console.log(renderer.timestep);
+  }
 
   return (
     <div>
@@ -254,45 +291,69 @@ export function SideMenu({getGL}) {
           <SheetHeader>
             <SheetTitle>Edit Simulation Parameters</SheetTitle>
           </SheetHeader>
+          <ScrollArea className="h-96 rounded-md border p-4">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[10px] text-center">#</TableHead>
-                <TableHead className="w-[150px] text-center">Position</TableHead>
-                <TableHead className="w-[150px] text-center">Velocity</TableHead>
-                <TableHead className="w-[100px] text-center">Mass</TableHead>
+                <TableHead className="w-[200px] text-center">Name</TableHead>
+                <TableHead className="w-[50px] text-center">Mass</TableHead>
                 <TableHead className="w-[160px] text-center">Edit</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {elements.length === 0 ? <TableRow><TableCell className="text-center">No Items</TableCell></TableRow> : elements}
+              {elements.length === 0 ?
+                  <TableRow><TableCell className="text-center">No Items</TableCell></TableRow> : elements}
               <TableRow>
                 <TableCell className="w-[10px] text-center"/>
-                <TableCell className="w-[150px] text-center"/>
-                <TableCell className="w-[150px] text-center"/>
-                <TableCell className="w-[100px] text-center"/>
+                <TableCell className="w-[200px] text-center"/>
+                <TableCell className="w-[50px] text-center"/>
                 <TableCell className="w-[160px] text-center">
                   <Button variant="outline" onClick={addNewObject}><PlusCircledIcon/></Button>
                 </TableCell>
               </TableRow>
             </TableBody>
           </Table>
+          </ScrollArea>
+          <br/>
+
+          <div className="grid gap-2 items-center grid-cols-10">
+            <Label htmlFor="timeFactor">Time</Label>
+            <Slider className="col-span-3 h-8 w-30" value={timeSliderValue} min={1} max={25} onValueChange={timeSliderValueChange}></Slider>
+            <Label>{timeSliderValue}</Label>
+            <Select className="col-span-3 h-8 w-30" value={timeFactor} onValueChange={timeFactorChange}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="unit" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1">s per s</SelectItem>
+                <SelectItem value="86400">days per s</SelectItem>
+                <SelectItem value="2678400">months per s</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
           <br/>
 
           <div className="grid gap-2 items-center grid-cols-10">
             <Label className="text-center" htmlFor="g">Gamma</Label>
             <Input
-                id="g"
+                id="gBase"
                 type="number"
-                value={g}
-                onChange={(e) => {
-                  setG(e.target.value);
-                  simulator.gamma = e.target.value;
-                }}
+                value={gBase}
+                onChange={gBaseChange}
                 className="col-span-2 h-8 w-30"
             />
-            <div className="col-span-4 h-8 w-30"/>
+            <Label htmlFor="gExp">x 10^</Label>
+            <Input
+                id="gExp"
+                type="number"
+                value={gExp}
+                onChange={gExpChange}
+                className="col-span-2 h-8 w-30"
+            />
+
+            <div className="col-span-1 h-8 w-30"/>
             <Button variant={animating ? "destructive" : ""} className="col-span-3 h-8 w-30"
                     onClick={handleAnimate}>{animating ? "Abort Animation" : "Start Animation"}</Button>
           </div>

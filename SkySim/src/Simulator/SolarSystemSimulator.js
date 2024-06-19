@@ -1,4 +1,4 @@
-import {directedAcceleration} from "../utils/VectorUtils";
+import {AEToM, directedAcceleration, MToAE} from "../utils/VectorUtils";
 import {Sphere} from "../Geometry/GeometryJS";
 
 export class SolarSystemSimulator {
@@ -9,9 +9,10 @@ export class SolarSystemSimulator {
     constructor(gamma) {
         this.gamma = gamma;
 
+        //[Mass in kg, Radius in ?, Position in AU, Velocity in m/s]
         this.objects = [
-            new NaturalObject(1000, 1, [0, 0, 0], [0, 0, 0]),
-            new NaturalObject(1, 1, [0, 10, 0], [10, 0, 0])
+            new NaturalObject(1.989 * Math.pow(10, 30), 0.1, [0, 0, 0], [0, 0, 0]),
+            new NaturalObject(5.972 * Math.pow(10, 24), 0.1, [1, 0, 0], [0, 29780, 0])
             //new NaturalObject(15, 0.1, [0, 10, 0], [10, 0, 0]),
         ];
     }
@@ -22,37 +23,45 @@ export class SolarSystemSimulator {
      */
     simulate(dt) {
         for (let i = 0; i < this.objects.length; i++) {
+            let posA = AEToM(this.objects[i].position);
             let acceleration = [0.0, 0.0, 0.0];
             for (let j = 0; j < this.objects.length; j++) {
                 if (i === j) {
                     continue;
                 }
 
-                const distance_squared = Math.pow(this.objects[i].position[0] - this.objects[j].position[0], 2) +
-                    Math.pow(this.objects[i].position[1] - this.objects[j].position[1], 2) +
-                    Math.pow(this.objects[i].position[2] - this.objects[j].position[2], 2)
+                let posB = AEToM(this.objects[j].position);
+
+                let distance_squared = Math.pow(posA[0] - posB[0], 2) +
+                    Math.pow(posA[1] - posB[1], 2) +
+                    Math.pow(posA[2] - posB[2], 2);
 
                 if (distance_squared === 0) {
                     continue;
                 }
 
                 const scalar_acceleration = this.gamma * this.objects[j].mass / distance_squared;
-                const directed_acceleration = directedAcceleration(this.objects[i].position, this.objects[j].position, scalar_acceleration);
+                const directed_acceleration = directedAcceleration(
+                    posA,
+                    posB,
+                    scalar_acceleration
+                );
                 acceleration[0] += directed_acceleration[0];
                 acceleration[1] += directed_acceleration[1];
                 acceleration[2] += directed_acceleration[2];
             }
+
             this.objects[i].velocity = [
                 this.objects[i].velocity[0] + acceleration[0] * dt,
                 this.objects[i].velocity[1] + acceleration[1] * dt,
                 this.objects[i].velocity[2] + acceleration[2] * dt
             ];
 
-            this.objects[i].position = [
-                this.objects[i].position[0] + this.objects[i].velocity[0] * dt,
-                this.objects[i].position[1] + this.objects[i].velocity[1] * dt,
-                this.objects[i].position[2] + this.objects[i].velocity[2] * dt
-            ];
+            this.objects[i].position = MToAE([
+                posA[0] + this.objects[i].velocity[0] * dt,
+                posA[1] + this.objects[i].velocity[1] * dt,
+                posA[2] + this.objects[i].velocity[2] * dt
+            ]);
         }
     }
 
