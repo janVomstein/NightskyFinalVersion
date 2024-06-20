@@ -22,7 +22,7 @@ import {SolarSystemSimulator} from "./Simulator/SolarSystemSimulator";
 import {Renderer} from "./Rendering/Renderer";
 
 //Utils
-import {isNumeric, useEventListener} from "./utils/uiUtils";
+import {floatToBaseExp, idToColor, isNumeric, useEventListener} from "./utils/uiUtils";
 
 
 /**
@@ -65,11 +65,6 @@ export function ObjectRepresentator({data, mutateData}) {
     }
   }
 
-  function idToColor(id) {
-    let availableColors = ["red", "green", "blue", "aqua", "blueviolet", "gray", "chartreuse", "cadetblue", "darkmagenta", "gold", "gainsboro", "firebrick", "indigo", "lightsalmon", "magenta", "tomato", "yellow", "powderblue"];
-    return availableColors[id % availableColors.length];
-  }
-
   /**
    * Function which gets called when the Popover is toggled
    */
@@ -90,7 +85,7 @@ export function ObjectRepresentator({data, mutateData}) {
     <TableRow>
       <TableCell className="w-[10px] text-center"><div className="box" style={{backgroundColor: idToColor(data.id)}}>{data.id}</div></TableCell>
       <TableCell className="w-[200px] text-center">{data.name}</TableCell>
-      <TableCell className="w-[50px] text-center">{`${data.mass} kg`}</TableCell>
+      <TableCell className="w-[100px] text-center">{`${floatToBaseExp(data.mass)[0]}`} <br/> {`x 10^${floatToBaseExp(data.mass)[1]}`} </TableCell>
       <TableCell className="w-[160px] text-center">
         <Popover open={popoverOpen} onOpenChange={handlePopoverToggle}>
           <PopoverTrigger asChild>
@@ -181,7 +176,71 @@ export function ObjectRepresentator({data, mutateData}) {
  * @constructor
  */
 export function SideMenu({getGL}) {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([
+    {
+      "id": 0,
+      "name": "Sun",
+      "pos": [0, 0, 0],
+      "vel": [0, 0, 0],
+      "mass": 1.989 * Math.pow(10, 30)
+    },
+    {
+      "id": 1,
+      "name": "Merkur",
+      "pos": [0.387098, 0, 0],
+      "vel": [0, 47360, 0],
+      "mass": 3.301 * Math.pow(10, 23)
+    },
+    {
+      "id": 2,
+      "name": "Venus",
+      "pos": [0.7233, 0, 0],
+      "vel": [0, 35020, 0],
+      "mass": 4.8673 * Math.pow(10, 24)
+    },
+    {
+      "id": 3,
+      "name": "Earth",
+      "pos": [1, 0, 0],
+      "vel": [0, 29780, 0],
+      "mass": 5.972 * Math.pow(10, 24)
+    },
+    {
+      "id": 4,
+      "name": "Mars",
+      "pos": [1.524, 0, 0],
+      "vel": [0, 24070, 0],
+      "mass": 6.417 * Math.pow(10, 23)
+    },
+    {
+      "id": 5,
+      "name": "Jupiter",
+      "pos": [5.204, 0, 0],
+      "vel": [0, 13060, 0],
+      "mass": 1.89813 * Math.pow(10, 27)
+    },
+    {
+      "id": 6,
+      "name": "Saturn",
+      "pos": [9.582, 0, 0],
+      "vel": [0, 9680, 0],
+      "mass": 5.683 * Math.pow(10, 26)
+    },
+    {
+      "id": 7,
+      "name": "Uranus",
+      "pos": [19.201, 0, 0],
+      "vel": [0, 6810, 0],
+      "mass": 8.681 * Math.pow(10, 25)
+    },
+    {
+      "id": 8,
+      "name": "Neptun",
+      "pos": [30.178, 0, 0],
+      "vel": [0, 5455, 0],
+      "mass": 1.024 * Math.pow(10, 26)
+    },
+  ]);
 
   //Parameters that get set directly in the SideMenu
   //These Parameters are for the Simulation
@@ -199,6 +258,9 @@ export function SideMenu({getGL}) {
   let ren = new Renderer(getGL, sim);
   const [simulator, setSimulator] = useState(sim);
   const [renderer, setRenderer] = useState(ren);
+
+  //Upload initial Data to simulator
+  simulator.applyDataUpdate(data);
 
   //Toggle the SideMenu whenever the CTRL-Key is pressed
   useEventListener("keydown", (e) => {if(e.ctrlKey) setOpen(!open)});
@@ -297,7 +359,7 @@ export function SideMenu({getGL}) {
               <TableRow>
                 <TableHead className="w-[10px] text-center">#</TableHead>
                 <TableHead className="w-[200px] text-center">Name</TableHead>
-                <TableHead className="w-[50px] text-center">Mass</TableHead>
+                <TableHead className="w-[100px] text-center">Mass</TableHead>
                 <TableHead className="w-[160px] text-center">Edit</TableHead>
               </TableRow>
             </TableHeader>
@@ -307,7 +369,7 @@ export function SideMenu({getGL}) {
               <TableRow>
                 <TableCell className="w-[10px] text-center"/>
                 <TableCell className="w-[200px] text-center"/>
-                <TableCell className="w-[50px] text-center"/>
+                <TableCell className="w-[100px] text-center"/>
                 <TableCell className="w-[160px] text-center">
                   <Button variant="outline" onClick={addNewObject}><PlusCircledIcon/></Button>
                 </TableCell>

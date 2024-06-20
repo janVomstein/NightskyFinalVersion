@@ -32,8 +32,11 @@ export class Renderer {
       
       out vec4 outColor;
       
+      uniform vec4 u_color;
+      
       void main() {
-        outColor = vec4((v_pos + vec3(0.3, 0.3, 0.3)) / length(v_pos + vec3(0.3, 0.3, 0.3)), 1.0);
+        outColor = u_color;
+        //outColor = vec4((v_pos + vec3(0.3, 0.3, 0.3)) / length(v_pos + vec3(0.3, 0.3, 0.3)), 1.0);
       }
       `;
 
@@ -103,13 +106,17 @@ export class Renderer {
     this.viewMatLocation = this.gl.getUniformLocation(this.program, "u_viewmat");
     this.worldMatLocation = this.gl.getUniformLocation(this.program, "u_worldmat");
 
+    this.colorLocation = this.gl.getUniformLocation(this.program, "u_color");
+
     this.projMat = mat4.create();
-    mat4.perspective(this.projMat, glMatrix.toRadian(90), this.gl.canvas.width / this.gl.canvas.height, 0.1, 10000.0);
+    mat4.perspective(this.projMat, glMatrix.toRadian(90), this.gl.canvas.width / this.gl.canvas.height, 1, 10000.0);
 
     this.viewMat = this.cam.getViewMat();
 
     this.worldMat = mat4.create();
     mat4.fromTranslation(this.worldMat, vec3.fromValues(0.0, 0.0, 0.0));
+
+    this.activeColor = [1.0, 0.0, 0.0, 1.0];
 
     this.updateUniforms();
   }
@@ -118,6 +125,7 @@ export class Renderer {
     this.gl.uniformMatrix4fv(this.projMatLocation, this.gl.FALSE, this.projMat);
     this.gl.uniformMatrix4fv(this.viewMatLocation, this.gl.FALSE, this.viewMat);
     this.gl.uniformMatrix4fv(this.worldMatLocation, this.gl.FALSE, this.worldMat);
+    this.gl.uniform4fv(this.colorLocation, this.activeColor);
   }
 
   updateInputBuffers() {
@@ -162,11 +170,15 @@ export class Renderer {
    */
   setRenderData(objects) {
     this.vertexBufferContents = [];
-    this.positions = []
+    this.positions = [];
+    this.lastPositions = [];
+    this.colors = [];
 
     for (let item of objects) {
       this.vertexBufferContents.push(item.bufferContent);
       this.positions.push(item.position);
+      this.lastPositions.push(item.lastPositions);
+      this.colors.push(item.color);
     }
   }
 
@@ -179,9 +191,21 @@ export class Renderer {
       this.updateInputBuffers();
 
       mat4.fromTranslation(this.worldMat, vec3.fromValues(this.positions[i][0], this.positions[i][1], this.positions[i][2]));
+      this.activeColor = this.colors[i];
       this.updateUniforms();
 
       this.gl.drawArrays(this.gl.TRIANGLES, 0, Math.floor(this.vertexBufferContents[i].length / 3));
+
+
+
+      mat4.fromTranslation(this.worldMat, vec3.fromValues(0.0, 0.0, 0.0));
+      this.activeColor = this.colors[i];
+      this.updateUniforms();
+
+      this.a = new Float32Array(this.lastPositions[i]);
+      this.updateInputBuffers();
+
+      this.gl.drawArrays(this.gl.LINE_STRIP, 0, Math.floor(this.lastPositions[i].length / 3))
     }
   }
 

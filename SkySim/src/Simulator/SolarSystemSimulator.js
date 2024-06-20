@@ -1,5 +1,6 @@
 import {AEToM, directedAcceleration, MToAE} from "../utils/VectorUtils";
 import {Sphere} from "../Geometry/GeometryJS";
+import {hexToRGB, idToColor} from "../utils/uiUtils";
 
 export class SolarSystemSimulator {
     /**
@@ -10,11 +11,7 @@ export class SolarSystemSimulator {
         this.gamma = gamma;
 
         //[Mass in kg, Radius in ?, Position in AU, Velocity in m/s]
-        this.objects = [
-            new NaturalObject(1.989 * Math.pow(10, 30), 0.1, [0, 0, 0], [0, 0, 0]),
-            new NaturalObject(5.972 * Math.pow(10, 24), 0.1, [1, 0, 0], [0, 29780, 0])
-            //new NaturalObject(15, 0.1, [0, 10, 0], [10, 0, 0]),
-        ];
+        this.objects = [];
     }
 
     /**
@@ -82,7 +79,7 @@ export class SolarSystemSimulator {
     }
 
     applyDataUpdate(data) {
-        let newObjects = data.map((elem, idx) => new ArtificalObject(elem.id, elem.mass, 1, elem.pos, elem.vel));
+        let newObjects = data.map((elem, idx) => new GravitationalObject(elem.id, elem.mass, 0.1, elem.pos, elem.vel));
         let objectsCopy = this.objects.filter((elem, idx) => elem.id === -1);
         for (let item of newObjects) {
             objectsCopy.push(item);
@@ -102,47 +99,38 @@ class GravitationalObject {
      * @param {[number, number, number]} velocity - Velocity of the Object
      */
     constructor(id, mass, radius, position, velocity) {
+        this.MAX_TRAJECTORY_LENGTH = 64;
+
         this.id = id;
         this.mass = mass;
         this.radius = radius;
-        this.position = position;
+        this._position = position;
         this.velocity = velocity;
+        this.color = hexToRGB(idToColor(this.id));
 
         this.bufferContent = [];
+
+        this.lastPositions = [];
+
         this.updateBufferContent();
+    }
+
+    get position() {
+        return this._position;
+    }
+
+    set position(newPos) {
+        this.lastPositions.push(this._position[0], this._position[1], this._position[2]);
+
+        if (this.lastPositions.length > 3 * this.MAX_TRAJECTORY_LENGTH) {
+            this.lastPositions.splice(0, 3);
+        }
+
+        this._position = newPos;
     }
 
     updateBufferContent() {
         let sphere = new Sphere(this.radius, 8, 16);
         this.bufferContent = sphere.getArrayBufferContent();
-    }
-}
-
-class NaturalObject extends GravitationalObject {
-    /**
-     * Represents a natural Object with gravitational properties.
-     * Natural Objects are Objects that naturally exist in the Solar System (e.g. Planets).
-     * @param {number} mass - Mass of the Object
-     * @param {number} radius - Radius of the Object
-     * @param {[number, number, number]} position - Position of the Object
-     * @param {[number, number, number]} velocity - Velocity of the Object
-     */
-    constructor(mass, radius, position, velocity) {
-        super(-1, mass, radius, position, velocity);
-    }
-}
-
-class ArtificalObject extends GravitationalObject {
-    /**
-     * Represents an artificial Object with gravitational properties.
-     * Artificial Objects are Objects that are inserted by the User (e.g. Space probe).
-     * @param {number} id - ID of the Object
-     * @param {number} mass - Mass of the Object
-     * @param {number} radius - Radius of the Object
-     * @param {[number, number, number]} position - Position of the Object
-     * @param {[number, number, number]} velocity - Velocity of the Object
-     */
-    constructor(id, mass, radius, position, velocity) {
-        super(id, mass, radius, position, velocity);
     }
 }
