@@ -49,7 +49,10 @@ export class Renderer {
     this.doSimulationStep = false;
     this.timestep = 1;
 
-    this.time = performance.now();
+    this.time_rl = performance.now();
+
+    this.getDatetime = () => Date.now();
+    this.setDatetime = (newDatetime) => {};
 
     this.isInitted = false;
   }
@@ -191,7 +194,7 @@ export class Renderer {
 
     //Start Render-Loop
     this.doSimulationStep = true;
-    this.time = performance.now();
+    this.time_rl = performance.now();
     requestAnimationFrame(this.render.bind(this));
   }
 
@@ -268,17 +271,21 @@ export class Renderer {
    * Performs Simulation-Step and draws the whole scene once.
    */
   render() {
-    //Calculate dt
-    const dt = performance.now() - this.time;
-    this.time = performance.now();
+    //Calculate dt_rl (delta time real life)
+    const dt_rl = performance.now() - this.time_rl;
+    this.time_rl = performance.now();
 
     //Perform Simulator Step
     if (this.doSimulationStep) {
-      this.simulator.simulate(0.001 * this.timestep * dt);
+      const dt = 0.001 * this.timestep * dt_rl;   //Time in seconds that passes between two render-calls
+      let datetime_copy = new Date(this.getDatetime());
+      datetime_copy.setMilliseconds(datetime_copy.getMilliseconds() + 1000 * dt);
+      this.setDatetime(datetime_copy);
+      this.simulator.simulate(dt);
     }
 
     //Update Camera Position, View-Matrix and Viewport to fit a potentially resized screen
-    this.cam.update(dt);
+    this.cam.update(dt_rl);
     this.viewMat = this.cam.getViewMat();
     this.updateUniforms();
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);

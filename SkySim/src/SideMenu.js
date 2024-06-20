@@ -11,9 +11,9 @@ import {Input} from "./components/ui/input";
 import {ScrollArea} from "./components/ui/scroll-area";
 import {Slider} from "./components/ui/slider";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "./components/ui/select";
+import {Badge} from "./components/ui/badge";
 
 import {Pencil2Icon, ReloadIcon, PlusCircledIcon, TrashIcon} from "@radix-ui/react-icons";
-import {Theme, Badge} from '@radix-ui/themes';
 
 
 //Simulation/Rendering
@@ -22,6 +22,7 @@ import {Renderer} from "./Rendering/Renderer";
 
 //Utils
 import {floatToBaseExp, idToColor, isNumeric, useEventListener} from "./utils/uiUtils";
+import {BadgeEuro} from "lucide-react";
 
 let simulator = new SolarSystemSimulator(1);
 let renderer = new Renderer(null, simulator);
@@ -85,7 +86,7 @@ export function ObjectRepresentator({data, mutateData}) {
   return (
     <TableRow>
       <TableCell className="w-[10px] text-center"><div className="box" style={{backgroundColor: idToColor(data.id)}}>{data.id}</div></TableCell>
-      <TableCell className="w-[200px] text-center">{data.name}</TableCell>
+      <TableCell className="w-[200px] text-center"><Badge>{data.name}</Badge></TableCell>
       <TableCell className="w-[100px] text-center">{`${floatToBaseExp(data.mass)[0]}`} <br/> {`x 10^${floatToBaseExp(data.mass)[1]}`} </TableCell>
       <TableCell className="w-[160px] text-center">
         <Popover open={popoverOpen} onOpenChange={handlePopoverToggle}>
@@ -150,12 +151,28 @@ export function ObjectRepresentator({data, mutateData}) {
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-x-2">
-                  <Label htmlFor="mass">Mass</Label>
+                  <Label htmlFor="massBase">Mass</Label>
                   <Input
-                    id="mass"
-                    value={tempData.mass}
-                    onChange={(e) => {setTempData({...tempData, "mass": e.target.value})}}
+                    id="massBase"
+                    value={tempData.mass / Math.pow(10, Math.floor(Math.log10(tempData.mass)))}
+                    onChange={(e) => {setTempData({
+                      ...tempData,
+                      "mass": e.target.value * Math.pow(10, Math.floor(Math.log10(tempData.mass)))
+                    })}}
                     className="col-span-1 h-8 w-20"
+                  />
+                  <Label htmlFor="massExp">x 10^</Label>
+                  <Input
+                      id="massExp"
+                      type="number"
+                      value={Math.floor(Math.log10(tempData.mass))}
+                      onChange={(e) => {setTempData({
+                        ...tempData,
+                        "mass": tempData["mass"] * Math.pow(
+                            10,
+                            e.target.value - Math.floor(Math.log10(tempData.mass))
+                        )})}}
+                      className="col-span-1 h-8 w-20"
                   />
                 </div>
               </div>
@@ -254,13 +271,20 @@ export function SideMenu({getGL}) {
   const [open, setOpen] = useState(true);
   const [animating, setAnimating] = useState(false);
 
+  const [datetime, setDatetime] = useState(new Date("June 2, 2024 15:49:00"));
+
   //States which represent the current Simulator/Renderer
   //let sim = new SolarSystemSimulator(gBase * Math.pow(10, gExp));
   //let ren = new Renderer(getGL, sim);
   //const [simulator, setSimulator] = useState(sim);
   //const [renderer, setRenderer] = useState(ren);
 
+  //Pass the getGL-Function to the Renderer
   renderer.getGL = getGL;
+  //Pass Getter and Setter of the Datetime to Renderer
+  renderer.getDatetime = () => datetime;
+  renderer.setDatetime = setDatetime;
+  //Pass Gamma aka Universal Gravitational Constant to Renderer
   simulator.gamma = gBase * Math.pow(10, gExp);
 
   //Toggle the SideMenu whenever the CTRL-Key is pressed
@@ -361,42 +385,52 @@ export function SideMenu({getGL}) {
     <div>
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent>
+          <Badge>
+            {datetime.getDate()}.
+            {datetime.getMonth()}.
+            {datetime.getFullYear()}
+            {" - "}
+            {datetime.getHours() < 10 ? "0" + datetime.getHours().toString() : datetime.getHours()}:
+            {datetime.getMinutes() < 10 ? "0" + datetime.getMinutes().toString() : datetime.getMinutes()}:
+            {datetime.getSeconds() < 10 ? "0" + datetime.getSeconds().toString() : datetime.getSeconds()}
+          </Badge>
           <SheetHeader>
             <SheetTitle>Edit Simulation Parameters</SheetTitle>
           </SheetHeader>
           <ScrollArea className="h-96 rounded-md border p-4">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[10px] text-center">#</TableHead>
-                <TableHead className="w-[200px] text-center">Name</TableHead>
-                <TableHead className="w-[100px] text-center">Mass</TableHead>
-                <TableHead className="w-[160px] text-center">Edit</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {elements.length === 0 ?
-                  <TableRow><TableCell className="text-center">No Items</TableCell></TableRow> : elements}
-              <TableRow>
-                <TableCell className="w-[10px] text-center"/>
-                <TableCell className="w-[200px] text-center"/>
-                <TableCell className="w-[100px] text-center"/>
-                <TableCell className="w-[160px] text-center">
-                  <Button variant="outline" onClick={addNewObject}><PlusCircledIcon/></Button>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[10px] text-center">#</TableHead>
+                  <TableHead className="w-[200px] text-center">Name</TableHead>
+                  <TableHead className="w-[100px] text-center">Mass</TableHead>
+                  <TableHead className="w-[160px] text-center">Edit</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {elements.length === 0 ?
+                    <TableRow><TableCell className="text-center">No Items</TableCell></TableRow> : elements}
+                <TableRow>
+                  <TableCell className="w-[10px] text-center"/>
+                  <TableCell className="w-[200px] text-center"/>
+                  <TableCell className="w-[100px] text-center"/>
+                  <TableCell className="w-[160px] text-center">
+                    <Button variant="outline" onClick={addNewObject}><PlusCircledIcon/></Button>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
           </ScrollArea>
           <br/>
 
           <div className="grid gap-2 items-center grid-cols-10">
-            <Label htmlFor="timeFactor">Time</Label>
-            <Slider className="col-span-3 h-8 w-30" value={timeSliderValue} min={1} max={25} onValueChange={timeSliderValueChange}></Slider>
+            <Label className="col-span-2 w-30" htmlFor="timeFactor"><Badge>Time</Badge></Label>
+            <Slider className="col-span-3 h-8 w-30" value={timeSliderValue} min={1} max={25}
+                    onValueChange={timeSliderValueChange}></Slider>
             <Label>{timeSliderValue}</Label>
             <Select className="col-span-3 h-8 w-30" value={timeFactor} onValueChange={timeFactorChange}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="unit" />
+                <SelectValue placeholder="unit"/>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="1">s per s</SelectItem>
@@ -409,7 +443,7 @@ export function SideMenu({getGL}) {
           <br/>
 
           <div className="grid gap-2 items-center grid-cols-10">
-            <Label className="text-center" htmlFor="g">Gamma</Label>
+            <Label className="col-span-2 w-30" htmlFor="g"><Badge>Gamma</Badge></Label>
             <Input
                 id="gBase"
                 type="number"
@@ -417,7 +451,7 @@ export function SideMenu({getGL}) {
                 onChange={gBaseChange}
                 className="col-span-2 h-8 w-30"
             />
-            <Label htmlFor="gExp">x 10^</Label>
+            <Label className="col-span-2 w-30 text-center" htmlFor="gExp">x 10^</Label>
             <Input
                 id="gExp"
                 type="number"
@@ -425,13 +459,15 @@ export function SideMenu({getGL}) {
                 onChange={gExpChange}
                 className="col-span-2 h-8 w-30"
             />
-
-            <div className="col-span-1 h-8 w-30"/>
+          </div>
+          <br/>
+          <div className="grid gap-2 items-center grid-cols-10">
+            <div className="col-span-7 h-8 w-30"/>
             <Button variant={animating ? "destructive" : ""} className="col-span-3 h-8 w-30"
                     onClick={handleAnimate}>{animating ? "Abort Animation" : "Start Animation"}</Button>
           </div>
         </SheetContent>
       </Sheet>
     </div>
-  );
+);
 }
