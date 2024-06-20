@@ -78,7 +78,12 @@ export class SolarSystemSimulator {
         this.objects.splice(index, 1);
     }
 
+    /**
+     * Set Data of all GravitationalObjects. This does NOT include Simulation-Data (e.g. gamma)
+     * @param {{}} data - Data-Object of all GravitationalObjects
+     */
     applyDataUpdate(data) {
+        console.log("applyDataUpdate")
         let newObjects = data.map((elem, idx) => new GravitationalObject(elem.id, elem.mass, 0.1, elem.pos, elem.vel));
         let objectsCopy = this.objects.filter((elem, idx) => elem.id === -1);
         for (let item of newObjects) {
@@ -115,10 +120,18 @@ class GravitationalObject {
         this.updateBufferContent();
     }
 
+    /**
+     * Getter for the Position of this GravitationalObject.
+     * @returns {[number,number,number]}
+     */
     get position() {
         return this._position;
     }
 
+    /**
+     * Setter for the Position of this GravitationalObject.
+     * @param {[number, number, number]} newPos - New Position
+     */
     set position(newPos) {
         this.lastPositions.push(this._position[0], this._position[1], this._position[2]);
 
@@ -129,6 +142,9 @@ class GravitationalObject {
         this._position = newPos;
     }
 
+    /**
+     * Sets the Vertexbuffer-Content for this Object
+     */
     updateBufferContent() {
         let sphere = new Sphere(this.radius, 8, 16);
         this.bufferContent = sphere.getArrayBufferContent();

@@ -24,6 +24,8 @@ import {Renderer} from "./Rendering/Renderer";
 //Utils
 import {floatToBaseExp, idToColor, isNumeric, useEventListener} from "./utils/uiUtils";
 
+let simulator = new SolarSystemSimulator(1);
+let renderer = new Renderer(null, simulator);
 
 /**
  * Component which represents one Object in the data-table in the SideMenu
@@ -254,19 +256,19 @@ export function SideMenu({getGL}) {
   const [animating, setAnimating] = useState(false);
 
   //States which represent the current Simulator/Renderer
-  let sim = new SolarSystemSimulator(gBase * Math.pow(10, gExp));
-  let ren = new Renderer(getGL, sim);
-  const [simulator, setSimulator] = useState(sim);
-  const [renderer, setRenderer] = useState(ren);
+  //let sim = new SolarSystemSimulator(gBase * Math.pow(10, gExp));
+  //let ren = new Renderer(getGL, sim);
+  //const [simulator, setSimulator] = useState(sim);
+  //const [renderer, setRenderer] = useState(ren);
 
-  //Upload initial Data to simulator
-  simulator.applyDataUpdate(data);
+  renderer.getGL = getGL;
+  simulator.gamma = gBase * Math.pow(10, gExp);
 
   //Toggle the SideMenu whenever the CTRL-Key is pressed
   useEventListener("keydown", (e) => {if(e.ctrlKey) setOpen(!open)});
 
   /**
-   * Mutates the data stored in the App-Component
+   * Mutates the data on GravitationalObjects stored in the App-Component and updates the Data in the Simulator.
    *
    * @param {Array} newDataPart   The Data which should be copied to the App-Component
    * @param {number} id           The object-ID of the newDataPart
@@ -286,6 +288,17 @@ export function SideMenu({getGL}) {
     }
     setData(updatedData);
     simulator.applyDataUpdate(updatedData);
+  }
+
+  /**
+   * Uploads all Simulation-Data to the Simulator.
+   */
+  function uploadSimulationData(gBase, gExp) {
+    simulator.gamma = gBase * Math.pow(10, gExp);
+  }
+
+  function uploadRendererData(timeFactor, timeSliderValue) {
+    renderer.timestep = parseFloat(timeFactor) * timeSliderValue[0];
   }
 
   //Fill in ObjectRepresentators to represent Objects in the Simulation/Animation
@@ -312,13 +325,14 @@ export function SideMenu({getGL}) {
   function handleAnimate() {
     if(animating) {
       //Stop Animation
-      /*let ren = new Renderer(getGL(), null);
-      setRenderer(ren);*/
       renderer.stopRender();
       setAnimating(false);
     }
     else {
       //Start Animation
+      simulator.applyDataUpdate(data);
+      uploadRendererData(timeFactor, timeSliderValue);
+      uploadSimulationData(gBase, gExp);
       renderer.startRender();
       setAnimating(true);
     }
@@ -326,24 +340,22 @@ export function SideMenu({getGL}) {
 
   function gBaseChange(e) {
     setGBase(e.target.value);
-    simulator.gamma = e.target.value * Math.pow(10, gExp);
+    uploadSimulationData(e.target.value, gExp);
   }
 
   function gExpChange(e) {
     setGExp(e.target.value);
-    simulator.gamma = gBase * Math.pow(10, e.target.value);
+    uploadSimulationData(gBase, e.target.value);
   }
 
   function timeSliderValueChange(newValue) {
     setTimeSliderValue(newValue);
-    renderer.timestep = parseFloat(timeFactor) * timeSliderValue[0];
+    uploadRendererData(timeFactor, newValue);
   }
 
   function timeFactorChange(newValue) {
-    console.log(newValue);
     setTimeFactor(newValue);
-    renderer.timestep = parseFloat(newValue) * timeSliderValue[0];
-    console.log(renderer.timestep);
+    uploadRendererData(newValue, timeSliderValue);
   }
 
   return (

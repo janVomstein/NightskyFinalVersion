@@ -33,6 +33,11 @@ export function useEventListener(eventName, handler, element = window) {
   }, [eventName, element]);
 }
 
+/**
+ * Calculate the scientific Notation of a large/small number
+ * @param {number} num - large/small number
+ * @returns {[string, string]} - Scientific Notation of num. Format [Base, Exponent]
+ */
 export function floatToBaseExp(num) {
   if (num === 0.0) {
     return [0.0.toFixed(2), 0.0.toFixed(0)]
@@ -44,11 +49,21 @@ export function floatToBaseExp(num) {
   return [base.toFixed(2), exp.toFixed(0)];
 }
 
+/**
+ * Return a Hex-Color-Value for an Integer-ID.
+ * @param {number} id - Integer-ID for which the Hex-Color-Value is calculated
+ * @returns {string} - Hex-Color-Value for the Integer-ID
+ */
 export function idToColor(id) {
   let availableColors = ["#ff0000", "#00ff00", "#0000ff", "#00ffff", "#8a2be2", "#808080", "#7fff00", "#5f9ea0", "#8b008b", "#ffd700", "#dcdcdc", "#b22222", "#4b0082", "#ffa07a", "#ff00ff", "#ff6347", "#ffff00", "#b0e0e6"];
   return availableColors[id % availableColors.length];
 }
 
+/**
+ * Return the RGBA-Representation for a Hex-Color-Value
+ * @param {string} hex - Hex-Color-Value
+ * @returns {number[]|null} - RGBA-Representation
+ */
 export function hexToRGB(hex) {
   let regex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return regex ? [

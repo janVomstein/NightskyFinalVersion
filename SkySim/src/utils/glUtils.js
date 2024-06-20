@@ -1,3 +1,10 @@
+/**
+ * Create a new Shader.
+ * @param gl - The WebGL-Context
+ * @param type - Type of the Buffer. Either "gl.VERTEX_SHADER" or "gl.FRAGMENT_SHADER"
+ * @param src - Source Code of the Shader
+ * @returns {WebGLShader}
+ */
 export function createShader(gl, type, src) {
   const shader = gl.createShader(type);
   gl.shaderSource(shader, src);
@@ -8,6 +15,12 @@ export function createShader(gl, type, src) {
   return shader;
 }
 
+/**
+ *
+ * @param gl
+ * @param sizeOrData
+ * @returns {*}
+ */
 export function makeBuffer(gl, sizeOrData) {
   const buf = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, buf);
