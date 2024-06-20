@@ -1,5 +1,5 @@
 import { createShader, makeBuffer, makeBufferAndSetAttributeNum, updateBuffer } from "../utils/glUtils";
-import { Triangle, Circle, Sphere } from "../Geometry/Geometry.ts";
+import { Triangle, Circle, Sphere } from "../Geometry/GeometryJS";
 import { Camera } from "../utils/Camera";
 import {glMatrix, mat4, vec3} from "gl-matrix";
 

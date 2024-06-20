@@ -16,12 +16,25 @@ export class Triangle {
     }
 }
 
+/**
+ * Represents a Circle Object.
+ */
 export class Circle {
+    /**
+     * Constructor of the Circle Object.
+     * @param {number} radius - Radius of the Sphere
+     * @param {number} n_phi - Number of Triangles in the Sphere
+     */
     constructor(radius, n_phi) {
         this.radius = radius;
         this.n_phi = n_phi;
     }
 
+    /**
+     * Returns one specific Triangle of the Sphere.
+     * @param index_phi - Phi-Index of the Triangle
+     * @returns {Triangle}
+     */
     getTriangleSphericalIndices(index_phi) {
         // Value of phi represents the corner of the wanted triangle with the smallest value of phi
         let phi = (index_phi % this.n_phi) * 2 * Math.PI / this.n_phi;
@@ -42,6 +55,11 @@ export class Circle {
         return new Triangle(a_cartesian, b_cartesian, c_cartesian);
     }
 
+    /**
+     * Returns the whole content of ARRAY_BUFFER as Float32Array.
+     *
+     * @returns {Float32Array} Content of ARRAY_BUFFER.
+     */
     getArrayBufferContent() {
         let triangles = [];
         for(let i_phi = 0; i_phi < this.n_phi; i_phi++) {
@@ -178,6 +196,13 @@ export class Sphere {
         return new Float32Array(trianglePoints);
     }
 
+    /**
+     * Returns a specific Triangle in the Sphere in spherical coordinates.
+     * @param {number} index_theta - Theta-Index
+     * @param {number} index_phi - Phi-Index
+     * @param {number} index_down - Up-/Down-Index
+     * @returns {Triangle} - Triangle in spherical coordinates
+     */
     getSphericalTriangleFromIndices(index_theta, index_phi, index_down) {
         // Values of theta and phi represent the corner of the wanted triangle with the smallest values of theta and phi
         let phi = (index_phi % this.n_phi) * 2 * Math.PI / this.n_phi;
@@ -217,6 +242,13 @@ export class Sphere {
         return new Triangle(a, b, c);
     }
 
+    /**
+     * Returns a specific Triangle in the Sphere in cartesian coordinates.
+     * @param {number} index_theta - Theta-Index
+     * @param {number} index_phi - Phi-Index
+     * @param {number} index_down - Up-/Down-Index
+     * @returns {Triangle} - Triangle in cartesian coordinates
+     */
     getCartesianTriangleFromIndices(index_theta, index_phi, index_down) {
         // Values of theta and phi represent the corner of the wanted triangle with the smallest values of theta and phi
         let spherical_triangle = this.getSphericalTriangleFromIndices(index_theta, index_phi, index_down);
@@ -233,6 +265,10 @@ export class Sphere {
         return new Triangle(a_cartesian, b_cartesian, c_cartesian);
     }
 
+    /**
+     * Returns the Content of the Texture-Coordinate-Buffer.
+     * @returns {Float32Array}
+     */
     getTextureCoordinateBufferContent() {
         // For the first and last theta_index only calculate one triangle per phi_index (Simply leave out the index_down variation)
         let triangles = [];
@@ -280,6 +316,12 @@ export function sphericalToCartesian(radius, theta, phi) {
     );
 }
 
+/**
+ * Transforms Coordinates in a Circle to cartesian coordinates.
+ * @param {number} radius - Radius-Coordinate
+ * @param {number} phi - Phi-Coordinate
+ * @returns {Array<number>} - Array of length 3 containing the desired cartesian coordinates.
+ */
 export function circularToCartesian(radius, phi) {
     return Array(
         radius * Math.cos(phi),

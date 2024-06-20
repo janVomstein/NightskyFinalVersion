@@ -17,7 +17,6 @@ import {Theme, Badge} from '@radix-ui/themes';
 
 
 //Simulation/Rendering
-import {Simulator} from "./Simulator/Simulator";
 import {SolarSystemSimulator} from "./Simulator/SolarSystemSimulator";
 import {Renderer} from "./Rendering/Renderer";
 
