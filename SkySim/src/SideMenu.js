@@ -40,30 +40,32 @@ export function ObjectRepresentator({data, mutateData}) {
   const [popoverOpen, setPopoverOpen] = useState(false);
 
   //State which represents the Object's Parameters before they get submitted to the SideMenu when the Popover is closed
-  const [tempData, setTempData] = useState(data);
+  let prepared_data = {...data, "massBase": data.mass / Math.pow(10, Math.floor(Math.log10(data.mass))), "massExp": Math.floor(Math.log10(data.mass))}
+  const [tempData, setTempData] = useState(prepared_data);
 
   /**
-   * Checks if the data inputted to the Popover (id, mass, pos, vel) is numeric and casts it to Number
+   * Checks if the data_to_validate inputted to the Popover (id, mass, pos, vel) is numeric and casts it to Number
    *
-   * @param {{pos: string[]|number[], mass: string|number, name: string, id: string|number, vel: string[]|number[]}} data - Data to validate
+   * @param {{}} data_to_validate - Data to validate
    * @returns {{pos: number[], mass: number, name: string, id: number, vel: number[]}|boolean}
    */
-  function validateData(data) {
-    if(!isNumeric(data.pos[0]) || !isNumeric(data.pos[1]) || !isNumeric(data.pos[2])) {
+  function validateData(data_to_validate) {
+    if(!isNumeric(data_to_validate.pos[0]) || !isNumeric(data_to_validate.pos[1]) || !isNumeric(data_to_validate.pos[2])) {
       return false;
     }
-    if(!isNumeric(data.vel[0]) || !isNumeric(data.vel[1]) || !isNumeric(data.vel[2])) {
+    if(!isNumeric(data_to_validate.vel[0]) || !isNumeric(data_to_validate.vel[1]) || !isNumeric(data_to_validate.vel[2])) {
       return false;
     }
-    if(!isNumeric(data.mass)) {   //Can be simplified but wouldn't fit context
+    if(!isNumeric(data_to_validate.mass) || !isNumeric(data_to_validate.massBase) || !isNumeric(data_to_validate.massExp)) {   //Can be simplified but wouldn't fit context
       return false
     }
+
     return {
-      "id": parseFloat(data.id),
-      "mass": parseFloat(data.mass),
-      "name": data.name,
-      "pos": [parseFloat(data.pos[0]), parseFloat(data.pos[1]), parseFloat(data.pos[2])],
-      "vel": [parseFloat(data.vel[0]), parseFloat(data.vel[1]), parseFloat(data.vel[2])]
+      "id": parseFloat(data_to_validate.id),
+      "mass": parseFloat(data_to_validate.mass),
+      "name": data_to_validate.name,
+      "pos": [parseFloat(data_to_validate.pos[0]), parseFloat(data_to_validate.pos[1]), parseFloat(data_to_validate.pos[2])],
+      "vel": [parseFloat(data_to_validate.vel[0]), parseFloat(data_to_validate.vel[1]), parseFloat(data_to_validate.vel[2])]
     }
   }
 
@@ -71,10 +73,7 @@ export function ObjectRepresentator({data, mutateData}) {
    * Function which gets called when the Popover is toggled
    */
   function handlePopoverToggle() {
-    if(!popoverOpen) {
-      setTempData(data);
-    }
-    else {
+    if(popoverOpen) {
       let validatedData = validateData(tempData);
       if(validatedData !== false) {
         mutateData(validatedData, data.id);
@@ -134,19 +133,19 @@ export function ObjectRepresentator({data, mutateData}) {
                   <Input
                     id="velx"
                     value={tempData.vel[0]}
-                    onChange={(e) => {setTempData({...tempData, "vel": tempData.pos.with(0, e.target.value)})}}
+                    onChange={(e) => {setTempData({...tempData, "vel": tempData.vel.with(0, e.target.value)})}}
                     className="col-span-1 h-8 w-20"
                   />
                   <Input
                     id="vely"
                     value={tempData.vel[1]}
-                    onChange={(e) => {setTempData({...tempData, "vel": tempData.pos.with(1, e.target.value)})}}
+                    onChange={(e) => {setTempData({...tempData, "vel": tempData.vel.with(1, e.target.value)})}}
                     className="col-span-1 h-8 w-20"
                   />
                   <Input
                     id="velz"
                     value={tempData.vel[2]}
-                    onChange={(e) => {setTempData({...tempData, "vel": tempData.pos.with(2, e.target.value)})}}
+                    onChange={(e) => {setTempData({...tempData, "vel": tempData.vel.with(2, e.target.value)})}}
                     className="col-span-1 h-8 w-20"
                   />
                 </div>
@@ -154,24 +153,21 @@ export function ObjectRepresentator({data, mutateData}) {
                   <Label htmlFor="massBase">Mass</Label>
                   <Input
                     id="massBase"
-                    value={tempData.mass / Math.pow(10, Math.floor(Math.log10(tempData.mass)))}
+                    value={tempData.massBase}
                     onChange={(e) => {setTempData({
                       ...tempData,
-                      "mass": e.target.value * Math.pow(10, Math.floor(Math.log10(tempData.mass)))
+                      "massBase": e.target.value
                     })}}
                     className="col-span-1 h-8 w-20"
                   />
                   <Label htmlFor="massExp">x 10^</Label>
                   <Input
                       id="massExp"
-                      type="number"
-                      value={Math.floor(Math.log10(tempData.mass))}
+                      value={tempData.massExp}
                       onChange={(e) => {setTempData({
                         ...tempData,
-                        "mass": tempData["mass"] * Math.pow(
-                            10,
-                            e.target.value - Math.floor(Math.log10(tempData.mass))
-                        )})}}
+                        "massExp": e.target.value
+                      })}}
                       className="col-span-1 h-8 w-20"
                   />
                 </div>
