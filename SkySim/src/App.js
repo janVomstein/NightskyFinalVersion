@@ -5,6 +5,7 @@ import React, {useEffect, useRef} from "react";
 
 //UI
 import { SideMenu } from "./SideMenu";
+import {Toaster} from "./components/ui/toaster";
 
 //Utils
 import {canvasFullscreen, canvasIdleColor} from "./utils/glUtils";
@@ -33,6 +34,7 @@ function App() {
     <>
       <SideMenu getGL={getGL}></SideMenu>
       <canvas id="canvas" ref={canvasRef}></canvas>
+      <Toaster/>
     </>
   );
 }

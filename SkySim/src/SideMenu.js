@@ -27,6 +27,7 @@ import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "./compon
 
 //Scenarios
 import {scenarios} from "./exampleScenarios";
+import {useToast} from "./components/ui/use-toast";
 
 
 let simulator = new SolarSystemSimulator(1);
@@ -47,12 +48,14 @@ export function ObjectRepresentator({data, mutateData}) {
   //State which represents the Object's Parameters before they get submitted to the SideMenu when the Popover is closed
   let prepared_data = {
     ...data,
-    "massBase": data.mass / Math.pow(10, Math.floor(Math.log10(data.mass))),
-    "massExp": Math.floor(Math.log10(data.mass)),
+    "massBase": data.mass === 0 ? 0.0 : data.mass / Math.pow(10, Math.floor(Math.log10(data.mass))),
+    "massExp": data.mass === 0 ? 0.0 : Math.floor(Math.log10(data.mass)),
     "pos_spherical": cartesianToSpherical(data.pos[0], data.pos[1], data.pos[2]),
     "vel_spherical": cartesianToSpherical(data.vel[0], data.vel[1], data.vel[2])
   }
   const [tempData, setTempData] = useState(prepared_data);
+
+  const { toast } = useToast();
 
   /**
    * Checks if the data_to_validate inputted to the Popover (id, mass, pos, vel) is numeric and casts it to Number
@@ -96,8 +99,11 @@ export function ObjectRepresentator({data, mutateData}) {
         mutateData(validatedData, data.id);
       }
       else {
-        //ToDo:
-        console.log("Error");
+        toast({
+          title: "Error",
+          description: "Invalid Values inserted. Only numerical Values allowed.",
+          variant: "destructive"
+        });
       }
     }
     setPopoverOpen(!popoverOpen);

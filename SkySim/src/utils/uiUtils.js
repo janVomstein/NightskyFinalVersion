@@ -7,10 +7,9 @@ import {useEffect, useRef} from "react";
  * @param {number|string} str   Number or String which should be checked if it contains numeric content
  */
 export function isNumeric(str) {
-  if (typeof str === "number") return true
+  if (typeof str === "number") return !(str === Infinity || str === -1 * Infinity || isNaN(str))
   if (typeof str != "string") return false // we only process strings!
-  return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-    !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+  return !(str === (Infinity).toString() || str === (-1 * Infinity).toString() || isNaN(parseFloat(str)))
 }
 
 /**
