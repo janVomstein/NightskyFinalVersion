@@ -23,6 +23,7 @@ import {Renderer} from "./Rendering/Renderer";
 //Utils
 import {floatToBaseExp, idToColor, isNumeric, useEventListener} from "./utils/uiUtils";
 import {cartesianToSpherical, sphericalToCartesian} from "./Geometry/GeometryJS";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "./components/ui/tooltip";
 
 let simulator = new SolarSystemSimulator(1);
 let renderer = new Renderer(null, simulator);
@@ -91,8 +92,8 @@ export function ObjectRepresentator({data, mutateData}) {
         mutateData(validatedData, data.id);
       }
       else {
-        //ToDo: Open Toast
-        console.log("Error")
+        //ToDo:
+        console.log("Error");
       }
     }
     setPopoverOpen(!popoverOpen);
@@ -473,7 +474,18 @@ export function SideMenu({getGL}) {
           <br/>
 
           <div className="grid gap-2 items-center grid-cols-10">
-            <Label className="col-span-2 w-30" htmlFor="timeFactor"><Badge>Time</Badge></Label>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Label className="col-span-2 w-30" htmlFor="timeFactor"><Badge>Time</Badge></Label>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>How much time should go by in the Simulation in one second of the Real Time</p>
+                  <p>5 days per s => One Second in Real Time is equivalent to 5 days in Simulation Time</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
             <Slider className="col-span-3 h-8 w-30" value={timeSliderValue} min={1} max={25}
                     onValueChange={timeSliderValueChange}></Slider>
             <Label>{timeSliderValue}</Label>
@@ -492,7 +504,17 @@ export function SideMenu({getGL}) {
           <br/>
 
           <div className="grid gap-2 items-center grid-cols-10">
-            <Label className="col-span-2 w-30" htmlFor="g"><Badge>Gamma</Badge></Label>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Label className="col-span-2 w-30" htmlFor="g"><Badge>Gamma</Badge></Label>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Universal Gravitational Constant</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
             <Input
                 id="gBase"
                 type="number"
@@ -513,7 +535,18 @@ export function SideMenu({getGL}) {
           <br/>
 
           <div className="grid gap-2 items-center grid-cols-10">
-            <Label className="col-span-2 w-30" htmlFor="timeFactor"><Badge>Precision</Badge></Label>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Label className="col-span-2 w-30" htmlFor="timeFactor"><Badge>Precision</Badge></Label>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>How many iterations of simulation should be performed per Simulation step</p>
+                  <p>Higher Values allow to simulate large Timesteps with higher Precision</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
             <Slider className="col-span-3 h-8 w-30" value={subSteps} min={1} max={25}
                     onValueChange={subStepsChange}></Slider>
             <Label>{subSteps}</Label>
