@@ -255,12 +255,6 @@ export function SideMenu({getGL}) {
 
   const [datetime, setDatetime] = useState(new Date("June 2, 2024 15:49:00"));
 
-  //States which represent the current Simulator/Renderer
-  //let sim = new SolarSystemSimulator(gBase * Math.pow(10, gExp));
-  //let ren = new Renderer(getGL, sim);
-  //const [simulator, setSimulator] = useState(sim);
-  //const [renderer, setRenderer] = useState(ren);
-
   //Pass the getGL-Function to the Renderer
   renderer.getGL = getGL;
   //Pass Getter and Setter of the Datetime to Renderer
@@ -271,6 +265,11 @@ export function SideMenu({getGL}) {
 
   //Toggle the SideMenu whenever the CTRL-Key is pressed
   useEventListener("keydown", (e) => {if(e.ctrlKey) setOpen(!open)});
+
+
+  /**
+   * Data Manipulation
+   */
 
   /**
    * Mutates the data on GravitationalObjects stored in the App-Component and updates the Data in the Simulator.
@@ -296,21 +295,13 @@ export function SideMenu({getGL}) {
   }
 
   /**
-   * Uploads all Simulation-Data to the Simulator.
+   * Loads the selected Example Scenario.
    */
-  function uploadSimulationData(gBase, gExp) {
-    simulator.gamma = gBase * Math.pow(10, gExp);
-  }
+  function loadExampleScenario() {
+    const index = parseInt(importSelectorValue);
 
-  function uploadRendererData(timeFactor, timeSliderValue, subSteps) {
-    renderer.timestep = parseFloat(timeFactor) * timeSliderValue[0];
-    renderer.sub_steps = subSteps[0];
-  }
-
-  //Fill in ObjectRepresentators to represent Objects in the Simulation/Animation
-  let elements = [];
-  for(let i = 0; i < data.length; i++) {
-    elements.push(<ObjectRepresentator key={i} data={data[i]} mutateData={mutateData}/>);
+    setData(scenarios[index].objects);
+    setDatetime(new Date(scenarios[index].date))
   }
 
   function addNewObject() {
@@ -325,12 +316,27 @@ export function SideMenu({getGL}) {
     setData(updatedData);
   }
 
-  function loadExampleScenario() {
-    const index = parseInt(importSelectorValue);
 
-    setData(scenarios[index].objects);
-    setDatetime(new Date(scenarios[index].date))
+  /**
+   * Data Uploading
+   */
+
+  /**
+   * Uploads all Simulation-Data to the Simulator.
+   */
+  function uploadSimulationData(gBase, gExp) {
+    simulator.gamma = gBase * Math.pow(10, gExp);
   }
+
+  function uploadRendererData(timeFactor, timeSliderValue, subSteps) {
+    renderer.timestep = parseFloat(timeFactor) * timeSliderValue[0];
+    renderer.sub_steps = subSteps[0];
+  }
+
+
+  /**
+   * Event Handlers
+   */
 
   /**
    * Function that gets called whenever the Start-Stop-Animation-Button is clicked
@@ -384,15 +390,24 @@ export function SideMenu({getGL}) {
             <SheetTitle>
               Edit Simulation Parameters
               <br/>
-              <Badge>
-                {datetime.getDate()}.
-                {datetime.getMonth()}.
-                {datetime.getFullYear()}
-                {" - "}
-                {datetime.getHours() < 10 ? "0" + datetime.getHours().toString() : datetime.getHours()}:
-                {datetime.getMinutes() < 10 ? "0" + datetime.getMinutes().toString() : datetime.getMinutes()}:
-                {datetime.getSeconds() < 10 ? "0" + datetime.getSeconds().toString() : datetime.getSeconds()}
-              </Badge>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Label className="col-span-2 w-30" htmlFor="timeFactor"><Badge>
+                      {datetime.getDate()}.
+                      {datetime.getMonth()}.
+                      {datetime.getFullYear()}
+                      {" - "}
+                      {datetime.getHours() < 10 ? "0" + datetime.getHours().toString() : datetime.getHours()}:
+                      {datetime.getMinutes() < 10 ? "0" + datetime.getMinutes().toString() : datetime.getMinutes()}:
+                      {datetime.getSeconds() < 10 ? "0" + datetime.getSeconds().toString() : datetime.getSeconds()}
+                    </Badge></Label>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Date and Time on Planet Earth</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </SheetTitle>
             <br/>
           </SheetHeader>
@@ -407,8 +422,10 @@ export function SideMenu({getGL}) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {elements.length === 0 ?
-                    <TableRow><TableCell className="text-center">No Items</TableCell></TableRow> : elements}
+                {data.length === 0 ?
+                    <TableRow><TableCell className="text-center">No Items</TableCell></TableRow> :
+                    data.map((item, index) => <ObjectRepresentator key={index} data={item} mutateData={mutateData}/>)
+                }
                 <TableRow>
                   <TableCell className="w-[10px] text-center"/>
                   <TableCell className="w-[200px] text-center"/>
@@ -421,7 +438,6 @@ export function SideMenu({getGL}) {
             </Table>
           </ScrollArea>
           <br/>
-
           <div className="grid gap-2 items-center grid-cols-10">
             <TooltipProvider>
               <Tooltip>

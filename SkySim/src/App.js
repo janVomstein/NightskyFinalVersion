@@ -8,7 +8,6 @@ import { SideMenu } from "./SideMenu";
 
 //Utils
 import {canvasFullscreen, canvasIdleColor} from "./utils/glUtils";
-import {Theme} from "@radix-ui/themes";
 
 
 
