@@ -317,6 +317,25 @@ export function sphericalToCartesian(radius, theta, phi) {
 }
 
 /**
+ * Transforms cartesian coordinates to spherical coordinates.
+ *
+ * @param {number} x X-Coordinate
+ * @param {number} y Y-Coordinate
+ * @param {number} z Z-Coordinate
+ * @returns {Array<number>} Array of length 3 containing the desired spherical coordinates.
+ */
+export function cartesianToSpherical(x, y, z) {
+    if (x === 0 && y === 0 && z === 0) {
+        return Array(0, 0, 0);
+    }
+    const r = Math.sqrt(x * x + y * y + z * z);
+    const theta = Math.acos(z / r);
+    const phi = Math.atan2(y, x);
+
+    return Array(r, theta, phi);
+}
+
+/**
  * Transforms Coordinates in a Circle to cartesian coordinates.
  * @param {number} radius - Radius-Coordinate
  * @param {number} phi - Phi-Coordinate

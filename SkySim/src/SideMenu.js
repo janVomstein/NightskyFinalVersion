@@ -22,6 +22,7 @@ import {Renderer} from "./Rendering/Renderer";
 
 //Utils
 import {floatToBaseExp, idToColor, isNumeric, useEventListener} from "./utils/uiUtils";
+import {cartesianToSpherical, sphericalToCartesian} from "./Geometry/GeometryJS";
 
 let simulator = new SolarSystemSimulator(1);
 let renderer = new Renderer(null, simulator);
@@ -39,7 +40,13 @@ export function ObjectRepresentator({data, mutateData}) {
   const [popoverOpen, setPopoverOpen] = useState(false);
 
   //State which represents the Object's Parameters before they get submitted to the SideMenu when the Popover is closed
-  let prepared_data = {...data, "massBase": data.mass / Math.pow(10, Math.floor(Math.log10(data.mass))), "massExp": Math.floor(Math.log10(data.mass))}
+  let prepared_data = {
+    ...data,
+    "massBase": data.mass / Math.pow(10, Math.floor(Math.log10(data.mass))),
+    "massExp": Math.floor(Math.log10(data.mass)),
+    "pos_spherical": cartesianToSpherical(data.pos[0], data.pos[1], data.pos[2]),
+    "vel_spherical": cartesianToSpherical(data.vel[0], data.vel[1], data.vel[2])
+  }
   const [tempData, setTempData] = useState(prepared_data);
 
   /**
@@ -49,12 +56,12 @@ export function ObjectRepresentator({data, mutateData}) {
    * @returns {{pos: number[], mass: number, name: string, id: number, vel: number[]}|boolean}
    */
   function validateData(data_to_validate) {
-    if(!isNumeric(data_to_validate.pos[0]) || !isNumeric(data_to_validate.pos[1]) || !isNumeric(data_to_validate.pos[2])) {
+    if(!isNumeric(data_to_validate.pos_spherical[0]) || !isNumeric(data_to_validate.pos_spherical[1]) || !isNumeric(data_to_validate.pos_spherical[2])) {
       //If Error occurs, set data back to last valid state
       setTempData(prepared_data);
       return false;
     }
-    if(!isNumeric(data_to_validate.vel[0]) || !isNumeric(data_to_validate.vel[1]) || !isNumeric(data_to_validate.vel[2])) {
+    if(!isNumeric(data_to_validate.vel_spherical[0]) || !isNumeric(data_to_validate.vel_spherical[1]) || !isNumeric(data_to_validate.vel_spherical[2])) {
       //If Error occurs, set data back to last valid state
       setTempData(prepared_data);
       return false;
@@ -69,8 +76,8 @@ export function ObjectRepresentator({data, mutateData}) {
       "id": parseFloat(data_to_validate.id),
       "mass": parseFloat(data_to_validate.massBase) * Math.pow(10, parseFloat(data_to_validate.massExp)),
       "name": data_to_validate.name,
-      "pos": [parseFloat(data_to_validate.pos[0]), parseFloat(data_to_validate.pos[1]), parseFloat(data_to_validate.pos[2])],
-      "vel": [parseFloat(data_to_validate.vel[0]), parseFloat(data_to_validate.vel[1]), parseFloat(data_to_validate.vel[2])]
+      "pos": sphericalToCartesian(data_to_validate.pos_spherical[0], data_to_validate.pos_spherical[1], data_to_validate.pos_spherical[2]),
+      "vel": sphericalToCartesian(data_to_validate.vel_spherical[0], data_to_validate.vel_spherical[1], data_to_validate.vel_spherical[2])
     }
   }
 
@@ -108,75 +115,99 @@ export function ObjectRepresentator({data, mutateData}) {
               </div>
               <div className="grid gap-2">
                 <div className="grid grid-cols-4 items-center gap-x-2">
-                  <Label htmlFor="name">Name</Label>
+                  <Label htmlFor="name" className="col-span-1 text-center"><Badge>Name</Badge></Label>
                   <Input
-                    id="name"
-                    value={tempData.name}
-                    onChange={(e) => {setTempData({...tempData, "name": e.target.value})}}
-                    className="col-span-3 h-8"
+                      id="name"
+                      value={tempData.name}
+                      onChange={(e) => {
+                        setTempData({...tempData, "name": e.target.value})
+                      }}
+                      className="col-span-3 h-8"
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-x-2">
-                  <Label htmlFor="posx">Position</Label>
+                  <Label/>
+                  <Label className="col-span-1 text-center"><Badge>Radius</Badge></Label>
+                  <Label className="col-span-1 text-center"><Badge>Theta</Badge></Label>
+                  <Label className="col-span-1 text-center"><Badge>Phi</Badge></Label>
+                </div>
+                <div className="grid grid-cols-4 items-center gap-x-2">
+                  <Label htmlFor="posx" className="col-span-1 text-center"><Badge>Position</Badge></Label>
                   <Input
-                    id="posx"
-                    value={tempData.pos[0]}
-                    onChange={(e) => {setTempData({...tempData, "pos": tempData.pos.with(0, e.target.value)})}}
-                    className="col-span-1 h-8 w-20"
+                      id="posx"
+                      value={tempData.pos_spherical[0]}
+                      onChange={(e) => {
+                        setTempData({...tempData, "pos_spherical": tempData.pos_spherical.with(0, e.target.value)})
+                      }}
+                      className="col-span-1 h-8 w-20"
                   />
                   <Input
-                    id="posy"
-                    value={tempData.pos[1]}
-                    onChange={(e) => {setTempData({...tempData, "pos": tempData.pos.with(1, e.target.value)})}}
-                    className="col-span-1 h-8 w-20"
+                      id="posy"
+                      value={tempData.pos_spherical[1]}
+                      onChange={(e) => {
+                        setTempData({...tempData, "pos_spherical": tempData.pos_spherical.with(1, e.target.value)})
+                      }}
+                      className="col-span-1 h-8 w-20"
                   />
                   <Input
-                    id="posz"
-                    value={tempData.pos[2]}
-                    onChange={(e) => {setTempData({...tempData, "pos": tempData.pos.with(2, e.target.value)})}}
-                    className="col-span-1 h-8 w-20"
+                      id="posz"
+                      value={tempData.pos_spherical[2]}
+                      onChange={(e) => {
+                        setTempData({...tempData, "pos_spherical": tempData.pos_spherical.with(2, e.target.value)})
+                      }}
+                      className="col-span-1 h-8 w-20"
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-x-2">
-                  <Label htmlFor="velx">Velocity</Label>
+                  <Label htmlFor="velx" className="col-span-1 text-center"><Badge>Velocity</Badge></Label>
                   <Input
-                    id="velx"
-                    value={tempData.vel[0]}
-                    onChange={(e) => {setTempData({...tempData, "vel": tempData.vel.with(0, e.target.value)})}}
-                    className="col-span-1 h-8 w-20"
+                      id="velx"
+                      value={tempData.vel_spherical[0]}
+                      onChange={(e) => {
+                        setTempData({...tempData, "vel_spherical": tempData.vel_spherical.with(0, e.target.value)})
+                      }}
+                      className="col-span-1 h-8 w-20"
                   />
                   <Input
-                    id="vely"
-                    value={tempData.vel[1]}
-                    onChange={(e) => {setTempData({...tempData, "vel": tempData.vel.with(1, e.target.value)})}}
-                    className="col-span-1 h-8 w-20"
+                      id="vely"
+                      value={tempData.vel_spherical[1]}
+                      onChange={(e) => {
+                        setTempData({...tempData, "vel_spherical": tempData.vel_spherical.with(1, e.target.value)})
+                      }}
+                      className="col-span-1 h-8 w-20"
                   />
                   <Input
-                    id="velz"
-                    value={tempData.vel[2]}
-                    onChange={(e) => {setTempData({...tempData, "vel": tempData.vel.with(2, e.target.value)})}}
-                    className="col-span-1 h-8 w-20"
+                      id="velz"
+                      value={tempData.vel_spherical[2]}
+                      onChange={(e) => {
+                        setTempData({...tempData, "vel_spherical": tempData.vel_spherical.with(2, e.target.value)})
+                      }}
+                      className="col-span-1 h-8 w-20"
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-x-2">
-                  <Label htmlFor="massBase">Mass</Label>
+                  <Label htmlFor="massBase" className="col-span-1 text-center"><Badge>Mass</Badge></Label>
                   <Input
-                    id="massBase"
-                    value={tempData.massBase}
-                    onChange={(e) => {setTempData({
-                      ...tempData,
-                      "massBase": e.target.value
-                    })}}
-                    className="col-span-1 h-8 w-20"
+                      id="massBase"
+                      value={tempData.massBase}
+                      onChange={(e) => {
+                        setTempData({
+                          ...tempData,
+                          "massBase": e.target.value
+                        })
+                      }}
+                      className="col-span-1 h-8 w-20"
                   />
-                  <Label htmlFor="massExp">x 10^</Label>
+                  <Label htmlFor="massExp" className="text-center">x 10^</Label>
                   <Input
                       id="massExp"
                       value={tempData.massExp}
-                      onChange={(e) => {setTempData({
-                        ...tempData,
-                        "massExp": e.target.value
-                      })}}
+                      onChange={(e) => {
+                        setTempData({
+                          ...tempData,
+                          "massExp": e.target.value
+                        })
+                      }}
                       className="col-span-1 h-8 w-20"
                   />
                 </div>
@@ -185,7 +216,9 @@ export function ObjectRepresentator({data, mutateData}) {
           </PopoverContent>
         </Popover>
         {" "}
-        <Button variant="outline" onClick={() => {mutateData(new Map(), tempData.id)}}><TrashIcon></TrashIcon></Button>
+        <Button variant="outline" onClick={() => {
+          mutateData(new Map(), tempData.id)
+        }}><TrashIcon></TrashIcon></Button>
       </TableCell>
     </TableRow>
   );
@@ -211,56 +244,56 @@ export function SideMenu({getGL}) {
       "id": 1,
       "name": "Merkur",
       "pos": [0.387098, 0, 0],
-      "vel": [0, 47360, 0],
+      "vel": [0, 0, 47360],
       "mass": 3.301 * Math.pow(10, 23)
     },
     {
       "id": 2,
       "name": "Venus",
       "pos": [0.7233, 0, 0],
-      "vel": [0, 35020, 0],
+      "vel": [0, 0, 35020],
       "mass": 4.8673 * Math.pow(10, 24)
     },
     {
       "id": 3,
       "name": "Earth",
       "pos": [1, 0, 0],
-      "vel": [0, 29780, 0],
+      "vel": [0, 0, 29780],
       "mass": 5.972 * Math.pow(10, 24)
     },
     {
       "id": 4,
       "name": "Mars",
       "pos": [1.524, 0, 0],
-      "vel": [0, 24070, 0],
+      "vel": [0, 0, 24070],
       "mass": 6.417 * Math.pow(10, 23)
     },
     {
       "id": 5,
       "name": "Jupiter",
       "pos": [5.204, 0, 0],
-      "vel": [0, 13060, 0],
+      "vel": [0, 0, 13060],
       "mass": 1.89813 * Math.pow(10, 27)
     },
     {
       "id": 6,
       "name": "Saturn",
       "pos": [9.582, 0, 0],
-      "vel": [0, 9680, 0],
+      "vel": [0, 0, 9680],
       "mass": 5.683 * Math.pow(10, 26)
     },
     {
       "id": 7,
       "name": "Uranus",
       "pos": [19.201, 0, 0],
-      "vel": [0, 6810, 0],
+      "vel": [0, 0, 6810],
       "mass": 8.681 * Math.pow(10, 25)
     },
     {
       "id": 8,
       "name": "Neptun",
       "pos": [30.178, 0, 0],
-      "vel": [0, 5455, 0],
+      "vel": [0, 0, 5455],
       "mass": 1.024 * Math.pow(10, 26)
     },
   ]);
@@ -397,17 +430,21 @@ export function SideMenu({getGL}) {
     <div>
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent>
-          <Badge>
-            {datetime.getDate()}.
-            {datetime.getMonth()}.
-            {datetime.getFullYear()}
-            {" - "}
-            {datetime.getHours() < 10 ? "0" + datetime.getHours().toString() : datetime.getHours()}:
-            {datetime.getMinutes() < 10 ? "0" + datetime.getMinutes().toString() : datetime.getMinutes()}:
-            {datetime.getSeconds() < 10 ? "0" + datetime.getSeconds().toString() : datetime.getSeconds()}
-          </Badge>
           <SheetHeader>
-            <SheetTitle>Edit Simulation Parameters</SheetTitle>
+            <SheetTitle>
+              Edit Simulation Parameters
+              <br/>
+              <Badge>
+                {datetime.getDate()}.
+                {datetime.getMonth()}.
+                {datetime.getFullYear()}
+                {" - "}
+                {datetime.getHours() < 10 ? "0" + datetime.getHours().toString() : datetime.getHours()}:
+                {datetime.getMinutes() < 10 ? "0" + datetime.getMinutes().toString() : datetime.getMinutes()}:
+                {datetime.getSeconds() < 10 ? "0" + datetime.getSeconds().toString() : datetime.getSeconds()}
+              </Badge>
+            </SheetTitle>
+            <br/>
           </SheetHeader>
           <ScrollArea className="h-96 rounded-md border p-4">
             <Table>
