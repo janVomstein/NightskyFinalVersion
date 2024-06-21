@@ -83,7 +83,6 @@ export class SolarSystemSimulator {
      * @param {{}} data - Data-Object of all GravitationalObjects
      */
     applyDataUpdate(data) {
-        console.log("applyDataUpdate")
         let newObjects = data.map((elem, idx) => new GravitationalObject(elem.id, elem.mass, 0.1, elem.pos, elem.vel));
         let objectsCopy = this.objects.filter((elem, idx) => elem.id === -1);
         for (let item of newObjects) {

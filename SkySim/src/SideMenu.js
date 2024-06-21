@@ -22,7 +22,6 @@ import {Renderer} from "./Rendering/Renderer";
 
 //Utils
 import {floatToBaseExp, idToColor, isNumeric, useEventListener} from "./utils/uiUtils";
-import {BadgeEuro} from "lucide-react";
 
 let simulator = new SolarSystemSimulator(1);
 let renderer = new Renderer(null, simulator);
@@ -51,18 +50,24 @@ export function ObjectRepresentator({data, mutateData}) {
    */
   function validateData(data_to_validate) {
     if(!isNumeric(data_to_validate.pos[0]) || !isNumeric(data_to_validate.pos[1]) || !isNumeric(data_to_validate.pos[2])) {
+      //If Error occurs, set data back to last valid state
+      setTempData(prepared_data);
       return false;
     }
     if(!isNumeric(data_to_validate.vel[0]) || !isNumeric(data_to_validate.vel[1]) || !isNumeric(data_to_validate.vel[2])) {
+      //If Error occurs, set data back to last valid state
+      setTempData(prepared_data);
       return false;
     }
     if(!isNumeric(data_to_validate.mass) || !isNumeric(data_to_validate.massBase) || !isNumeric(data_to_validate.massExp)) {   //Can be simplified but wouldn't fit context
+      //If Error occurs, set data back to last valid state
+      setTempData(prepared_data);
       return false
     }
 
     return {
       "id": parseFloat(data_to_validate.id),
-      "mass": parseFloat(data_to_validate.mass),
+      "mass": parseFloat(data_to_validate.massBase) * Math.pow(10, parseFloat(data_to_validate.massExp)),
       "name": data_to_validate.name,
       "pos": [parseFloat(data_to_validate.pos[0]), parseFloat(data_to_validate.pos[1]), parseFloat(data_to_validate.pos[2])],
       "vel": [parseFloat(data_to_validate.vel[0]), parseFloat(data_to_validate.vel[1]), parseFloat(data_to_validate.vel[2])]
@@ -77,6 +82,10 @@ export function ObjectRepresentator({data, mutateData}) {
       let validatedData = validateData(tempData);
       if(validatedData !== false) {
         mutateData(validatedData, data.id);
+      }
+      else {
+        //ToDo: Open Toast
+        console.log("Error")
       }
     }
     setPopoverOpen(!popoverOpen);
