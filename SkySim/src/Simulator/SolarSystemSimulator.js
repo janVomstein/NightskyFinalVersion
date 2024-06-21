@@ -15,7 +15,7 @@ export class SolarSystemSimulator {
     }
 
     /**
-     * Simulate a timestep and update the values of the respective Objects.
+     * Simulate one timestep and update the values of the respective Objects.
      * @param {number} dt - Length of Timestep
      */
     simulate(dt) {
@@ -59,6 +59,19 @@ export class SolarSystemSimulator {
                 posA[1] + this.objects[i].velocity[1] * dt,
                 posA[2] + this.objects[i].velocity[2] * dt
             ]);
+        }
+    }
+
+    /**
+     * Simulate one timestep and update the values of the respective Objects.
+     * The timestep is parted into multiple sub-steps to increase precision.
+     * @param {number} dt - Length of timestep
+     * @param {number} num_steps - Number of sub-steps
+     */
+    simulateMultiple(dt, num_steps) {
+        const dt_sub = dt / num_steps;
+        for (let step = 0; step < num_steps; step++) {
+            this.simulate(dt_sub);
         }
     }
 

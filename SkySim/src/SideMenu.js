@@ -271,6 +271,7 @@ export function SideMenu({getGL}) {
   const [gExp, setGExp] = useState(-11);
   const [timeSliderValue, setTimeSliderValue] = useState([1]);
   const [timeFactor, setTimeFactor] = useState("1")
+  const [subSteps, setSubSteps] = useState([1]);
 
   //States which represent if the SideMenu is opened and whether the Animation is running/paused
   const [open, setOpen] = useState(true);
@@ -325,8 +326,9 @@ export function SideMenu({getGL}) {
     simulator.gamma = gBase * Math.pow(10, gExp);
   }
 
-  function uploadRendererData(timeFactor, timeSliderValue) {
+  function uploadRendererData(timeFactor, timeSliderValue, subSteps) {
     renderer.timestep = parseFloat(timeFactor) * timeSliderValue[0];
+    renderer.sub_steps = subSteps[0];
   }
 
   //Fill in ObjectRepresentators to represent Objects in the Simulation/Animation
@@ -359,7 +361,7 @@ export function SideMenu({getGL}) {
     else {
       //Start Animation
       simulator.applyDataUpdate(data);
-      uploadRendererData(timeFactor, timeSliderValue);
+      uploadRendererData(timeFactor, timeSliderValue, subSteps);
       uploadSimulationData(gBase, gExp);
       renderer.startRender();
       setAnimating(true);
@@ -378,12 +380,17 @@ export function SideMenu({getGL}) {
 
   function timeSliderValueChange(newValue) {
     setTimeSliderValue(newValue);
-    uploadRendererData(timeFactor, newValue);
+    uploadRendererData(timeFactor, newValue, subSteps);
   }
 
   function timeFactorChange(newValue) {
     setTimeFactor(newValue);
-    uploadRendererData(newValue, timeSliderValue);
+    uploadRendererData(newValue, timeSliderValue, subSteps);
+  }
+
+  function subStepsChange(newValue) {
+    setSubSteps(newValue);
+    uploadRendererData(timeFactor, timeSliderValue, newValue);
   }
 
   return (
@@ -465,7 +472,18 @@ export function SideMenu({getGL}) {
                 className="col-span-2 h-8 w-30"
             />
           </div>
+
           <br/>
+
+          <div className="grid gap-2 items-center grid-cols-10">
+            <Label className="col-span-2 w-30" htmlFor="timeFactor"><Badge>Precision</Badge></Label>
+            <Slider className="col-span-3 h-8 w-30" value={subSteps} min={1} max={25}
+                    onValueChange={subStepsChange}></Slider>
+            <Label>{subSteps}</Label>
+          </div>
+
+          <br/>
+
           <div className="grid gap-2 items-center grid-cols-10">
             <div className="col-span-7 h-8 w-30"/>
             <Button variant={animating ? "destructive" : ""} className="col-span-3 h-8 w-30"

@@ -54,6 +54,8 @@ export class Renderer {
     this.getDatetime = () => Date.now();
     this.setDatetime = (newDatetime) => {};
 
+    this.sub_steps = 1;   //Number sub steps in one simulation step
+
     this.isInitted = false;
   }
 
@@ -281,7 +283,7 @@ export class Renderer {
       let datetime_copy = new Date(this.getDatetime());
       datetime_copy.setMilliseconds(datetime_copy.getMilliseconds() + 1000 * dt);
       this.setDatetime(datetime_copy);
-      this.simulator.simulate(dt);
+      this.simulator.simulateMultiple(dt, this.sub_steps);
     }
 
     //Update Camera Position, View-Matrix and Viewport to fit a potentially resized screen
