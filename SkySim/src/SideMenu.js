@@ -25,6 +25,10 @@ import {floatToBaseExp, idToColor, isNumeric, useEventListener} from "./utils/ui
 import {cartesianToSpherical, sphericalToCartesian} from "./Geometry/GeometryJS";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "./components/ui/tooltip";
 
+//Scenarios
+import {scenarios} from "./exampleScenarios";
+
+
 let simulator = new SolarSystemSimulator(1);
 let renderer = new Renderer(null, simulator);
 
@@ -233,71 +237,7 @@ export function ObjectRepresentator({data, mutateData}) {
  * @constructor
  */
 export function SideMenu({getGL}) {
-  const [data, setData] = useState([
-    {
-      "id": 0,
-      "name": "Sun",
-      "pos": [0, 0, 0],
-      "vel": [0, 0, 0],
-      "mass": 1.989 * Math.pow(10, 30)
-    },
-    {
-      "id": 1,
-      "name": "Merkur",
-      "pos": [0.387098, 0, 0],
-      "vel": [0, 0, 47360],
-      "mass": 3.301 * Math.pow(10, 23)
-    },
-    {
-      "id": 2,
-      "name": "Venus",
-      "pos": [0.7233, 0, 0],
-      "vel": [0, 0, 35020],
-      "mass": 4.8673 * Math.pow(10, 24)
-    },
-    {
-      "id": 3,
-      "name": "Earth",
-      "pos": [1, 0, 0],
-      "vel": [0, 0, 29780],
-      "mass": 5.972 * Math.pow(10, 24)
-    },
-    {
-      "id": 4,
-      "name": "Mars",
-      "pos": [1.524, 0, 0],
-      "vel": [0, 0, 24070],
-      "mass": 6.417 * Math.pow(10, 23)
-    },
-    {
-      "id": 5,
-      "name": "Jupiter",
-      "pos": [5.204, 0, 0],
-      "vel": [0, 0, 13060],
-      "mass": 1.89813 * Math.pow(10, 27)
-    },
-    {
-      "id": 6,
-      "name": "Saturn",
-      "pos": [9.582, 0, 0],
-      "vel": [0, 0, 9680],
-      "mass": 5.683 * Math.pow(10, 26)
-    },
-    {
-      "id": 7,
-      "name": "Uranus",
-      "pos": [19.201, 0, 0],
-      "vel": [0, 0, 6810],
-      "mass": 8.681 * Math.pow(10, 25)
-    },
-    {
-      "id": 8,
-      "name": "Neptun",
-      "pos": [30.178, 0, 0],
-      "vel": [0, 0, 5455],
-      "mass": 1.024 * Math.pow(10, 26)
-    },
-  ]);
+  const [data, setData] = useState([]);
 
   //Parameters that get set directly in the SideMenu
   //These Parameters are for the Simulation
@@ -310,6 +250,8 @@ export function SideMenu({getGL}) {
   //States which represent if the SideMenu is opened and whether the Animation is running/paused
   const [open, setOpen] = useState(true);
   const [animating, setAnimating] = useState(false);
+
+  const [importSelectorValue, setImportSelectorValue] = useState("0");
 
   const [datetime, setDatetime] = useState(new Date("June 2, 2024 15:49:00"));
 
@@ -381,6 +323,13 @@ export function SideMenu({getGL}) {
       "mass": 0
     })
     setData(updatedData);
+  }
+
+  function loadExampleScenario() {
+    const index = parseInt(importSelectorValue);
+
+    setData(scenarios[index].objects);
+    setDatetime(new Date(scenarios[index].date))
   }
 
   /**
@@ -490,7 +439,7 @@ export function SideMenu({getGL}) {
                     onValueChange={timeSliderValueChange}></Slider>
             <Label>{timeSliderValue}</Label>
             <Select className="col-span-3 h-8 w-30" value={timeFactor} onValueChange={timeFactorChange}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="col-span-3 w-[180px]">
                 <SelectValue placeholder="unit"/>
               </SelectTrigger>
               <SelectContent>
@@ -558,6 +507,27 @@ export function SideMenu({getGL}) {
             <div className="col-span-7 h-8 w-30"/>
             <Button variant={animating ? "destructive" : ""} className="col-span-3 h-8 w-30"
                     onClick={handleAnimate}>{animating ? "Abort Animation" : "Start Animation"}</Button>
+          </div>
+
+          <br/>
+
+          <SheetTitle>Example Scenarios</SheetTitle>
+
+          <br/>
+
+          <div className="grid gap-2 items-center grid-cols-10">
+            <Select value={importSelectorValue} onValueChange={setImportSelectorValue}>
+              <SelectTrigger className="col-span-5 w-[360px]">
+                <SelectValue placeholder=""/>
+              </SelectTrigger>
+              <SelectContent>
+                {scenarios.map((element, idx) => <SelectItem value={idx.toString()}>{element.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+
+            <div className="col-span-3 h-8 w-30"></div>
+
+            <Button className="col-span-2 h-8 w-30" onClick={loadExampleScenario}>Load</Button>
           </div>
         </SheetContent>
       </Sheet>
