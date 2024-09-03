@@ -1,5 +1,5 @@
 //ReactJS
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 //UI
 import {Sheet, SheetContent, SheetHeader, SheetTitle} from "./components/ui/sheet";
@@ -61,7 +61,7 @@ export function ObjectRepresentator({data, mutateData}) {
    * Checks if the data_to_validate inputted to the Popover (id, mass, pos, vel) is numeric and casts it to Number
    *
    * @param {{}} data_to_validate - Data to validate
-   * @returns {{pos: number[], mass: number, name: string, id: number, vel: number[]}|boolean}
+   * @returns {{pos: number[], mass: number, name: string, id: number, vel: number[]}, radius: number|boolean}
    */
   function validateData(data_to_validate) {
     if(!isNumeric(data_to_validate.pos_spherical[0]) || !isNumeric(data_to_validate.pos_spherical[1]) || !isNumeric(data_to_validate.pos_spherical[2])) {
@@ -77,7 +77,11 @@ export function ObjectRepresentator({data, mutateData}) {
     if(!isNumeric(data_to_validate.mass) || !isNumeric(data_to_validate.massBase) || !isNumeric(data_to_validate.massExp)) {   //Can be simplified but wouldn't fit context
       //If Error occurs, set data back to last valid state
       setTempData(prepared_data);
-      return false
+      return false;
+    }
+    if(!isNumeric(data_to_validate.radius)) {
+      setTempData(prepared_data);
+      return false;
     }
 
     return {
@@ -85,7 +89,8 @@ export function ObjectRepresentator({data, mutateData}) {
       "mass": parseFloat(data_to_validate.massBase) * Math.pow(10, parseFloat(data_to_validate.massExp)),
       "name": data_to_validate.name,
       "pos": sphericalToCartesian(data_to_validate.pos_spherical[0], data_to_validate.pos_spherical[1], data_to_validate.pos_spherical[2]),
-      "vel": sphericalToCartesian(data_to_validate.vel_spherical[0], data_to_validate.vel_spherical[1], data_to_validate.vel_spherical[2])
+      "vel": sphericalToCartesian(data_to_validate.vel_spherical[0], data_to_validate.vel_spherical[1], data_to_validate.vel_spherical[2]),
+      "radius": data_to_validate.radius
     }
   }
 
@@ -259,7 +264,9 @@ export function SideMenu({getGL}) {
 
   const [importSelectorValue, setImportSelectorValue] = useState("0");
 
-  const [datetime, setDatetime] = useState(new Date("June 2, 2024 15:49:00"));
+  //Datetime at the beginning of the Simulation
+  let animationStartDatetime = new Date("June 2, 2024 15:49:00");
+  const [datetime, setDatetime] = useState(animationStartDatetime);
 
   //Pass the getGL-Function to the Renderer
   renderer.getGL = getGL;
@@ -307,7 +314,8 @@ export function SideMenu({getGL}) {
     const index = parseInt(importSelectorValue);
 
     setData(scenarios[index].objects);
-    setDatetime(new Date(scenarios[index].date))
+    animationStartDatetime = scenarios[index].date;
+    setDatetime(new Date(animationStartDatetime))
   }
 
   function addNewObject() {
@@ -317,7 +325,8 @@ export function SideMenu({getGL}) {
       "name": "UFO",
       "pos": [0, 0, 0],
       "vel": [0, 0, 0],
-      "mass": 0
+      "mass": 0,
+      "radius": 10000
     })
     setData(updatedData);
   }
@@ -355,6 +364,7 @@ export function SideMenu({getGL}) {
     }
     else {
       //Start Animation
+      setDatetime(animationStartDatetime);
       simulator.applyDataUpdate(data);
       uploadRendererData(timeFactor, timeSliderValue, subSteps);
       uploadSimulationData(gBase, gExp);

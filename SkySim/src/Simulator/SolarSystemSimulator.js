@@ -100,7 +100,7 @@ export class SolarSystemSimulator {
             (elem, idx) => new GravitationalObject(
                 elem.id,
                 elem.mass,
-                elem.radius / (1.496 * Math.pow(10, 8)),
+                elem.radius,
                 elem.pos,
                 elem.vel
             )
@@ -111,6 +111,7 @@ export class SolarSystemSimulator {
         }
 
         this.objects = objectsCopy;
+        console.log(data)
     }
 }
 
@@ -166,7 +167,7 @@ class GravitationalObject {
      * Sets the Vertexbuffer-Content for this Object
      */
     updateBufferContent() {
-        let sphere = new Sphere(this.radius, 8, 16);
+        let sphere = new Sphere(this.radius / (1.496 * Math.pow(10, 8)), 8, 16);
         this.bufferContent = sphere.getArrayBufferContent();
     }
 }
