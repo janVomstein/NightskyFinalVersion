@@ -131,7 +131,13 @@ export class Renderer {
 
     //Set Uniform Values (e.g. Matrices)
     this.projMat = mat4.create();
-    mat4.perspective(this.projMat, glMatrix.toRadian(90), this.gl.canvas.width / this.gl.canvas.height, 1, 10000.0);
+    mat4.perspective(
+        this.projMat,
+        glMatrix.toRadian(90),
+        this.gl.canvas.width / this.gl.canvas.height,
+        0.1,
+        10000.0
+    );
 
     this.viewMat = this.cam.getViewMat();
 

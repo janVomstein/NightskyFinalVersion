@@ -646,7 +646,7 @@ class BackgroundStar extends CelestialBody {
         this.index = index;
         this.cam = cam;
 
-        this.velo_data = velo_data;                 //velo_data contains information about movement of object
+        this.velo_data = velo_data;                 //velo_data [radius, DEC, RA, RV, prop mot DEC, prop mot RA]
         this.real_position = vec3.clone(position);  //position in real cosmic units; this.position is scaled for visualization
         this.name = name_info[0];                   //Trivial name of object; "" if not known
         this.cst = name_info[1];                    //StarSign of this object; "" if not known
@@ -664,9 +664,18 @@ class BackgroundStar extends CelestialBody {
         //velo_data is [radius, DE, RA, RV, pmDE, pmRA]
         //units: [pc, deg (-90 <-> +90), deg (0 <-> 360), km/s, mas/yr, mas/yr]
 
-        let v_x = calcXFromProperMotion([this.velo_data[0], this.velo_data[1], this.velo_data[2]], [this.velo_data[3], this.velo_data[4], this.velo_data[5]]);
-        let v_y = calcYFromProperMotion([this.velo_data[0], this.velo_data[1], this.velo_data[2]], [this.velo_data[3], this.velo_data[4], this.velo_data[5]]);
-        let v_z = calcZFromProperMotion([this.velo_data[0], this.velo_data[1], this.velo_data[2]], [this.velo_data[3], this.velo_data[4], this.velo_data[5]]);
+        let v_x = calcXFromProperMotion(
+            [this.velo_data[0], this.velo_data[1], this.velo_data[2]],
+            [this.velo_data[3], this.velo_data[4], this.velo_data[5]]
+        );
+        let v_y = calcYFromProperMotion(
+            [this.velo_data[0], this.velo_data[1], this.velo_data[2]],
+            [this.velo_data[3], this.velo_data[4], this.velo_data[5]]
+        );
+        let v_z = calcZFromProperMotion(
+            [this.velo_data[0], this.velo_data[1], this.velo_data[2]],
+            [this.velo_data[3], this.velo_data[4], this.velo_data[5]]
+        );
 
         this.real_position = vec3.fromValues(
             this.real_position[0] + v_x * speed * dt,
@@ -846,6 +855,7 @@ class StaticOrbit extends CelestialBody {
     select() {}
     unselect() {}
 }
+
 
 function deg2rad(deg) {
     return 2 * Math.PI * deg / 360;
