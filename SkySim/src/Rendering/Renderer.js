@@ -133,10 +133,10 @@ export class Renderer {
     this.projMat = mat4.create();
     mat4.perspective(
         this.projMat,
-        glMatrix.toRadian(90),
+        glMatrix.toRadian(80),
         this.gl.canvas.width / this.gl.canvas.height,
         0.1,
-        10000.0
+        100.0
     );
 
     this.viewMat = this.cam.getViewMat();

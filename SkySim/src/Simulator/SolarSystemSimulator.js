@@ -111,7 +111,6 @@ export class SolarSystemSimulator {
         }
 
         this.objects = objectsCopy;
-        console.log(data)
     }
 }
 

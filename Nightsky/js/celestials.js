@@ -881,7 +881,7 @@ function calcXFromProperMotion(pos, vel) {
 
     let a = rv * Math.sin(theta) * Math.cos(phi);
     let b = radius * Math.cos(theta) * pm_theta * Math.cos(phi);
-    let c = radius * Math.sin(theta) * Math.sin(phi) * pm_phi;
+    let c = (-1) * radius * Math.sin(theta) * Math.sin(phi) * pm_phi;
 
     return a + b + c;
 }

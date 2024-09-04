@@ -22,7 +22,12 @@ import {Renderer} from "./Rendering/Renderer";
 
 //Utils
 import {floatToBaseExp, idToColor, isNumeric, useEventListener} from "./utils/uiUtils";
-import {cartesianToSpherical, sphericalToCartesian} from "./Geometry/GeometryJS";
+import {
+  cartesianToSpherical,
+  cartesianToSphericalVelocity,
+  sphericalToCartesian,
+  sphericalToCartesianVelocity
+} from "./Geometry/GeometryJS";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "./components/ui/tooltip";
 
 //Scenarios
@@ -42,6 +47,8 @@ let renderer = new Renderer(null, simulator);
  * @constructor
  */
 export function ObjectRepresentator({data, mutateData}) {
+  const { toast } = useToast();
+
   //State which represents if the Popover used to edit an Object's Parameters is opened
   const [popoverOpen, setPopoverOpen] = useState(false);
 
@@ -51,11 +58,9 @@ export function ObjectRepresentator({data, mutateData}) {
     "massBase": data.mass === 0 ? 0.0 : data.mass / Math.pow(10, Math.floor(Math.log10(data.mass))),
     "massExp": data.mass === 0 ? 0.0 : Math.floor(Math.log10(data.mass)),
     "pos_spherical": cartesianToSpherical(data.pos[0], data.pos[1], data.pos[2]),
-    "vel_spherical": cartesianToSpherical(data.vel[0], data.vel[1], data.vel[2])
+    "vel_spherical": cartesianToSphericalVelocity(data.pos, data.vel)
   }
   const [tempData, setTempData] = useState(prepared_data);
-
-  const { toast } = useToast();
 
   /**
    * Checks if the data_to_validate inputted to the Popover (id, mass, pos, vel) is numeric and casts it to Number
@@ -80,6 +85,7 @@ export function ObjectRepresentator({data, mutateData}) {
       return false;
     }
     if(!isNumeric(data_to_validate.radius)) {
+      //If Error occurs, set data back to last valid state
       setTempData(prepared_data);
       return false;
     }
@@ -88,8 +94,15 @@ export function ObjectRepresentator({data, mutateData}) {
       "id": parseFloat(data_to_validate.id),
       "mass": parseFloat(data_to_validate.massBase) * Math.pow(10, parseFloat(data_to_validate.massExp)),
       "name": data_to_validate.name,
-      "pos": sphericalToCartesian(data_to_validate.pos_spherical[0], data_to_validate.pos_spherical[1], data_to_validate.pos_spherical[2]),
-      "vel": sphericalToCartesian(data_to_validate.vel_spherical[0], data_to_validate.vel_spherical[1], data_to_validate.vel_spherical[2]),
+      "pos": sphericalToCartesian(
+          parseFloat(data_to_validate.pos_spherical[0]),
+          parseFloat(data_to_validate.pos_spherical[1]),
+          parseFloat(data_to_validate.pos_spherical[2])
+      ),
+      "vel": sphericalToCartesianVelocity(
+          data_to_validate.pos_spherical.map(parseFloat),
+          data_to_validate.vel_spherical.map(parseFloat)
+      ),
       "radius": data_to_validate.radius
     }
   }
@@ -100,6 +113,7 @@ export function ObjectRepresentator({data, mutateData}) {
   function handlePopoverToggle() {
     if(popoverOpen) {
       let validatedData = validateData(tempData);
+      //Important to keep the comparison without type coercion! validatedData can also be non-Boolean
       if(validatedData !== false) {
         mutateData(validatedData, data.id);
       }

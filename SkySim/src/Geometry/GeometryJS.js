@@ -348,3 +348,74 @@ export function circularToCartesian(radius, phi) {
         0.0
     );
 }
+
+export function sphericalToCartesianVelocity(pos, vel) {
+    let radius = pos[0];                        //km
+    let theta = pos[1];                         //rad
+    let phi = pos[2];                           //rad
+
+    let rv = vel[0];                            //km/s
+    let pm_theta = vel[1];                      //rad/s
+    let pm_phi = vel[2];                        //rad/s
+
+    //X
+    let x_a = rv * Math.sin(theta) * Math.cos(phi);
+    let x_b = radius * Math.cos(theta) * pm_theta * Math.cos(phi);
+    let x_c = (-1) * radius * Math.sin(theta) * Math.sin(phi) * pm_phi;
+
+    //Y
+    let y_a = rv * Math.sin(theta) * Math.sin(phi);
+    let y_b = radius * Math.cos(theta) * pm_theta * Math.sin(phi);
+    let y_c = radius * Math.sin(theta) * Math.cos(phi) * pm_phi;
+
+    //Z
+    let z_a = rv * Math.cos(theta);
+    let z_b = (-1) * radius * Math.sin(theta) * pm_theta;
+
+    return Array(
+        x_a + x_b + x_c,
+        y_a + y_b + y_c,
+        z_a + z_b
+    );
+}
+
+export function cartesianToSphericalVelocity(pos, vel) {
+    let x = pos[0];
+    let y = pos[1];
+    let z = pos[2];
+
+    let v_x = vel[0];
+    let v_y = vel[1];
+    let v_z = vel[2];
+
+    if (v_x === 0 && v_y === 0 && v_z === 0) {
+        return Array(0, 0, 0);
+    }
+
+    //Needed for multiple Operations
+    let r = Math.sqrt(x * x + y * y + z * z);
+
+    //Radial Velocity
+    let r_dot = (x * v_x + y * v_y + z * v_z) / r;
+
+    //Velocity in Theta-Direction
+    let theta_dot_numerator = (z * r_dot / r) - v_z;
+    let theta_dot_denominator = Math.sqrt(r * r - z * z);
+    let theta_dot = theta_dot_numerator / theta_dot_denominator;
+
+    //Velocity in  Phi-Direction
+    let phi_dot = (x * v_y - v_x * y) / (x * x + y * y);
+
+    if (isNaN(theta_dot)) {
+        theta_dot = 0;
+    }
+    if (isNaN(phi_dot)) {
+        phi_dot = 0;
+    }
+
+    return Array(
+        r_dot,
+        theta_dot,
+        phi_dot
+    );
+}
