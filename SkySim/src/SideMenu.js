@@ -64,7 +64,7 @@ export function ObjectRepresentator({data, mutateData}) {
 
   //Transform from rad/s to rad/yr
   prepared_data["vel_spherical"] = [
-    prepared_data["vel_spherical"][0],
+    prepared_data["vel_spherical"][0] * 365 * 24 * 60 * 60,
     prepared_data["vel_spherical"][1] * 365 * 24 * 60 * 60,
     prepared_data["vel_spherical"][2] * 365 * 24 * 60 * 60
   ]
@@ -103,7 +103,7 @@ export function ObjectRepresentator({data, mutateData}) {
     let vel_spherical_float = data_to_validate.vel_spherical.map(parseFloat);
 
     let vel_spherical_rad_s = [
-        vel_spherical_float[0],
+        vel_spherical_float[0] / (365 * 24 * 60 * 60),
         vel_spherical_float[1] / (365 * 24 * 60 * 60),
         vel_spherical_float[2] / (365 * 24 * 60 * 60)
     ]
@@ -150,7 +150,7 @@ export function ObjectRepresentator({data, mutateData}) {
     <TableRow>
       <TableCell className="w-[10px] text-center"><div className="box" style={{backgroundColor: idToColor(data.id)}}>{data.id}</div></TableCell>
       <TableCell className="w-[200px] text-center"><Badge>{data.name}</Badge></TableCell>
-      <TableCell className="w-[100px] text-center">{`${floatToBaseExp(data.mass)[0]}`} <br/> {`x 10^${floatToBaseExp(data.mass)[1]}`} </TableCell>
+      <TableCell className="w-[100px] text-center">{`${floatToBaseExp(data.mass)[0]}`} <br/> {`x 10^${floatToBaseExp(data.mass)[1]}`} kg</TableCell>
       <TableCell className="w-[160px] text-center">
         <Popover open={popoverOpen} onOpenChange={handlePopoverToggle}>
           <PopoverTrigger asChild>
@@ -162,7 +162,7 @@ export function ObjectRepresentator({data, mutateData}) {
                 <h4 className="font-medium leading-none">Edit Object</h4>
               </div>
               <div className="grid gap-2">
-                <div className="grid grid-cols-4 items-center gap-x-2">
+                <div className="grid grid-cols-5 items-center gap-x-2">
                   <Label htmlFor="name" className="col-span-1 text-center"><Badge>Name</Badge></Label>
                   <Input
                       id="name"
@@ -170,16 +170,16 @@ export function ObjectRepresentator({data, mutateData}) {
                       onChange={(e) => {
                         setTempData({...tempData, "name": e.target.value})
                       }}
-                      className="col-span-3 h-8"
+                      className="col-span-4 h-8 w-80"
                   />
                 </div>
-                <div className="grid grid-cols-4 items-center gap-x-2">
+                <div className="grid grid-cols-5 items-center gap-x-2">
                   <Label/>
-                  <Label className="col-span-1 text-center"><Badge>Radius (AU)</Badge></Label>
-                  <Label className="col-span-1 text-center"><Badge>Theta (RAD)</Badge></Label>
-                  <Label className="col-span-1 text-center"><Badge>Phi (RAD)</Badge></Label>
+                  <Label className="col-span-1 text-center"><Badge>Radius <br/> AU[/yr]</Badge></Label>
+                  <Label className="col-span-1 text-center"><Badge>Theta <br/> RAD[/yr]</Badge></Label>
+                  <Label className="col-span-1 text-center"><Badge>Phi <br/> RAD[/yr]</Badge></Label>
                 </div>
-                <div className="grid grid-cols-4 items-center gap-x-2">
+                <div className="grid grid-cols-5 items-center gap-x-2">
                   <Label htmlFor="posx" className="col-span-1 text-center"><Badge>Position</Badge></Label>
                   <Input
                       id="posx"
@@ -206,7 +206,7 @@ export function ObjectRepresentator({data, mutateData}) {
                       className="col-span-1 h-8 w-20"
                   />
                 </div>
-                <div className="grid grid-cols-4 items-center gap-x-2">
+                <div className="grid grid-cols-5 items-center gap-x-2">
                   <Label htmlFor="velx" className="col-span-1 text-center"><Badge>Velocity</Badge></Label>
                   <Input
                       id="velx"
@@ -233,8 +233,8 @@ export function ObjectRepresentator({data, mutateData}) {
                       className="col-span-1 h-8 w-20"
                   />
                 </div>
-                <div className="grid grid-cols-4 items-center gap-x-2">
-                  <Label htmlFor="massBase" className="col-span-1 text-center"><Badge>Mass</Badge></Label>
+                <div className="grid grid-cols-5 items-center gap-x-2">
+                  <Label htmlFor="massBase" className="col-span-1 h-8 w-20 text-center"><Badge>Mass</Badge></Label>
                   <Input
                       id="massBase"
                       value={tempData.massBase}
@@ -258,6 +258,7 @@ export function ObjectRepresentator({data, mutateData}) {
                       }}
                       className="col-span-1 h-8 w-20"
                   />
+                  <Label htmlFor="massExp" className="text-center w-10">kg</Label>
                 </div>
               </div>
             </div>
@@ -556,6 +557,7 @@ export function SideMenu({getGL}) {
                 onChange={gExpChange}
                 className="col-span-2 h-8 w-30"
             />
+            <Label className="col-span-2 w-30 text-center" htmlFor="gExp">Nm^2/kg^2</Label>
           </div>
 
           <br/>
@@ -575,7 +577,7 @@ export function SideMenu({getGL}) {
 
             <Slider className="col-span-3 h-8 w-30" value={subSteps} min={1} max={25}
                     onValueChange={subStepsChange}></Slider>
-            <Label>{subSteps}</Label>
+            <Label className="w-20">{subSteps < 2 ? `${subSteps} Substep` : `${subSteps} Substeps`}</Label>
           </div>
 
           <br/>
