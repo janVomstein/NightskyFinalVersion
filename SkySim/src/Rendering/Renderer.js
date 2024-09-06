@@ -11,20 +11,15 @@ export class Renderer {
    */
   constructor(getGL, simulator) {
     this.vs = `#version 300 es
-
       in vec3 a;
-      
-      out vec3 v_pos;
       
       uniform mat4 u_projmat;
       uniform mat4 u_viewmat;
       uniform mat4 u_worldmat;
       
       void main() {
-        mat4 test = mat4(1.0);
+        //World-, View- and Projection-Matrix
         vec4 pos = u_projmat * u_viewmat * u_worldmat * vec4(a, 1.0);
-        //vec4 pos = u_a * u_b * u_c * vec4(a, 1.0);
-        v_pos = a;
         gl_Position = pos / pos.w;
       }
       `;
@@ -32,15 +27,12 @@ export class Renderer {
     this.fs = `#version 300 es
       precision highp float;
       
-      in vec3 v_pos;
-      
       out vec4 outColor;
-      
       uniform vec4 u_color;
       
       void main() {
+        //Color the Fragments in the same color as inputted by the uniform
         outColor = u_color;
-        //outColor = vec4((v_pos + vec3(0.3, 0.3, 0.3)) / length(v_pos + vec3(0.3, 0.3, 0.3)), 1.0);
       }
       `;
 

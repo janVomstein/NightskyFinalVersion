@@ -53,23 +53,6 @@ let searchMap;
     let speedStars = speedStarsSlider.value;
     speedStarsText.textContent = speedStars;
 
-    /*
-    // text input for importing a list of connections between stars
-    const impInput = document.getElementById("impStarSignText");
-    // button to start the import
-    const impButton = document.getElementById("impStarSign");
-    impButton.onclick = onImport.bind(this);
-    
-    // button to copy the current connection to the clipboard
-    const expButton = document.getElementById("expStarSign");
-    expButton.onclick = onExport.bind(this);
-    
-    // color picker for coloring new connections
-    const colorPicker = document.getElementById("color");
-    const colorPickerWrapper = document.getElementById("colorWrapper");
-    colorPicker.onchange = onColorChange.bind(this);
-    onColorChange();*/
-
     const millenniumText = document.getElementById("millennium");
     let currentMillennium = 2;     //The current Millennium of the visualization (data from year 2000 -> Mil 2)
 
@@ -243,6 +226,12 @@ let searchMap;
         return speedStars;
     }
 
+    /**
+     * This Function updates the Year-Display which shows the current Year, the BackgroundStar-Simulation is in.
+     * This Function gets called each Simulation-Step
+     * @param dt - Length of the Simulation-Step
+     * @param speed - Current Speed used in the Simulation-Step
+     */
     function updateMillennium(dt, speed) {
         currentMillennium += speed * dt;
 
@@ -260,164 +249,6 @@ let searchMap;
         else {
             millenniumText.textContent = `${parseInt(currentMillennium / 1000000000)}T A.D.`;
         }
-    }
-
-    /**
-    * Gets called by the onclick event of the import button.
-    * This function reads the text input parses the string and
-    * adds Connector objects (celestial.js) accordingly.
-    * For this function to work, the string must be of form:
-    * /firstObj1/fistObj2/fistColor/secondObj1/secondObj2/secondColor/...
-    * where the objects are represented by the index in the gaia list
-    * (scene.js) and the color values of the connectors are hex values.
-    */
-    function onImport() {
-        // Get the map of the current connected objects.
-        // The function getConnectedObjects() is defined in scene.js.
-        const cObjs = getConnectedObjects();
-        // Index of the current sun.
-        const sun = getSun().index;
-        // Max index.
-        const max = getGaia()[0].length-1;
-
-        // Get and split the string from the text input.
-        impInput.select();
-        const parts = impInput.value.trim().split("/");
-
-        // Check if the amount of arguments fits the requirements.
-        // If not, alert the user and abort.
-        if (parts.length == 1 || (parts.length-1)%3 != 0) {
-            alert("invalid input");
-            return;
-        }
-
-        const regExpression = /^[0-9]+$/
-        // For each argument.
-        for (let i = 1; i < parts.length; i++) {
-            // Check if the indices are numbers. If not, alert the
-            // user and abort. Also check if the indices are in the
-            // range of possible indices. If not, alert the user and
-            // abort.
-            if (!(i%3 == 0 || regExpression.test(parts[i]))) {
-                alert("invalid input");
-                return; 
-            }
-            else if (i%3 != 0 && parseInt(parts[i]) > max) {
-                alert("invalid input");
-                return;
-            }
-        }
-
-        // All the arguments are correct. For each triplet of arguments.
-        for (let i = 1; i < parts.length-1; i += 3) {
-            // If the both indices are the same, skip this triplet, because
-            // a object can not be connected to itself.
-            if (parseInt(parts[i]) == parseInt(parts[i+1])) {
-                continue;
-            }
-            // If one of the indices matches the index of the current sun,
-            // and the connection is already present in the map we skip
-            // this triplet. If one index matches but it is not present, add
-            // the connection to the map, but do not add a connector. If the
-            // indices do not match, add the connection to the map and add the
-            // connector.
-            if (parseInt(parts[i]) == sun || parseInt(parts[i+1]) == sun) {
-                // Is it in the map already?
-                if ((cObjs.get(parseInt(parts[i])) !== undefined &&
-                cObjs.get(
-                    parseInt(parts[i])
-                ).indexOf(parseInt(parts[i+1])) != -1)
-                || 
-                (cObjs.get(parseInt(parts[i+1])) !== undefined && 
-                cObjs.get(
-                    parseInt(parts[i+1])
-                ).indexOf(parseInt(parts[i]))!= -1)
-                ||
-                (cObjs.get(parseInt(parts[i])) !== undefined && 
-                cObjs.get(
-                    parseInt(parts[i])
-                ).indexOf(parseInt(parts[i+1]))%2 == 0)
-                ||
-                (cObjs.get(parseInt(parts[i+1])) !== undefined && 
-                cObjs.get(
-                    parseInt(parts[i+1])
-                ).indexOf(parseInt(parts[i]))%2 == 0))
-                {
-                    continue;
-                } 
-                else {
-                    // Compute rgb[0, 1] color values from the hex value.
-                    const r = parseInt(parts[i+2].substr(0, 2), 16);
-                    const g = parseInt(parts[i+2].substr(2, 2), 16);
-                    const b = parseInt(parts[i+2].substr(4, 2), 16);
-                    const color = [r/255, g/255, b/255];
-
-                    // If there is no entry in the map already, create one.
-                    if (cObjs.get(parseInt(parts[i])) === undefined) {
-                        cObjs.set(
-                            parseInt(parts[i]),
-                            [
-                                parseInt(parts[i+1]),
-                                color
-                            ]
-                        );
-                    } else {
-                        cObjs.get(parseInt(parts[i])).push(
-                            parseInt(parts[i+1]),
-                            color
-                        );
-                    }
-
-                }
-            } else {
-                // Compute rgb[0, 1] color values from the hex value.
-                const r = parseInt(parts[i+2].substr(0, 2), 16);
-                const g = parseInt(parts[i+2].substr(2, 2), 16);
-                const b = parseInt(parts[i+2].substr(4, 2), 16);
-                const color = [r/255, g/255, b/255];
-
-                // Add the connection and the connector through addConnector().
-                // The function is defined in scene.js.
-                addConnector(parseInt(parts[i]), color);
-                addConnector(parseInt(parts[i+1]), color);
-            }
-        }
-    }
-    
-    /**
-    * Gets called by the onclick event of the export button.
-    * Copies the current connections to the clipboard as a string of form:
-    * /firstObj1/fistObj2/fistColor/secondObj1/secondObj2/secondColor/...
-    * where the objects are represented by the index in the gaia list
-    * (scene.js) and the color values of the connectors are hex values.
-    */
-    function onExport() {
-        // Get the map of connections, that need to be exported.
-        // The function getConnectedObjects() is defined in scene.js.
-        const connectedObjects = getConnectedObjects();
-        // The export-string we want to save to the clipboard.
-        let result = "";
-        // For each entry in the map look at all the connections.
-        for (let [star1, stars] of connectedObjects.entries()) {
-            // For each of these connections.
-            for (let i = 0; i < stars.length; i = i + 2) {
-                // Convert the color of the connection from rgb[0, 1] to
-                // a hex-string.
-                let r = (stars[i+1][0] * 255).toString(16);
-                let g = (stars[i+1][1] * 255).toString(16);
-                let b = (stars[i+1][2] * 255).toString(16);
-                r = r.length == 1? "0" + r : r;
-                g = g.length == 1? "0" + g : g;
-                b = b.length == 1? "0" + b : b;
-                let hex = r + g + b;
-                // Add the indices of the connected objects and the color of
-                // the connection between them to the result.
-                result = result + "/" + star1 + "/" + stars[i] + "/" + hex;
-            }
-        }
-        // Copy the result to the clipboard and alert the user.
-        navigator.clipboard.writeText(result);
-        alert("copied star signs to clipboard!");
     }
 
     /**
@@ -461,12 +292,18 @@ let searchMap;
     }
 }
 
+/**
+ * This Function generates a SearchMap that maps the names of each BackgroundStar to it's Look-At.
+ * This SearchMap is used for the Search-Feature with Look-At
+ * @returns {Map<any, any>} - The generated SearchMap
+ */
 function generateSearchMap() {
     let searchMap = new Map();      //The Map, containing all names and mapping them to the middle point of the object
     let signMap = new Map();        //Contains all starSigns with all of their stars
     for(let i = 0; i < gaia[4].length; i++) {
         //If Trivial Name of star is not "", add it with current Position
         if (gaia[4][i][0].length != 0) {
+            //Calculate Look-At
             let position = vec3.fromValues(gaia[0][i][0], gaia[0][i][1], gaia[0][i][2]);
             let direction = vec3.clone(position);
             vec3.normalize(direction, direction);
@@ -477,6 +314,7 @@ function generateSearchMap() {
         }
         //If Cst is not "" and signMap doesn't contain the current Cst, add it with current Position
         if (gaia[4][i][1].length != 0) {
+            //Calculate Look-At
             let position = vec3.fromValues(gaia[0][i][0], gaia[0][i][1], gaia[0][i][2]);
             let direction = vec3.clone(position);
             vec3.normalize(direction, direction);

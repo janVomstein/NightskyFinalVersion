@@ -349,6 +349,12 @@ export function circularToCartesian(radius, phi) {
     );
 }
 
+/**
+ * Calculates the Cartesian Velocity from a Spherical Position and a Spherical Velocity.
+ * @param pos - Spherical Position
+ * @param vel - Spherical Velocity
+ * @returns {[number, number, number]} - Cartesian Velocity
+ */
 export function sphericalToCartesianVelocity(pos, vel) {
     let radius = pos[0];                        //km
     let theta = pos[1];                         //rad
@@ -379,6 +385,12 @@ export function sphericalToCartesianVelocity(pos, vel) {
     );
 }
 
+/**
+ * Calculates the Spherical Velocity from a Cartesian Position and a Cartesian Velocity.
+ * @param pos - Cartesian Position
+ * @param vel - Cartesian Velocity
+ * @returns {[number, number, number]} - Spherical Velocity
+ */
 export function cartesianToSphericalVelocity(pos, vel) {
     let x = pos[0];
     let y = pos[1];
