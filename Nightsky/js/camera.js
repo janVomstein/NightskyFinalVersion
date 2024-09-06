@@ -143,6 +143,10 @@ class Camera {
         this.move(this.z, distance);
     }
 
+    /**
+     * Applies a new LookAt-Direction to the Camera
+     * @param {[number, number, number]} lookAt - Point in Cartesian Coordinates to which the Camera should point
+     */
     newLookAt(lookAt) {
         this.z = vec3.create();
         vec3.sub(this.z, lookAt, this.position);

@@ -15,11 +15,17 @@
  * radius: Radius of the Object
  *
  * Units:
- * pos: Astronomical Units
- * vel: meters/second
+ * pos: kilometers
+ * vel: kilometers/second
  * mass: kg
  * radius: kilometers
  */
+import {
+    cartesianToSpherical,
+    cartesianToSphericalVelocity,
+    sphericalToCartesian,
+    sphericalToCartesianVelocity
+} from "./Geometry/GeometryJS";
 
 
 export const scenarios = [
@@ -43,64 +49,64 @@ export const scenarios = [
             {
                 "id": 1,
                 "name": "Merkur",
-                "pos": [0.387098, 0, 0],
-                "vel": [0, 0, 47360],
+                "pos": [0.387098 * 149597870.7, 0, 0],
+                "vel": [0, 0, 47.36],
                 "mass": 3.301 * Math.pow(10, 23),
                 "radius": 4881
             },
             {
                 "id": 2,
                 "name": "Venus",
-                "pos": [0.7233, 0, 0],
-                "vel": [0, 0, 35020],
+                "pos": [0.7233 * 149597870.7, 0, 0],
+                "vel": [0, 0, 35.02],
                 "mass": 4.8673 * Math.pow(10, 24),
                 "radius": 12103
             },
             {
                 "id": 3,
                 "name": "Earth",
-                "pos": [1, 0, 0],
-                "vel": [0, 0, 29780],
+                "pos": [149597870.7, 0, 0],
+                "vel": [0, 0, 29.78],
                 "mass": 5.972 * Math.pow(10, 24),
                 "radius": 12756
             },
             {
                 "id": 4,
                 "name": "Mars",
-                "pos": [1.524, 0, 0],
-                "vel": [0, 0, 24070],
+                "pos": [1.524 * 149597870.7, 0, 0],
+                "vel": [0, 0, 24.07],
                 "mass": 6.417 * Math.pow(10, 23),
                 "radius": 6792
             },
             {
                 "id": 5,
                 "name": "Jupiter",
-                "pos": [5.204, 0, 0],
-                "vel": [0, 0, 13060],
+                "pos": [5.204 * 149597870.7, 0, 0],
+                "vel": [0, 0, 13.06],
                 "mass": 1.89813 * Math.pow(10, 27),
                 "radius": 142984
             },
             {
                 "id": 6,
                 "name": "Saturn",
-                "pos": [9.582, 0, 0],
-                "vel": [0, 0, 9680],
+                "pos": [9.582 * 149597870.7, 0, 0],
+                "vel": [0, 0, 9.68],
                 "mass": 5.683 * Math.pow(10, 26),
                 "radius": 120536
             },
             {
                 "id": 7,
                 "name": "Uranus",
-                "pos": [19.201, 0, 0],
-                "vel": [0, 0, 6810],
+                "pos": [19.201 * 149597870.7, 0, 0],
+                "vel": [0, 0, 6.81],
                 "mass": 8.681 * Math.pow(10, 25),
                 "radius": 51118
             },
             {
                 "id": 8,
                 "name": "Neptun",
-                "pos": [30.178, 0, 0],
-                "vel": [0, 0, 5455],
+                "pos": [30.178 * 149597870.7, 0, 0],
+                "vel": [0, 0, 5.455],
                 "mass": 1.024 * Math.pow(10, 26),
                 "radius": 49528
             }
@@ -121,67 +127,85 @@ export const scenarios = [
             {
                 "id": 1,
                 "name": "Merkur",
-                "pos": [0.387098, 0, 0],
-                "vel": [0, 0, 47360],
+                "pos": [0.387098 * 149597870.7, 0, 0],
+                "vel": [0, 0, 47.36],
                 "mass": 3.301 * Math.pow(10, 29),
                 "radius": 4881
             },
             {
                 "id": 2,
                 "name": "Venus",
-                "pos": [0.7233, 0, 0],
-                "vel": [0, 0, 35020],
+                "pos": [0.7233 * 149597870.7, 0, 0],
+                "vel": [0, 0, 35.02],
                 "mass": 4.8673 * Math.pow(10, 24),
                 "radius": 12103
             },
             {
                 "id": 3,
                 "name": "Earth",
-                "pos": [1, 0, 0],
-                "vel": [0, 0, 29780],
+                "pos": [1 * 149597870.7, 0, 0],
+                "vel": [0, 0, 29.78],
                 "mass": 5.972 * Math.pow(10, 24),
                 "radius": 12756
             },
             {
                 "id": 4,
                 "name": "Mars",
-                "pos": [1.524, 0, 0],
-                "vel": [0, 0, 24070],
+                "pos": [1.524 * 149597870.7, 0, 0],
+                "vel": [0, 0, 24.07],
                 "mass": 6.417 * Math.pow(10, 23),
                 "radius": 6792
             },
             {
                 "id": 5,
                 "name": "Jupiter",
-                "pos": [5.204, 0, 0],
-                "vel": [0, 0, 13060],
+                "pos": [5.204 * 149597870.7, 0, 0],
+                "vel": [0, 0, 13.06],
                 "mass": 1.89813 * Math.pow(10, 27),
                 "radius": 142984
             },
             {
                 "id": 6,
                 "name": "Saturn",
-                "pos": [9.582, 0, 0],
-                "vel": [0, 0, 9680],
+                "pos": [9.582 * 149597870.7, 0, 0],
+                "vel": [0, 0, 9.68],
                 "mass": 5.683 * Math.pow(10, 26),
                 "radius": 120536
             },
             {
                 "id": 7,
                 "name": "Uranus",
-                "pos": [19.201, 0, 0],
-                "vel": [0, 0, 6810],
+                "pos": [19.201 * 149597870.7, 0, 0],
+                "vel": [0, 0, 6.81],
                 "mass": 8.681 * Math.pow(10, 25),
                 "radius": 51118
             },
             {
                 "id": 8,
                 "name": "Neptun",
-                "pos": [30.178, 0, 0],
-                "vel": [0, 0, 5455],
+                "pos": [30.178 * 149597870.7, 0, 0],
+                "vel": [0, 0, 5.455],
                 "mass": 1.024 * Math.pow(10, 26),
                 "radius": 49528
             }
         ]
     }
 ]
+
+let pos = [1, 0, 0];
+let vel = [0, 0, 29.78];
+
+console.log(pos)
+console.log(vel)
+
+let poss = cartesianToSpherical(pos[0], pos[1], pos[2])
+let vels = cartesianToSphericalVelocity(pos, vel)
+
+console.log(poss)
+console.log(vels)
+
+let pos1 = sphericalToCartesian(poss[0], poss[1], poss[2])
+let vel1 = sphericalToCartesianVelocity(poss, vels)
+
+console.log(pos1)
+console.log(vel1)

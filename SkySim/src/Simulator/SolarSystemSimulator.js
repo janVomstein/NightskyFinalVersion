@@ -48,17 +48,21 @@ export class SolarSystemSimulator {
                 acceleration[2] += directed_acceleration[2];
             }
 
-            this.objects[i].velocity = [
-                this.objects[i].velocity[0] + acceleration[0] * dt,
-                this.objects[i].velocity[1] + acceleration[1] * dt,
-                this.objects[i].velocity[2] + acceleration[2] * dt
+            let velocity = AEToM(this.objects[i].velocity);
+
+            velocity = [
+                velocity[0] + acceleration[0] * dt,
+                velocity[1] + acceleration[1] * dt,
+                velocity[2] + acceleration[2] * dt
             ];
 
             this.objects[i].position = MToAE([
-                posA[0] + this.objects[i].velocity[0] * dt,
-                posA[1] + this.objects[i].velocity[1] * dt,
-                posA[2] + this.objects[i].velocity[2] * dt
+                posA[0] + velocity[0] * dt,
+                posA[1] + velocity[1] * dt,
+                posA[2] + velocity[2] * dt
             ]);
+
+            this.objects[i].velocity = MToAE(velocity);
         }
     }
 

@@ -78,12 +78,19 @@ let searchMap;
     const searchFieldButton = document.getElementById("searchFieldButton");
     searchFieldButton.onclick = onSearchButton.bind(this);
 
+    /**
+     * Listener-Function triggered by Key-Press while the searchField is focused
+     * @param event
+     */
     function onSearchFieldButtonDown(event) {
         if (event.key === "Enter") {
             onSearchButton();
         }
     }
 
+    /**
+     * Listener-Function triggered by the searchFieldButton
+     */
     function onSearchButton() {
         const searchValue = searchField.value.toLowerCase();
 
@@ -242,16 +249,16 @@ let searchMap;
         const orderMagnitude = Math.log10(currentMillennium);
 
         if (orderMagnitude < 3) {
-            millenniumText.textContent = `${parseInt(currentMillennium)} Millennium`;
+            millenniumText.textContent = `${parseInt(currentMillennium)}k A.D.`;
         }
         else if (orderMagnitude < 6) {
-            millenniumText.textContent = `${parseInt(currentMillennium / 1000)}k Millennium`;
+            millenniumText.textContent = `${parseInt(currentMillennium / 1000)}M A.D.`;
         }
         else if (orderMagnitude < 9) {
-            millenniumText.textContent = `${parseInt(currentMillennium / 1000000)}M Millennium`;
+            millenniumText.textContent = `${parseInt(currentMillennium / 1000000)}B A.D.`;
         }
         else {
-            millenniumText.textContent = `${parseInt(currentMillennium / 1000000000)}B Millennium`;
+            millenniumText.textContent = `${parseInt(currentMillennium / 1000000000)}T A.D.`;
         }
     }
 

@@ -53,6 +53,7 @@ export function ObjectRepresentator({data, mutateData}) {
   const [popoverOpen, setPopoverOpen] = useState(false);
 
   //State which represents the Object's Parameters before they get submitted to the SideMenu when the Popover is closed
+  //Transform Cartesian Coordinates to Spherical for better usability
   let prepared_data = {
     ...data,
     "massBase": data.mass === 0 ? 0.0 : data.mass / Math.pow(10, Math.floor(Math.log10(data.mass))),
@@ -60,6 +61,14 @@ export function ObjectRepresentator({data, mutateData}) {
     "pos_spherical": cartesianToSpherical(data.pos[0], data.pos[1], data.pos[2]),
     "vel_spherical": cartesianToSphericalVelocity(data.pos, data.vel)
   }
+
+  //Transform from rad/s to rad/yr
+  prepared_data["vel_spherical"] = [
+    prepared_data["vel_spherical"][0],
+    prepared_data["vel_spherical"][1] * 365 * 24 * 60 * 60,
+    prepared_data["vel_spherical"][2] * 365 * 24 * 60 * 60
+  ]
+
   const [tempData, setTempData] = useState(prepared_data);
 
   /**
@@ -90,6 +99,15 @@ export function ObjectRepresentator({data, mutateData}) {
       return false;
     }
 
+    let pos_spherical_float = data_to_validate.pos_spherical.map(parseFloat);
+    let vel_spherical_float = data_to_validate.vel_spherical.map(parseFloat);
+
+    let vel_spherical_rad_s = [
+        vel_spherical_float[0],
+        vel_spherical_float[1] / (365 * 24 * 60 * 60),
+        vel_spherical_float[2] / (365 * 24 * 60 * 60)
+    ]
+
     return {
       "id": parseFloat(data_to_validate.id),
       "mass": parseFloat(data_to_validate.massBase) * Math.pow(10, parseFloat(data_to_validate.massExp)),
@@ -100,8 +118,8 @@ export function ObjectRepresentator({data, mutateData}) {
           parseFloat(data_to_validate.pos_spherical[2])
       ),
       "vel": sphericalToCartesianVelocity(
-          data_to_validate.pos_spherical.map(parseFloat),
-          data_to_validate.vel_spherical.map(parseFloat)
+          pos_spherical_float,
+          vel_spherical_rad_s
       ),
       "radius": data_to_validate.radius
     }
@@ -157,9 +175,9 @@ export function ObjectRepresentator({data, mutateData}) {
                 </div>
                 <div className="grid grid-cols-4 items-center gap-x-2">
                   <Label/>
-                  <Label className="col-span-1 text-center"><Badge>Radius</Badge></Label>
-                  <Label className="col-span-1 text-center"><Badge>Theta</Badge></Label>
-                  <Label className="col-span-1 text-center"><Badge>Phi</Badge></Label>
+                  <Label className="col-span-1 text-center"><Badge>Radius (AU)</Badge></Label>
+                  <Label className="col-span-1 text-center"><Badge>Theta (RAD)</Badge></Label>
+                  <Label className="col-span-1 text-center"><Badge>Phi (RAD)</Badge></Label>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-x-2">
                   <Label htmlFor="posx" className="col-span-1 text-center"><Badge>Position</Badge></Label>
@@ -327,7 +345,20 @@ export function SideMenu({getGL}) {
   function loadExampleScenario() {
     const index = parseInt(importSelectorValue);
 
-    setData(scenarios[index].objects);
+    //Transform Data (pos and vel) from Astronomical Units (or AU/AE) to kilometers
+    var data_transformed = [];
+    for (let object of scenarios[index].objects) {
+      data_transformed.push({
+        "id": object["id"],
+        "name": object["name"],
+        "pos": [object["pos"][0] / 149597870.7, object["pos"][1] / 149597870.7, object["pos"][2] / 149597870.7],
+        "vel": [object["vel"][0] / 149597870.7, object["vel"][1] / 149597870.7, object["vel"][2] / 149597870.7],
+        "mass": object["mass"],
+        "radius": object["radius"]
+      })
+    }
+
+    setData(data_transformed);
     animationStartDatetime = scenarios[index].date;
     setDatetime(new Date(animationStartDatetime))
   }
@@ -339,8 +370,8 @@ export function SideMenu({getGL}) {
       "name": "UFO",
       "pos": [0, 0, 0],
       "vel": [0, 0, 0],
-      "mass": 0,
-      "radius": 10000
+      "mass": 1000,
+      "radius": 12756
     })
     setData(updatedData);
   }
