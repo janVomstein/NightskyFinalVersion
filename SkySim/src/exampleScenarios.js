@@ -14,19 +14,12 @@
  * mass: Mass of the Object
  * radius: Radius of the Object
  *
- * Units:
+ * Units: (Cartesian Coordinates!)
  * pos: kilometers
  * vel: kilometers/second
  * mass: kg
  * radius: kilometers
  */
-import {
-    cartesianToSpherical,
-    cartesianToSphericalVelocity,
-    sphericalToCartesian,
-    sphericalToCartesianVelocity
-} from "./Geometry/GeometryJS";
-
 
 export const scenarios = [
     {
@@ -191,21 +184,3 @@ export const scenarios = [
         ]
     }
 ]
-
-let pos = [1, 0, 0];
-let vel = [0, 0, 29.78];
-
-console.log(pos)
-console.log(vel)
-
-let poss = cartesianToSpherical(pos[0], pos[1], pos[2])
-let vels = cartesianToSphericalVelocity(pos, vel)
-
-console.log(poss)
-console.log(vels)
-
-let pos1 = sphericalToCartesian(poss[0], poss[1], poss[2])
-let vel1 = sphericalToCartesianVelocity(poss, vels)
-
-console.log(pos1)
-console.log(vel1)
