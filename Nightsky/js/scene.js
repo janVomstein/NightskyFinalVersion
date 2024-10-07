@@ -398,6 +398,7 @@
             sun.update(dt, getSpeed() / 100); // GetSpeed is defined in ui.js.
         }
 
+        // Update Background-Stars
         if(!getPauseStars()) {
             updateMillennium(dt, getStarsSpeed());
             for(let i = 0; i < backgroundObjects.length; i++) {

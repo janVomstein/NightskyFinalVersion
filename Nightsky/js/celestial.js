@@ -862,6 +862,7 @@ class BackgroundStar extends CelestialBody {
         //velo_data is [radius, DE, RA, RV, pmDE, pmRA]
         //units: [pc, deg (-90 <-> +90), deg (0 <-> 360), km/s, mas/yr, mas/yr]
 
+        //Calculate Velocity in x-, y-, z-Direction from Proper Motion to perform Euler-Steps updating the Position of Stars
         let v_x = calcXFromProperMotion([this.velo_data[0], this.velo_data[1], this.velo_data[2]], [this.velo_data[3], this.velo_data[4], this.velo_data[5]]);
         let v_y = calcYFromProperMotion([this.velo_data[0], this.velo_data[1], this.velo_data[2]], [this.velo_data[3], this.velo_data[4], this.velo_data[5]]);
         let v_z = calcZFromProperMotion([this.velo_data[0], this.velo_data[1], this.velo_data[2]], [this.velo_data[3], this.velo_data[4], this.velo_data[5]]);
@@ -1162,19 +1163,40 @@ class StaticOrbit extends CelestialBody {
     unselect() {}
 }
 
+/**
+ * Convert Degrees to Radians
+ * @param deg
+ * @returns {number}
+ */
 function deg2rad(deg) {
     return 2 * Math.PI * deg / 360;
 }
 
+/**
+ * Convert Milli-Arcseconds to degrees
+ * @param mas
+ * @returns {number}
+ */
 function mas2deg(mas) {
     let arcsecond = mas / 1000;
     return arcsecond / 3600;
 }
 
+/**
+ * Convert Kilometers to Parsec
+ * @param km
+ * @returns {number}
+ */
 function km2pc(km) {
     return km / 30856769049426;
 }
 
+/**
+ * Calculate Velocity in x-Direction (Cartesian Coordinates) from current Position and Velocity in Spherical Coordinates
+ * @param {[number, number, number]} pos - Current Position in Spherical Coordinates
+ * @param {[number, number, number]} vel - Current Velocity in Spherical Coordinates
+ * @returns {number}
+ */
 function calcXFromProperMotion(pos, vel) {
     let radius = pos[0];                                 //pc
     let theta = deg2rad(pos[1] + 90);               //rad
@@ -1191,6 +1213,12 @@ function calcXFromProperMotion(pos, vel) {
     return a + b + c;
 }
 
+/**
+ * Calculate Velocity in y-Direction (Cartesian Coordinates) from current Position and Velocity in Spherical Coordinates
+ * @param {[number, number, number]} pos - Current Position in Spherical Coordinates
+ * @param {[number, number, number]} vel - Current Velocity in Spherical Coordinates
+ * @returns {number}
+ */
 function calcYFromProperMotion(pos, vel) {
     let radius = pos[0];                                 //pc
     let theta = deg2rad(pos[1] + 90);               //rad
@@ -1207,6 +1235,12 @@ function calcYFromProperMotion(pos, vel) {
     return a + b + c;
 }
 
+/**
+ * Calculate Velocity in z-Direction (Cartesian Coordinates) from current Position and Velocity in Spherical Coordinates
+ * @param {[number, number, number]} pos - Current Position in Spherical Coordinates
+ * @param {[number, number, number]} vel - Current Velocity in Spherical Coordinates
+ * @returns {number}
+ */
 function calcZFromProperMotion(pos, vel) {
     let radius = pos[0];                                 //pc
     let theta = deg2rad(pos[1] + 90);               //rad

@@ -1,4 +1,5 @@
 //Global information
+//Global SearchMap, that maps Constellation-Names to LookAt-Positions
 let searchMap;
 
 {
@@ -102,31 +103,6 @@ let searchMap;
         }
         // Change the visibility value.
         uiVisibility = !uiVisibility;
-    }
-
-    /**
-    * This function returns the color currently selected by the color picker.
-    * @returns {[number, number, number]} color currently selected
-    */
-    function getColor() {
-        // Get the color value of the colorPicker.
-        const color = colorPicker.value;
-        // The value of the color picker is a hex value.
-        // Compute the rgb values from the hax value.
-        const r = parseInt(color.substr(1,2), 16);
-        const g = parseInt(color.substr(3,2), 16);
-        const b = parseInt(color.substr(5,2), 16);
-        // Return the rgb[0, 1] values.
-        return [r / 255, g / 255, b / 255];
-    }
-    
-    /**
-     * This function will be called by the onchange event of the color
-     * picker. It changes the backgroundColor of the wrapper, so it fits to
-     * the selected color.
-     */
-    function onColorChange() {
-        colorPickerWrapper.style.backgroundColor = colorPicker.value;
     }
 
     /**
@@ -343,6 +319,9 @@ function generateSearchMap() {
     return searchMap;
 }
 
+/**
+ * Init-Function that triggers the Computation of the SearchMap
+ */
 function initUI() {
     searchMap = generateSearchMap();
 }
