@@ -851,6 +851,7 @@ class BackgroundStar extends CelestialBody {
         // direction of the camera.
         this.cam = cam;
 
+        //(Done by Eric)
         this.name_info = name_info;
         this.velo_data = velo_data;                 //velo_data contains information about movement of object
         this.name = name_info[0];                   //Trivial name of object; "" if not known
@@ -858,6 +859,11 @@ class BackgroundStar extends CelestialBody {
         this.bayer = name_info[2];                  //Bayer designation of this object; "" if not known
     }
 
+    /**
+     * Update this Object / Perform one Simulation-Step (Done by Eric)
+     * @param dt
+     * @param speed
+     */
     update(dt, speed) {
         //velo_data is [radius, DE, RA, RV, pmDE, pmRA]
         //units: [pc, deg (-90 <-> +90), deg (0 <-> 360), km/s, mas/yr, mas/yr]
@@ -909,6 +915,7 @@ class BackgroundStar extends CelestialBody {
      * Add information about this BackgroundStar. Add instructions for 
      * connecting two BackgroundStars.
      * Also change the scaling for a better Visualization of the selection.
+     * (Partly Done by Eric)
      */
     select() {
         //Use this.real_position for position in real cosmic data (unit: pc)
@@ -1036,6 +1043,10 @@ class Connector extends CelestialBody {
         return[worldMat, normalWorldMat];
     }
 
+    /**
+     * Method for Updating the Positions of the Connectors while Stars are Drifting
+     * (Done by Eric)
+     */
     updatePositions() {
         // The connector is positioned in the middle between the two objects.
         vec3.sub(this.position, this.obj1.position, this.obj2.position);
@@ -1164,7 +1175,7 @@ class StaticOrbit extends CelestialBody {
 }
 
 /**
- * Convert Degrees to Radians
+ * Convert Degrees to Radians (Done by Eric)
  * @param deg
  * @returns {number}
  */
@@ -1173,7 +1184,7 @@ function deg2rad(deg) {
 }
 
 /**
- * Convert Milli-Arcseconds to degrees
+ * Convert Milli-Arcseconds to degrees (Done by Eric)
  * @param mas
  * @returns {number}
  */
@@ -1183,7 +1194,7 @@ function mas2deg(mas) {
 }
 
 /**
- * Convert Kilometers to Parsec
+ * Convert Kilometers to Parsec (Done by Eric)
  * @param km
  * @returns {number}
  */
@@ -1193,6 +1204,7 @@ function km2pc(km) {
 
 /**
  * Calculate Velocity in x-Direction (Cartesian Coordinates) from current Position and Velocity in Spherical Coordinates
+ * (Done by Eric)
  * @param {[number, number, number]} pos - Current Position in Spherical Coordinates
  * @param {[number, number, number]} vel - Current Velocity in Spherical Coordinates
  * @returns {number}
@@ -1215,6 +1227,7 @@ function calcXFromProperMotion(pos, vel) {
 
 /**
  * Calculate Velocity in y-Direction (Cartesian Coordinates) from current Position and Velocity in Spherical Coordinates
+ * (Done by Eric)
  * @param {[number, number, number]} pos - Current Position in Spherical Coordinates
  * @param {[number, number, number]} vel - Current Velocity in Spherical Coordinates
  * @returns {number}
@@ -1237,6 +1250,7 @@ function calcYFromProperMotion(pos, vel) {
 
 /**
  * Calculate Velocity in z-Direction (Cartesian Coordinates) from current Position and Velocity in Spherical Coordinates
+ * (Done by Eric)
  * @param {[number, number, number]} pos - Current Position in Spherical Coordinates
  * @param {[number, number, number]} vel - Current Velocity in Spherical Coordinates
  * @returns {number}

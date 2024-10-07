@@ -309,6 +309,7 @@
                         parseFloat(parts[29])
                     ],
                     //Push [radius, DE, RA, RV, pmDE, pmRA] (Proper Motion Velocities in milli-arcsec, DE & RA in degrees)
+                    //(Done by Eric)
                     [
                         parseFloat(parts[26]),
                         parseFloat(parts[7]),
@@ -318,6 +319,7 @@
                         parseFloat(parts[19])
                     ],
                     //Push name_info [Trivial Name, Cst, Bayer Name]
+                    //(Done by Eric)
                     [
                       parts[30],
                       parts[11],
@@ -429,6 +431,7 @@
                 // the center.
                 sizes.push(5);
 
+                //(Done by Eric)
                 let radius = parseFloat(parts[7]);   //Radius / Distance of object
                 let de = parseFloat(parts[3]);       //declination of object in deg
                 let ra = parseFloat(parts[2]);       //right ascension of object in deg
@@ -449,6 +452,7 @@
   /**
    * Replaces all char-sequences in map's keys by map's values
    * inp_str is String which is a primitive and is thus copied
+   * (Done by Eric)
    *
    * @param inp_str
    * @param map

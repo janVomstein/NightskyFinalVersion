@@ -144,7 +144,7 @@ class Camera {
     }
 
     /**
-     * Applies a new LookAt-Direction to the Camera
+     * Applies a new LookAt-Direction to the Camera (Done by Eric)
      * @param {[number, number, number]} lookAt - Point in Cartesian Coordinates to which the Camera should point
      */
     newLookAt(lookAt) {

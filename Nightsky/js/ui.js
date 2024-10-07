@@ -27,6 +27,7 @@ let searchMap;
     // Current pause state - true if paused.
     let pause = false;
 
+    //(Done by Eric)
     // button to pause and unpause the Stars from drifting
     const pauseStarsButton = document.getElementById('pauseStars');
     pauseStarsButton.onclick = onPauseStars.bind(this);
@@ -45,6 +46,7 @@ let searchMap;
     let speed = speedSlider.value;
     speedText.textContent = speed;
 
+    //(Done by Eric)
     // slider controlling stars speed
     const speedStarsSlider = document.getElementById('speedStars');
     speedStarsSlider.oninput = onStarsSlider.bind(this);
@@ -54,9 +56,13 @@ let searchMap;
     let speedStars = speedStarsSlider.value;
     speedStarsText.textContent = speedStars;
 
+    //(Done by Eric)
+    //Text on displaying the Simulation-Time
     const millenniumText = document.getElementById("millennium");
     let currentMillennium = 2;     //The current Millennium of the visualization (data from year 2000 -> Mil 2)
 
+    //(Done by Eric)
+    //Search Field to Search for Stars and Focus them
     const searchField = document.getElementById("searchField");
     searchField.onkeyup = onSearchFieldButtonDown.bind(this);
     const searchFieldButton = document.getElementById("searchFieldButton");
@@ -64,6 +70,7 @@ let searchMap;
 
     /**
      * Listener-Function triggered by Key-Press while the searchField is focused
+     * (Done by Eric)
      * @param event
      */
     function onSearchFieldButtonDown(event) {
@@ -74,6 +81,7 @@ let searchMap;
 
     /**
      * Listener-Function triggered by the searchFieldButton
+     * (Done by Eric)
      */
     function onSearchButton() {
         const searchValue = searchField.value.toLowerCase();
@@ -107,6 +115,7 @@ let searchMap;
 
     /**
     * This function allows to change the info text to a new string.
+    * (Partly Done by Eric)
     * @param {string} text - string to be set as the info text 
     */
     function setInfoText(text) {
@@ -147,6 +156,7 @@ let searchMap;
     /**
      * Gets called by the onclick event of the pauseStars button.
      * The function changes the pauseStars image and pauses / unpauses the star drifting
+     * (Done by Eric)
      */
     function onPauseStars() {
         // change the image
@@ -161,6 +171,7 @@ let searchMap;
 
     /**
      * getter function for the pauseStars state
+     * (Done by Eric)
      * @returns {boolean} current pauseStars state
      */
     function getPauseStars() {
@@ -180,6 +191,7 @@ let searchMap;
     /**
      * Gets called by the oninput event of the speedStars slider.
      * The function changes the speed and the speedStarsText according to the slider
+     * (Done by Eric)
      */
     function onStarsSlider() {
         speedStarsText.textContent = speedStarsSlider.value;
@@ -196,6 +208,7 @@ let searchMap;
 
     /**
      * getter function for the stars speed
+     * (Done by Eric)
      * @returns {number} current speed
      */
     function getStarsSpeed() {
@@ -205,6 +218,7 @@ let searchMap;
     /**
      * This Function updates the Year-Display which shows the current Year, the BackgroundStar-Simulation is in.
      * This Function gets called each Simulation-Step
+     * (Done by Eric)
      * @param dt - Length of the Simulation-Step
      * @param speed - Current Speed used in the Simulation-Step
      */
@@ -271,6 +285,7 @@ let searchMap;
 /**
  * This Function generates a SearchMap that maps the names of each BackgroundStar to it's Look-At.
  * This SearchMap is used for the Search-Feature with Look-At
+ * (Done by Eric)
  * @returns {Map<any, any>} - The generated SearchMap
  */
 function generateSearchMap() {
@@ -321,6 +336,7 @@ function generateSearchMap() {
 
 /**
  * Init-Function that triggers the Computation of the SearchMap
+ * (Done by Eric)
  */
 function initUI() {
     searchMap = generateSearchMap();

@@ -399,6 +399,7 @@
         }
 
         // Update Background-Stars
+        // (Done by Eric)
         if(!getPauseStars()) {
             updateMillennium(dt, getStarsSpeed());
             for(let i = 0; i < backgroundObjects.length; i++) {
@@ -601,6 +602,7 @@
      * and build a scene around the i-th object in the gaia list.
      * It generates random objects that orbit the new sun.
      * It is async so it can use the async sleep function.
+     * (Partly Done by Eric)
      * @param {!number} index - index of the new sun in the gaia list
      */
     async function swapStarAsync(index) {
@@ -898,6 +900,7 @@
     /**
      * This function recalculates the connections between the visible
      * star signs. The function sets the signsConnectors list.
+     * (Partly Done by Eric)
      */
     function calcSignsConnections() {
         // Reset signsConnectors.
