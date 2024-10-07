@@ -1,5 +1,5 @@
 //ReactJS
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 
 //UI
 import {Sheet, SheetContent, SheetHeader, SheetTitle} from "./components/ui/sheet";
@@ -11,10 +11,11 @@ import {Input} from "./components/ui/input";
 import {ScrollArea} from "./components/ui/scroll-area";
 import {Slider} from "./components/ui/slider";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "./components/ui/select";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "./components/ui/tooltip";
 import {Badge} from "./components/ui/badge";
 
-import {Pencil2Icon, ReloadIcon, PlusCircledIcon, TrashIcon} from "@radix-ui/react-icons";
-
+//Icons
+import {Pencil2Icon, PlusCircledIcon, TrashIcon} from "@radix-ui/react-icons";
 
 //Simulation/Rendering
 import {SolarSystemSimulator} from "./Simulator/SolarSystemSimulator";
@@ -28,13 +29,12 @@ import {
   sphericalToCartesian,
   sphericalToCartesianVelocity
 } from "./Geometry/GeometryJS";
-import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "./components/ui/tooltip";
 
 //Scenarios
 import {scenarios} from "./exampleScenarios";
 import {useToast} from "./components/ui/use-toast";
 
-
+//Set global Simulator and Renderer
 let simulator = new SolarSystemSimulator(1);
 let renderer = new Renderer(null, simulator);
 
@@ -364,11 +364,14 @@ export function SideMenu({getGL}) {
     setDatetime(new Date(animationStartDatetime))
   }
 
+  /**
+   * Add a new Object to the Simulation
+   */
   function addNewObject() {
     let updatedData = [...data];
     updatedData.push({
       "id": updatedData.length,
-      "name": "UFO",
+      "name": "New Object",
       "pos": [0, 0, 0],
       "vel": [0, 0, 0],
       "mass": 1000,
@@ -383,12 +386,20 @@ export function SideMenu({getGL}) {
    */
 
   /**
-   * Uploads all Simulation-Data to the Simulator.
+   * Uploads all Simulation-Data to the Simulator
+   * @param {number} gBase - Base of Universal Gravitational Constant
+   * @param {number} gExp - Exponent of Universal Gravitational Constant
    */
   function uploadSimulationData(gBase, gExp) {
     simulator.gamma = gBase * Math.pow(10, gExp);
   }
 
+  /**
+   * Uploads all Renderer-Data to the Renderer
+   * @param timeFactor - Factor for timeSliderValue to set Unit (day/second, month/second, ...)
+   * @param timeSliderValue - How many Simulation-Seconds per Real-Second
+   * @param subSteps - Precision-Value / Sub-Stepping-Value
+   */
   function uploadRendererData(timeFactor, timeSliderValue, subSteps) {
     renderer.timestep = parseFloat(timeFactor) * timeSliderValue[0];
     renderer.sub_steps = subSteps[0];
@@ -419,26 +430,46 @@ export function SideMenu({getGL}) {
     }
   }
 
+  /**
+   * Event Handler for change of the Base-Value of Universal Gravitational Constant (G)
+   * @param e
+   */
   function gBaseChange(e) {
     setGBase(e.target.value);
     uploadSimulationData(e.target.value, gExp);
   }
 
+  /**
+   * Event Handler for change of the Exponent-Value of Universal Gravitational Constant (G)
+   * @param e
+   */
   function gExpChange(e) {
     setGExp(e.target.value);
     uploadSimulationData(gBase, e.target.value);
   }
 
+  /**
+   * Event Handler for change of the Value of the Time-Factor (How many Simulation-Seconds in one Real-Second)
+   * @param newValue
+   */
   function timeSliderValueChange(newValue) {
     setTimeSliderValue(newValue);
     uploadRendererData(timeFactor, newValue, subSteps);
   }
 
+  /**
+   * Event Handler for change of the Value of the Time-Factor (How many Simulation-Seconds in one Real-Second)
+   * @param newValue
+   */
   function timeFactorChange(newValue) {
     setTimeFactor(newValue);
     uploadRendererData(newValue, timeSliderValue, subSteps);
   }
 
+  /**
+   * Event Handler for change of the Value of Sub-Stepping/Precision
+   * @param newValue
+   */
   function subStepsChange(newValue) {
     setSubSteps(newValue);
     uploadRendererData(timeFactor, timeSliderValue, newValue);
