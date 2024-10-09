@@ -35,7 +35,7 @@ jobs:
         cache-dependency-path: SkySim/package-lock.json
     - name: Install Dependencies
       working-directory: ./SkySim
-      run: npm ci
+      run: npm install
     - name: Build SkySim
       working-directory: ./SkySim
       run: npm run-script build
