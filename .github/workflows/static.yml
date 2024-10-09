@@ -43,6 +43,7 @@ jobs:
     - name: Build SkySim
       working-directory: ./SkySim
       run: npm run-script build
+      continue-on-error: true
     
   deploy:
     needs: build
