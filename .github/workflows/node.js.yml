@@ -26,6 +26,9 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        path: '/SkySim'
-    - run: npm ci
-    - run: npm react-scripts build
+    - name: Install Dependencies
+      working-directory: ./SkySim
+      run: npm ci
+    - name: Build SkySim
+      working-directory: ./SkySim
+      run: npm react-scripts build
