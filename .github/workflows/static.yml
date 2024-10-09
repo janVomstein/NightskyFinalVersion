@@ -44,6 +44,12 @@ jobs:
       working-directory: ./SkySim
       run: npm run-script build
       continue-on-error: true
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        # Nightsky
+        name: 'skysim-build'
+        path: './SkySim/build'
     
   deploy-nightsky:
     needs: build
@@ -77,10 +83,10 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/download-artifact@v3
         with:
           # Nightsky
-          path: './SkySim/build'
+          name: 'skysim-build'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
