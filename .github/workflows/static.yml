@@ -83,6 +83,7 @@ jobs:
         with:
           # Nightsky
           name: 'skysim-build'
+          path: './build'
       - run: ls -l
       - name: Upload pages-artifact
         uses: actions/upload-pages-artifact@v3
