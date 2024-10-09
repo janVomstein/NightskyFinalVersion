@@ -45,7 +45,7 @@ jobs:
       run: npm run-script build
       continue-on-error: true
     
-  deploy:
+  deploy-nightsky:
     needs: build
     environment:
       name: github-pages
@@ -58,9 +58,29 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
-        with:
-          # Upload entire repository
-          path: './Nightsky'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          # Nightsky
+          path: './Nightsky'
+
+  deploy-skysim:
+    needs: build
+    environment:
+      name: skysim
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          # Nightsky
+          path: './SkySim/build'
