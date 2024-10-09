@@ -42,7 +42,7 @@ jobs:
       run: npm ci
     - name: Build SkySim
       working-directory: ./SkySim
-      run: npm run-scripts build
+      run: npm run-script build
     
   deploy:
     needs: build
