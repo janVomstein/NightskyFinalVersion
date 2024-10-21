@@ -150,168 +150,352 @@
      * realistic representation of our solar system, separate textures are
      * required for these objects.
      */
-    function sunSystem() {
+function sunSystem() {
         // Empty the backgroundObjects list and the connectors list.
         backgroundObjects = [];
         connectors = [];
+        if (!getRealistic()) {
+            // First define our sun.
+            sun = new Star(
+                getModel("sphere"),
+                getTexture("sun"),
+                [60, 60, 60],
+                [1,1,1],
+                1,
+                gaia[0].length-1    // Index in the gaia list.
+            );
 
-        // First define our sun.
-        sun = new Star(
-            getModel("sphere"),
-            randTexture(),      // Returns a random texture
-                                // (see texture.js for the definition).
-                                // This should be replaced by a separate
-                                // texture (see todo).
-            [60, 60, 60],
-            [0.96, 0.95, 0.77],
-            1,
-            gaia[0].length-1    // Index in the gaia list.
-        );
+            // Mercury.
+            sun.addObject(
+                getModel("sphere"),
+                getTexture("mercury"),
+                [0, 0, 130],        // Relative position to the sun.
+                [2.4, 2.4, 2.4],
+                basicMaterials.all,
+                [1,1,1],
+                [1,1,1],
+                1,
+                [0 , 1, 0],
+                [0, 0, 0],
+                1,
+                2
+            ).addStaticOrbit();
 
-        // Mercury.
-        sun.addObject(
-            getModel("sphere"),
-            randTexture(),
-            [0, 0, 130],        // Relative position to the sun.
-            [2.4, 2.4, 2.4],
-            basicMaterials.all,
-            [0.38, 0.21, 0.03],
-            [0.86, 0.65, 0.43],
-            1,
-            [0 , 1, 0],
-            [0, 0, 0],
-            1,
-            2
-        ).addStaticOrbit();
+            sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(3.142186,0,0);
 
-        // Venus.
-        sun.addObject(
-            getModel("sphere"),
-            randTexture(), 
-            [0, 0, 170],
-            [6, 6, 6],
-            basicMaterials.all,
-            [0.58, 0.20, 0.04],
-            [0.91, 0.65, 0.24],
-            1,
-            [1, 0, 0],
-            [0, 0, 0],
-            1,
-            1
-        ).addStaticOrbit();
+            // Venus.
+            sun.addObject(
+                getModel("sphere"),
+                getTexture("venus"),
+                [0, 0, 170],
+                [6, 6, 6],
+                basicMaterials.all,
+                [1,1,1],
+                [1,1,1],
+                1,
+                [0, 1, 0],
+                [0, 0, 0],
+                1,
+                1
+            ).addStaticOrbit();
 
-        // Earth.
-        sun.addObject(
-            getModel("sphere"),
-            randTexture(), 
-            [0, 0, 210],
-            [6.3, 6.3, 6.3],
-            basicMaterials.all,
-            [0.04, 0.24, 0.26],
-            [0.42, 0.77, 0.81],
-            1,
-            [0, 1, 0],
-            [0, 0, 0],
-            1,
-            1
+            sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(6.237109,0,0);
 
-        ).addStaticOrbit();
+            // Earth.
+            sun.addObject(
+                getModel("sphere"),
+                getTexture("earth"),
+                [0, 0, 210],
+                [6.3, 6.3, 6.3],
+                basicMaterials.all,
+                [1,1,1],
+                [1,1,1],
+                1,
+                [0, 1, 0],
+                [0, 0, 0],
+                1,
+                1
+            ).addStaticOrbit();
 
-        // Our moon (Earth.addObject).
-        sun.objects[sun.objects.length-1].addObject(
-            getModel("sphere"),
-            randTexture(), 
-            [0, 0, -10],
-            [2, 2, 2],
-            basicMaterials.all,
-            [0.04, 0.24, 0.26],
-            [0.42, 0.77, 0.81],
-            1,
-            [2, 0, 1.5],
-            [50, 20, 10],
-            1,
-            0.5
-        ).addDynamicOrbit();
+            sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(3.550698,0,0);
 
-        // Mars.
-        sun.addObject(
-            getModel("sphere"),
-            randTexture(), 
-            [0, 0, 250],
-            [3.3, 3.3, 3.3],
-            basicMaterials.all,
-            [0.29, 0.13, 0.15],
-            [0.91, 0.50, 0.24],
-            1,
-            [0, 0.5, 0.5],
-            [0, 0, 0],
-            1,
-            1
-        ).addDynamicOrbit();
+            // Our moon (Earth.addObject).
+            sun.objects[sun.objects.length-1].addObject(
+                getModel("sphere"),
+                getTexture("moon"),
+                [0, 0, -10],
+                [2, 2, 2],
+                basicMaterials.all,
+                [1,1,1],
+                [1,1,1],
+                1,
+                [0, 1, 0],
+                [0.1, 1, 0],
+                1,
+                0.5
+            ).addDynamicOrbit();
 
-        // Jupiter.
-        sun.addObject(
-            getModel("sphere"),
-            randTexture(), 
-            [0, 0, 310],
-            [20, 20, 20],
-            basicMaterials.all,
-            [1,1,1],
-            [1,1,1],
-            1,
-            [3, 1, -0.3],
-            [0, 0, 0],
-            0.3,
-            0.5
-        ).addDynamicOrbit();
+            // Mars.
+            sun.addObject(
+                getModel("sphere"),
+                getTexture("mars"),
+                [0, 0, 250],
+                [3.3, 3.3, 3.3],
+                basicMaterials.all,
+                [1,1,1],
+                [1,1,1],
+                1,
+                [0, 1, 0],
+                [0, 0, 0],
+                1,
+                1
+            ).addDynamicOrbit();
 
-        // Saturn.
-        sun.addObject(
-            getModel("sphere"),
-            randTexture(), 
-            [0, 0, 370],
-            [18, 18, 18],
-            basicMaterials.all,
-            [0.43, 0.38, 0.28],
-            [0.87, 0.72, 0.44],
-            1,
-            [1, 0, 0],
-            [0, 0, 0],
-            0.5,
-            0.5
-        ).addDynamicOrbit();
+            sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(3.581241,0,0);
 
-        // Uranus.
-        sun.addObject(
-            getModel("sphere"),
-            randTexture(), 
-            [0, 0, 410],
-            [9, 9, 9],
-            basicMaterials.all,
-            [0.04, 0.25, 0.33],
-            [0.55, 0.81, 0.82],
-            1,
-            [0, 1, 0],
-            [0, 0, 0],
-            1,
-            1
-        ).addDynamicOrbit();
+            // Jupiter.
+            sun.addObject(
+                getModel("sphere"),
+                getTexture("jupiter"),
+                [0, 0, 310],
+                [20, 20, 20],
+                basicMaterials.all,
+                [1,1,1],
+                [1,1,1],
+                1,
+                [0, 1, 0],
+                [0, 0, 0],
+                0.3,
+                0.5
+            ).addDynamicOrbit();
 
-        // Neptune.
-        sun.addObject(
-            getModel("sphere"),
-            randTexture(), 
-            [0, 0, 450],
-            [8.5, 8.5, 8.5],
-            basicMaterials.all,
-            [0.11, 0.37, 0.66],
-            [0.74, 0.88, 0.95],
-            1,
-            [0.5, 0.5, 0],
-            [0, 0, 0],
-            1,
-            1
-        ).addDynamicOrbit();
+            sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(3.196221,0,0);
+
+            // Saturn.
+            sun.addObject(
+                getModel("sphere"),
+                getTexture("saturn"),
+                [0, 0, 370],
+                [18, 18, 18],
+                basicMaterials.all,
+                [1,1,1],
+                [1,1,1],
+                1,
+                [0, 1, 0],
+                [0, 0, 0],
+                0.5,
+                0.5
+            ).addDynamicOrbit();
+
+            sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(3.608119,0,0);
+
+            // Uranus.
+            sun.addObject(
+                getModel("sphere"),
+                getTexture("uranus"),
+                [0, 0, 410],
+                [9, 9, 9],
+                basicMaterials.all,
+                [1,1,1],
+                [1,1,1],
+                1,
+                [0, 1, 0],
+                [0, 0, 0],
+                1,
+                1
+            ).addDynamicOrbit();
+
+            sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(4.848001,0,0);
+
+            // Neptune.
+            sun.addObject(
+                getModel("sphere"),
+                getTexture("neptune"),
+                [0, 0, 450],
+                [8.5, 8.5, 8.5],
+                basicMaterials.all,
+                [1,1,1],
+                [1,1,1],
+                1,
+                [0, 1, 0],
+                [0, 0, 0],
+                1,
+                1
+            ).addDynamicOrbit();
+
+            sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(3.63587,0,0);
+        } else{
+            // First define our sun.
+            sun = new Star(
+                getModel("sphere"),
+                getTexture("sun"),
+                [14.25 , 14.25, 14.25],
+                [1,1,1],
+                1,
+                gaia[0].length-1    // Index in the gaia list.
+            );
+
+            // Mercury.
+            sun.addObject(
+                getModel("sphere"),
+                getTexture("mercury"),
+                [0, 0, 34.3],        // Relative position to the sun.
+                [0.5, 0.5, 0.5],
+                basicMaterials.all,
+                [1,1,1],
+                [1,1,1],
+                1,
+                [0 , 1, 0],
+                [0, 0, 0],
+                0.02,
+                1.59
+            ).addStaticOrbit();
+
+            sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(3.142186,0,0);
+
+            // Venus.
+            sun.addObject(
+                getModel("sphere"),
+                getTexture("venus"),
+                [0, 0, 39.3],
+                [1.24, 1.24, 1.24],
+                basicMaterials.all,
+                [1,1,1],
+                [1,1,1],
+                1,
+                [0, 1, 0],
+                [0, 0, 0],
+                0.01,
+                1.18
+            ).addStaticOrbit();
+
+            sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(6.237109,0,0);
+
+            // Earth.
+            sun.addObject(
+                getModel("sphere"),
+                getTexture("earth"),
+                [0, 0, 43.4],
+                [1.31, 1.31, 1.31],
+                basicMaterials.all,
+                [1,1,1],
+                [1,1,1],
+                1,
+                [0, 1, 0],
+                [0, 0, 0],
+                1,
+                1
+            ).addStaticOrbit();
+
+            sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(3.550698,0,0);
+
+            // Our moon (Earth.addObject).
+            sun.objects[sun.objects.length-1].addObject(
+                getModel("sphere"),
+                getTexture("moon"),
+                [0, 0, -2],
+                [0.36, 0.36, 0.36],
+                basicMaterials.all,
+                [1,1,1],
+                [1,1,1],
+                1,
+                [0, 1, 0],
+                [0.1, 1, 0],
+                1,
+                0.01
+            ).addDynamicOrbit();
+
+            // Mars.
+            sun.addObject(
+                getModel("sphere"),
+                getTexture("mars"),
+                [0, 0, 51.3],
+                [0.69, 0.69, 0.69],
+                basicMaterials.all,
+                [1,1,1],
+                [1,1,1],
+                1,
+                [0, 1, 0],
+                [0, 0, 0],
+                0.95,
+                0.81
+            ).addDynamicOrbit();
+
+            sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(3.581241,0,0);
+
+            // Jupiter.
+            sun.addObject(
+                getModel("sphere"),
+                getTexture("jupiter"),
+                [0, 0, 106.4],
+                [14.33, 14.33, 14.33],
+                basicMaterials.all,
+                [1,1,1],
+                [1,1,1],
+                1,
+                [0, 1, 0], //[3, 1, -0.3]
+                [0, 0, 0],
+                2.5,
+                0.44
+            ).addDynamicOrbit();
+
+            sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(3.196221,0,0);
+
+            // Saturn.
+            sun.addObject(
+                getModel("sphere"),
+                getTexture("saturn"),
+                [0, 0, 171.5],
+                [11.93, 11.93, 11.93],
+                basicMaterials.all,
+                [1,1,1],
+                [1,1,1],
+                1,
+                [0, 1, 0],
+                [0, 0, 0],
+                2.3,
+                0.33
+            ).addDynamicOrbit();
+
+            sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(3.608119,0,0);
+
+            // Uranus.
+            sun.addObject(
+                getModel("sphere"),
+                getTexture("uranus"),
+                [0, 0, 308.5],
+                [5.2, 5.2, 5.2],
+                basicMaterials.all,
+                [1,1,1],
+                [1,1,1],
+                1,
+                [0, 1, 0],
+                [0, 0, 0],
+                1.4,
+                0.23
+            ).addDynamicOrbit();
+
+            sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(4.848001,0,0);
+
+            // Neptune.
+            sun.addObject(
+                getModel("sphere"),
+                getTexture("neptune"),
+                [0, 0, 480],
+                [5.01, 5.01, 5.01],
+                basicMaterials.all,
+                [1,1,1],
+                [1,1,1],
+                1,
+                [0, 1, 0],
+                [0, 0, 0],
+                1.5,
+                0.18
+            ).addDynamicOrbit();
+
+            sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(3.63587,0,0);
+
+        }
 
         // Get all the new objects and their orbits.
         const objects = sun.getObjects();
@@ -616,8 +800,7 @@
         }
 
         // Set a new texture for the new sun.
-        // This is a random texture for the time beeing.
-        let tex = randTexture();
+        let tex = getTexture("sun");
         // Apply the new texture to the new sun in the current background.
         newSun.updateTexture(tex);
 
@@ -673,7 +856,7 @@
         );
 
         // Build the new scene:
-
+        // @ToDo
         // If the index belongs to our sun, call sunSystem.
         // Else build a randomized scene around the new sun.
         if (index == gaia[0].length-1) {
@@ -681,104 +864,447 @@
             // Make sure the texture matches.
             sun.updateTexture(tex);
         } else {
-            // Create the new sun.
-            sun = new Star(
-                getModel("sphere"),
-                tex,
-                [60, 60, 60],
-                newSun.ambColor,
-                1,
-                index
-            );
+            if(!getRealistic()) {
+                // Create the new sun.
+                        sun = new Star(
+                            getModel("sphere"),
+                            tex,
+                            [60, 60, 60],
+                            [1,1,1],    //newSun.ambColor
+                            1,
+                            index
+                        );
+                // The amount of objects to orbit the new sun.
+                    let amount = Math.round(Math.random() * 5) + 3; // Min: 3 | Max: 8
+                    // Minimal distance between the new objects.
+                    let minDist = 130;
+                    // Create the orbiting objects.
+                    let dist;
+                    let scale;
+                    for (let i = 0; i < amount; i++) {
+                        // Distance from the sun.
+                        // Min: minDist * (i + 1) | Max: Min + 50
+                        dist = Math.random() * 50 + minDist * (i + 1);
+                        // Scale of the new object.
+                        scale = Math.random() * 30 + 10; // Min: 10 | Max: 40
+                        // Add the new orbiting object.
+                        sun.addObject(
+                            getModel("sphere"),
+                            randTexture(),
+                            [0, 0, dist],
+                            [scale, scale, scale],
+                            basicMaterials.all,
+                            [0,0,0],
+                            [0,0,0],
+                            1,
+                            [
+                                // Angular momentum. Min: 0 | Max: 2
+                                Math.random() * 2,
+                                Math.random() * 2,
+                                Math.random() * 2
+                            ],
+                            [
+                                // Rotation amount. Min: 0 dec | Max: 5 dec
+                                Math.random() * 5
+                                *
+                                // Rotation direction (1 or -1).
+                                Math.pow(-1, Math.round(Math.random())),
+                                Math.random() * 5
+                                *
+                                Math.pow(-1, Math.round(Math.random())),
+                                Math.random() * 5
+                                *
+                                Math.pow(-1, Math.round(Math.random()))
+                            ],
+                            Math.random() * 1 + 0.5, // rotSpeed. Min: 0.5 | Max: 1.5
+                            Math.random() * 2 + 1,   // orbitSpeed Min: 0.5 | Max: 2.5
+                        ).addDynamicOrbit(); // Add the orbit.
 
-            // The amount of objects to orbit the new sun.
-            let amount = Math.round(Math.random() * 5) + 3; // Min: 3 | Max: 8
-            // Minimal distance between the new objects.
-            let minDist = 130;
-            // Create the orbiting objects.
-            let dist;
-            let scale;
-            for (let i = 0; i < amount; i++) {
-                // Distance from the sun.
-                // Min: minDist * (i + 1) | Max: Min + 50
-                dist = Math.random() * 50 + minDist * (i + 1);
-                // Scale of the new object.
-                scale = Math.random() * 30 + 10; // Min: 10 | Max: 40
-                // Add the new orbiting object.
-                sun.addObject(
-                    getModel("sphere"),
-                    randTexture(),
-                    [0, 0, dist],
-                    [scale, scale, scale],
-                    basicMaterials.all,
-                    [Math.random(), Math.random(), Math.random()],
-                    [Math.random(), Math.random(), Math.random()],
-                    1,
-                    [
-                        // Angular momentum. Min: 0 | Max: 2
-                        Math.random() * 2,
-                        Math.random() * 2,
-                        Math.random() * 2
-                    ],
-                    [
-                        // Rotation amount. Min: 0 dec | Max: 5 dec
-                        Math.random() * 5
-                        *
-                        // Rotation direction (1 or -1).
-                        Math.pow(-1, Math.round(Math.random())),
-                        Math.random() * 5
-                        *
-                        Math.pow(-1, Math.round(Math.random())),
-                        Math.random() * 5
-                        *
-                        Math.pow(-1, Math.round(Math.random()))
-                    ],
-                    Math.random() * 1 + 0.5, // rotSpeed. Min: 0.5 | Max: 1.5
-                    Math.random() * 2 + 1,   // orbitSpeed Min: 0.5 | Max: 2.5
-                ).addDynamicOrbit(); // Add the orbit.
-
-                // Decide randomly, if the new object should have a moon.
-                if (Math.round(Math.random()) == 1) {
-                    sun.objects[sun.objects.length-1].addObject(
-                        getModel("sphere"),
-                        randTexture(),
-                        // Match the relative position of the moon
-                        // to the scaling of the object.
-                        [0, 0, 1.5 * scale],
-                        // Match the scaling of the moon to the
-                        // scaling of the object.
-                        [scale/10, scale/10, scale/10],
-                        basicMaterials.all,
-                        [Math.random(), Math.random(), Math.random()],
-                        [Math.random(), Math.random(), Math.random()],
-                        1,
-                        [
-                            // Angular momentum. Min: 0 | Max: 2
-                            Math.random() * 2,
-                            Math.random() * 2,
-                            Math.random() * 2
-                        ],
-                        [
-                            // Rotation amount. Min: 0 dec | Max: 20 dec
-                            Math.random() * 20
-                            *
-                            // Rotation direction (1 or -1).
-                            Math.pow(-1, Math.round(Math.random())),
-                            Math.random() * 20
-                            *
-                            Math.pow(-1, Math.round(Math.random())),
-                            Math.random() * 20
-                            *
-                            Math.pow(-1, Math.round(Math.random()))
-                        ],
-                        // rotSpeed. Min: 0.5 | Max: 1.5
-                        Math.random() * 1 + 0.5,
-                        // orbitSpeed Min: 1 | Max: 3
-                        Math.random() * 2 + 1
-                    ).addDynamicOrbit(); // Add the orbit.
+                        // Decide randomly, if the new object should have a moon.
+                        if (Math.round(Math.random()) == 1) {
+                            sun.objects[sun.objects.length-1].addObject(
+                                getModel("sphere"),
+                                randTexture(),
+                                // Match the relative position of the moon
+                                // to the scaling of the object.
+                                [0, 0, 1.5 * scale],
+                                // Match the scaling of the moon to the
+                                // scaling of the object.
+                                [scale/10, scale/10, scale/10],
+                                basicMaterials.all,
+                                [Math.random(), Math.random(), Math.random()],
+                                [Math.random(), Math.random(), Math.random()],
+                                1,
+                                [
+                                    // Angular momentum. Min: 0 | Max: 2
+                                    Math.random() * 2,
+                                    Math.random() * 2,
+                                    Math.random() * 2
+                                ],
+                                [
+                                    // Rotation amount. Min: 0 dec | Max: 20 dec
+                                    Math.random() * 20
+                                    *
+                                    // Rotation direction (1 or -1).
+                                    Math.pow(-1, Math.round(Math.random())),
+                                    Math.random() * 20
+                                    *
+                                    Math.pow(-1, Math.round(Math.random())),
+                                    Math.random() * 20
+                                    *
+                                    Math.pow(-1, Math.round(Math.random()))
+                                ],
+                                // rotSpeed. Min: 0.5 | Max: 1.5
+                                Math.random() * 1 + 0.5,
+                                // orbitSpeed Min: 1 | Max: 3
+                                Math.random() * 2 + 1
+                            ).addDynamicOrbit(); // Add the orbit.
+                        }
+                    }
+            }else {
+                let sizes = ["large","medium","small"];
+                let planets = ["gasBlack_","gasBlue_","gasOrange_","gasPink_","gasPurple_","stone_","ice_","iceWater_","waterLand_","lavaRock_"];
+                let classes = ["O","B","A","F","G","K","M"];
+                let classId = Math.round(Math.random() * 6);
+                let starSize = Math.round(Math.random());
+                let textureId = Math.round(Math.random()) + 1;
+                if (starSize == 0 ) {
+                    let starTexture = getTexture("class" + classes[classId] + "Star_small_" + textureId);
+                    sun = new Star(
+                          getModel("sphere"),
+                          starTexture,
+                          [10, 10, 10],
+                          [1,1,1],
+                          1,
+                          index
+                          );
+                } else {
+                    let starTexture = getTexture("class" + classes[classId] + "Star_large_" + textureId);
+                    sun = new Star(
+                          getModel("sphere"),
+                          starTexture,
+                          [15, 15, 15],
+                          [1,1,1],
+                          1,
+                          index
+                          );
                 }
-            }
+                    // The amount of objects to orbit the new sun.
+                    let amount = Math.round(Math.random() * 2) + Math.round(classId / 2); // Min: 0 | Max: 8
+                    let lastDistance = 20;
 
+                    for (let i = 0; i < amount; i++) {
+                        if (classId < 4) {
+                            lastDistance = lastDistance * (Math.random() + 1.7)
+                            let planetId = Math.round(Math.random() * 4);
+                            let planetSize = Math.round(Math.random() * 2);
+
+                            let planetTexture = getTexture(planets[planetId] + sizes[planetSize]);
+                            sun.addObject(
+                                getModel("sphere"),
+                                planetTexture,
+                                [0,0,lastDistance],
+                                [3 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1)],
+                                basicMaterials.all,
+                                [1,1,1],
+                                [1,1,1],
+                                1,
+                                [0,1,0],
+                                [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                1 + Math.round(Math.random() * 2),
+                                1 + Math.random() - 0.2 * i
+                            ).addDynamicOrbit();
+                            sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(Math.random() * 3.14,0,0);
+
+                            if (Math.round(Math.random()) == 1) {
+                                let moonTexVar = Math.round(Math.random() * 2) + 1;
+                                let moonTexId = Math.round(Math.random()) + 5;
+                                let moonTexture = getTexture(planets[moonTexId]+ "small_" + moonTexVar);
+                                let moonScale = Math.round(Math.random() * 2) + 1;
+
+                                sun.objects[sun.objects.length-1].addObject(
+                                    getModel("sphere"),
+                                    moonTexture,
+                                    [0,0,3 + 6 * (planetSize + 1)],
+                                    [moonScale, moonScale, moonScale],
+                                    basicMaterials.all,
+                                    [1,1,1],
+                                    [1,1,1],
+                                    1,
+                                    [0,1,0],
+                                    [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                    0.3 + Math.random(),
+                                    0.1 + Math.random()
+                                ).addDynamicOrbit();
+
+                            }
+
+                        }else {
+                            lastDistance = lastDistance * (1.5 + (Math.round(Math.random() * 10) / 20));
+                            //hot planet
+                            if (lastDistance < 40) {
+                                if (Math.random() < 0.4) { //Gesteinsplanet
+                                    let planetSize = Math.round(Math.random() * 2);
+                                    let planetVar = Math.round(Math.random()*2) + 1;
+                                    let planetId = (Math.round(Math.random()) * 4) + 5;
+                                    let planetTexture = getTexture(planets[planetId] + sizes[planetSize] + "_" + planetVar);
+                                    sun.addObject(
+                                        getModel("sphere"),
+                                        planetTexture,
+                                        [0,0,lastDistance],
+                                        [1 + planetSize,1 + planetSize,1 + planetSize],
+                                        basicMaterials.all,
+                                        [1,1,1],
+                                        [1,1,1],
+                                        1,
+                                        [0,1,0],
+                                        [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                        0.5 + Math.random(),
+                                        1.4 + Math.random()/2 - 0.15 * i
+                                    ).addDynamicOrbit();
+                                    sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(Math.random() * 3.14,0,0);
+                                    if (Math.round(Math.random()*3) == 2) {
+                                        let moonTexVar = Math.round(Math.random() * 2) + 1;
+                                        let moonTexId = Math.round(Math.random()) + 5;
+                                        let moonTexture = getTexture(planets[moonTexId]+ "small_" + moonTexVar);
+                                        let moonScale = Math.random()/2 + 0.5;
+                                        sun.objects[sun.objects.length-1].addObject(
+                                            getModel("sphere"),
+                                            moonTexture,
+                                            [0,0,3 + 4 * (planetSize + 1)],
+                                            [moonScale, moonScale, moonScale],
+                                            basicMaterials.all,
+                                            [1,1,1],
+                                            [1,1,1],
+                                            1,
+                                            [0,1,0],
+                                            [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                            0.3 + Math.random(),
+                                            0.1 + Math.random()
+                                        ).addDynamicOrbit();
+
+                                    }
+                                }else { //Gasplanet
+                                    let planetId = Math.round(Math.random() * 4);
+                                    let planetSize = Math.round(Math.random() * 2);
+
+                                    let planetTexture = getTexture(planets[planetId] + sizes[planetSize]);
+                                    sun.addObject(
+                                        getModel("sphere"),
+                                        planetTexture,
+                                        [0,0,lastDistance],
+                                        [2 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1)],
+                                        basicMaterials.all,
+                                        [1,1,1],
+                                        [1,1,1],
+                                        1,
+                                        [0,1,0],
+                                        [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                        1 + Math.round(Math.random() * 2),
+                                        1 + Math.random() - 0.2 * i
+                                    ).addDynamicOrbit();
+                                    sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(Math.random() * 3.14,0,0);
+
+                                    if (Math.round(Math.random()) == 1) {
+                                        let moonTexVar = Math.round(Math.random() * 2) + 1;
+                                        let moonTexId = Math.round(Math.random()) + 5;
+                                        let moonTexture = getTexture(planets[moonTexId]+ "small_" + moonTexVar);
+                                        let moonScale = Math.round(Math.random() * 2) + 1;
+
+                                        sun.objects[sun.objects.length-1].addObject(
+                                            getModel("sphere"),
+                                            moonTexture,
+                                            [0,0,2 + 5 * (planetSize + 1)],
+                                            [moonScale, moonScale, moonScale],
+                                            basicMaterials.all,
+                                            [1,1,1],
+                                            [1,1,1],
+                                            1,
+                                            [0,1,0],
+                                            [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                            0.3 + Math.random(),
+                                            0.1 + Math.random()
+                                        ).addDynamicOrbit();
+
+                                    }
+                                }
+                            }else if (lastDistance < 50) { //habitable zone
+                                if (Math.random() < 0.4) { //Gesteinsplanet
+                                    let planetSize = Math.round(Math.random() * 2);
+                                    let planetVar = Math.round(Math.random()*2) + 1;
+                                    let planetId = (Math.round(Math.random()*4)) + 5;
+                                    let planetTexture = getTexture(planets[planetId] + sizes[planetSize] + "_" + planetVar);
+                                    sun.addObject(
+                                        getModel("sphere"),
+                                        planetTexture,
+                                        [0,0,lastDistance],
+                                        [1 + planetSize,1 + planetSize,1 + planetSize],
+                                        basicMaterials.all,
+                                        [1,1,1],
+                                        [1,1,1],
+                                        1,
+                                        [0,1,0],
+                                        [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                        0.5 + Math.random(),
+                                        1.4 + Math.random()/2 - 0.15 * i
+                                    ).addDynamicOrbit();
+                                    sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(Math.random() * 3.14,0,0);
+                                    if (Math.round(Math.random()*3) == 2) {
+                                        let moonTexVar = Math.round(Math.random() * 2) + 1;
+                                        let moonTexId = Math.round(Math.random()) + 5;
+                                        let moonTexture = getTexture(planets[moonTexId]+ "small_" + moonTexVar);
+                                        let moonScale = Math.random()/2 + 0.5;
+                                        sun.objects[sun.objects.length-1].addObject(
+                                            getModel("sphere"),
+                                            moonTexture,
+                                            [0,0,3 + 4 * (planetSize + 1)],
+                                            [moonScale, moonScale, moonScale],
+                                            basicMaterials.all,
+                                            [1,1,1],
+                                            [1,1,1],
+                                            1,
+                                            [0,1,0],
+                                            [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                            0.3 + Math.random(),
+                                            0.1 + Math.random()
+                                        ).addDynamicOrbit();
+
+                                    }
+                                }else { //Gasplanet
+                                    let planetId = Math.round(Math.random() * 4);
+                                    let planetSize = Math.round(Math.random() * 2);
+
+                                    let planetTexture = getTexture(planets[planetId] + sizes[planetSize]);
+                                    sun.addObject(
+                                        getModel("sphere"),
+                                        planetTexture,
+                                        [0,0,lastDistance],
+                                        [2 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1)],
+                                        basicMaterials.all,
+                                        [1,1,1],
+                                        [1,1,1],
+                                        1,
+                                        [0,1,0],
+                                        [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                        1 + Math.round(Math.random() * 2),
+                                        1 + Math.random() - 0.2 * i
+                                    ).addDynamicOrbit();
+                                    sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(Math.random() * 3.14,0,0);
+
+                                    if (Math.round(Math.random()) == 1) {
+                                        let moonTexVar = Math.round(Math.random() * 2) + 1;
+                                        let moonTexId = Math.round(Math.random() * 4) + 5;
+                                        let moonTexture = getTexture(planets[moonTexId]+ "small_" + moonTexVar);
+                                        let moonScale = Math.round(Math.random() * 2) + 1;
+
+                                        sun.objects[sun.objects.length-1].addObject(
+                                            getModel("sphere"),
+                                            moonTexture,
+                                            [0,0,2 + 5 * (planetSize + 1)],
+                                            [moonScale, moonScale, moonScale],
+                                            basicMaterials.all,
+                                            [1,1,1],
+                                            [1,1,1],
+                                            1,
+                                            [0,1,0],
+                                            [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                            0.3 + Math.random(),
+                                            0.1 + Math.random()
+                                        ).addDynamicOrbit();
+
+                                    }
+                                }
+                            }else { //kalter planet
+                                if (Math.random() < 0.2) { //Gesteinsplanet
+                                    let planetSize = Math.round(Math.random() * 2);
+                                    let planetVar = Math.round(Math.random()*2) + 1;
+                                    let planetId = (Math.round(Math.random())) + 5;
+                                    let planetTexture = getTexture(planets[planetId] + sizes[planetSize] + "_" + planetVar);
+                                    sun.addObject(
+                                        getModel("sphere"),
+                                        planetTexture,
+                                        [0,0,lastDistance],
+                                        [1 + planetSize,1 + planetSize,1 + planetSize],
+                                        basicMaterials.all,
+                                        [1,1,1],
+                                        [1,1,1],
+                                        1,
+                                        [0,1,0],
+                                        [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                        0.5 + Math.random(),
+                                        1.4 + Math.random()/2 - 0.15 * i
+                                    ).addDynamicOrbit();
+                                    sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(Math.random() * 3.14,0,0);
+                                    if (Math.round(Math.random()*3) == 2) {
+                                        let moonTexVar = Math.round(Math.random() * 2) + 1;
+                                        let moonTexId = Math.round(Math.random()) + 5;
+                                        let moonTexture = getTexture(planets[moonTexId]+ "small_" + moonTexVar);
+                                        let moonScale = Math.random()/2 + 0.5;
+                                        sun.objects[sun.objects.length-1].addObject(
+                                            getModel("sphere"),
+                                            moonTexture,
+                                            [0,0,3 + 4 * (planetSize + 1)],
+                                            [moonScale, moonScale, moonScale],
+                                            basicMaterials.all,
+                                            [1,1,1],
+                                            [1,1,1],
+                                            1,
+                                            [0,1,0],
+                                            [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                            0.3 + Math.random(),
+                                            0.1 + Math.random()
+                                        ).addDynamicOrbit();
+
+                                    }
+                                }else { //Gasplanet
+                                    let planetId = Math.round(Math.random() * 4);
+                                    let planetSize = Math.round(Math.random() * 2);
+
+                                    let planetTexture = getTexture(planets[planetId] + sizes[planetSize]);
+                                    sun.addObject(
+                                        getModel("sphere"),
+                                        planetTexture,
+                                        [0,0,lastDistance],
+                                        [2 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1)],
+                                        basicMaterials.all,
+                                        [1,1,1],
+                                        [1,1,1],
+                                        1,
+                                        [0,1,0],
+                                        [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                        1 + Math.round(Math.random() * 2),
+                                        1 + Math.random() - 0.2 * i
+                                    ).addDynamicOrbit();
+                                    sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(Math.random() * 3.14,0,0);
+
+                                    if (Math.round(Math.random()) == 1) {
+                                        let moonTexVar = Math.round(Math.random() * 2) + 1;
+                                        let moonTexId = Math.round(Math.random()) + 5;
+                                        let moonTexture = getTexture(planets[moonTexId]+ "small_" + moonTexVar);
+                                        let moonScale = Math.round(Math.random() * 2) + 1;
+
+                                        sun.objects[sun.objects.length-1].addObject(
+                                            getModel("sphere"),
+                                            moonTexture,
+                                            [0,0,2 + 5 * (planetSize + 1)],
+                                            [moonScale, moonScale, moonScale],
+                                            basicMaterials.all,
+                                            [1,1,1],
+                                            [1,1,1],
+                                            1,
+                                            [0,1,0],
+                                            [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                            0.3 + Math.random(),
+                                            0.1 + Math.random()
+                                        ).addDynamicOrbit();
+
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+            }
             // Update the lists needed for rendering:
 
             // Get the shaded objects and their orbits.

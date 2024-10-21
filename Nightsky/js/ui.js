@@ -26,6 +26,11 @@ let searchMap;
     const pauseImg = document.getElementById("pauseImg");
     // Current pause state - true if paused.
     let pause = false;
+    //@ToDo
+    const realisticButton = document.getElementById("realistic");
+    realisticButton.onclick = onRealistic.bind(this);
+    const realisticImg = document.getElementById("realisticImg");
+    let realistic = false;
 
     //(Done by Eric)
     // button to pause and unpause the Stars from drifting
@@ -177,6 +182,25 @@ let searchMap;
     function getPauseStars() {
         return pauseStars;
     }
+
+    /**
+    * @ToDo
+    */
+
+    function onRealistic() {
+                if (realistic) {
+                    realisticImg.src = "./images/realisticOff.png";
+                } else {
+                    realisticImg.src = "./images/realisticOn.png";
+                }
+                // Change the pause state.
+                realistic = !realistic;
+                sunSystem();
+        }
+
+        function getRealistic() {
+            return realistic;
+        }
 
     /**
     * Gets called by the oninput event of the speed slider.

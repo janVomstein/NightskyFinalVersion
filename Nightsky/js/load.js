@@ -333,6 +333,25 @@
     }
 
     /**
+    * This function parses the data for loading the textures.
+    * @ToDo
+    */
+
+    function parseTextureData(data) {
+        let names = [];
+        let paths = [];
+        let lines = data.split("\n");
+        for (let i = 0; i < lines.length; i++) {
+            let parts = lines[i].trim().split(",");
+            if (parts.length == 2) {
+                names.push(parts[0]);
+                paths.push(parts[1]);
+            }
+        }
+        return [names, paths];
+    }
+
+    /**
      * @typedef {[number, number, number][]} positions
      * @typedef {[number, number, number][]} colors
      */

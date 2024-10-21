@@ -619,6 +619,32 @@ class OrbitingObject extends CelestialBody {
     }
 
     /**
+    * @ToDo
+    * Use this method to rotate the Object Space
+    * @param {!number} x - rotation around X-axis
+    * @param {!number} y - rotation around Y-axis
+    * @param {!number} z - rotation around Z-axis
+    */
+
+    rotateObjectSpaceAxis(x, y, z) {
+        quat.rotateX(
+            this.rotationObject,
+            this.rotationObject,
+            x
+        );
+        quat.rotateY(
+            this.rotationObject,
+            this.rotationObject,
+            y
+        );
+        quat.rotateZ(
+            this.rotationObject,
+            this.rotationObject,
+            z
+        );
+    }
+
+    /**
      * Use this method to update the position of this object and the objects,
      * orbiting this object.
      * @param {!number} time - time for which the objects are to be updated

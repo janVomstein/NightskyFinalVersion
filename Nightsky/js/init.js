@@ -25,32 +25,111 @@ function init() {
         './models/orbit.obj',
         './starData/GAIA_refined.csv',     //'./starData/TOP 10000 bright.csv with coordinates.csv.csv',
         './starData/conns_HIP.csv',
-        './starData/stars(1).csv'
+        './starData/stars(1).csv',
+        './textures/textureData.csv'
     ];
     // The list of needed image files.
     // New files can be added here if needed.
     const neededImageFiles = [
-        "./textures/lavaRock1.png",
-        "./textures/lavaRock2.png",
-        "./textures/ice1.png",
-        "./textures/ice2.png",
-        "./textures/iceAndWater1.png",
-        "./textures/iceAndWater2.png",
-        "./textures/gasGiant01.png",
-        "./textures/gasGiant02.png",
-        "./textures/gasGiant03.png",
-        "./textures/gasGiant04.png",
-        "./textures/gasGiant05.png",
-        "./textures/gasGiant06.png",
-        "./textures/gasGiant07.png",
-        "./textures/gasGiant08.png",
-        "./textures/gasGiant09.png",
-        "./textures/gasGiant10.png",
-        "./textures/gasGiant11.png",
-        "./textures/gasGiant12.png",
-        "./textures/gasGiant13.png",
-        "./textures/gasGiant14.png",
-        "./textures/gasGiant15.png"
+        "./textures/2k_mercury.jpg",
+        "./textures/2k_venus_atmosphere.jpg",
+        "./textures/2k_earth_daymap.jpg",
+        "./textures/2k_mars.jpg",
+        "./textures/2k_jupiter.jpg",
+        "./textures/2k_saturn.jpg",
+        "./textures/2k_uranus.jpg",
+        "./textures/2k_neptune.jpg",
+        "./textures/2k_sun.jpg",
+        "./textures/2k_moon.jpg",
+        "./textures/ice_large_1.png",
+        "./textures/ice_large_2.png",
+        "./textures/ice_large_3.png",
+        "./textures/ice_medium_1.png",
+        "./textures/ice_medium_2.png",
+        "./textures/ice_medium_3.png",
+        "./textures/ice_small_1.png",
+        "./textures/ice_small_2.png",
+        "./textures/ice_small_3.png",
+        "./textures/iceWater_large_1.png",
+        "./textures/iceWater_large_2.png",
+        "./textures/iceWater_large_3.png",
+        "./textures/iceWater_medium_1.png",
+        "./textures/iceWater_medium_2.png",
+        "./textures/iceWater_medium_3.png",
+        "./textures/iceWater_small_1.png",
+        "./textures/iceWater_small_2.png",
+        "./textures/iceWater_small_3.png",
+        "./textures/lavaRock_large_1.png",
+        "./textures/lavaRock_large_2.png",
+        "./textures/lavaRock_large_3.png",
+        "./textures/lavaRock_medium_1.png",
+        "./textures/lavaRock_medium_2.png",
+        "./textures/lavaRock_medium_3.png",
+        "./textures/lavaRock_small_1.png",
+        "./textures/lavaRock_small_2.png",
+        "./textures/lavaRock_small_3.png",
+        "./textures/stone_large_1.png",
+        "./textures/stone_large_2.png",
+        "./textures/stone_large_3.png",
+        "./textures/stone_medium_1.png",
+        "./textures/stone_medium_2.png",
+        "./textures/stone_medium_3.png",
+        "./textures/stone_small_1.png",
+        "./textures/stone_small_2.png",
+        "./textures/stone_small_3.png",
+        "./textures/waterLand_large_1.png",
+        "./textures/waterLand_large_2.png",
+        "./textures/waterLand_large_3.png",
+        "./textures/waterLand_medium_1.png",
+        "./textures/waterLand_medium_2.png",
+        "./textures/waterLand_medium_3.png",
+        "./textures/waterLand_small_1.png",
+        "./textures/waterLand_small_2.png",
+        "./textures/waterLand_small_3.png",
+        "./textures/gasBlack_large.png",
+        "./textures/gasBlack_medium.png",
+        "./textures/gasBlack_small.png",
+        "./textures/gasBlue_large.png",
+        "./textures/gasBlue_medium.png",
+        "./textures/gasBlue_small.png",
+        "./textures/gasOrange_large.png",
+        "./textures/gasOrange_medium.png",
+        "./textures/gasOrange_small.png",
+        "./textures/gasPurple_large.png",
+        "./textures/gasPurple_medium.png",
+        "./textures/gasPurple_small.png",
+        "./textures/gasPink_large.png",
+        "./textures/gasPink_medium.png",
+        "./textures/gasPink_small.png",
+        "./textures/classOStar_large_1.png",
+        "./textures/classOStar_large_2.png",
+        "./textures/classOStar_small_1.png",
+        "./textures/classOStar_small_2.png",
+        "./textures/classBStar_large_1.png",
+        "./textures/classBStar_large_2.png",
+        "./textures/classBStar_small_1.png",
+        "./textures/classBStar_small_2.png",
+        "./textures/classAStar_large_1.png",
+        "./textures/classAStar_large_2.png",
+        "./textures/classAStar_small_1.png",
+        "./textures/classAStar_small_2.png",
+        "./textures/classFStar_large_1.png",
+        "./textures/classFStar_large_2.png",
+        "./textures/classFStar_small_1.png",
+        "./textures/classFStar_small_2.png",
+        "./textures/classGStar_large_1.png",
+        "./textures/classGStar_large_2.png",
+        "./textures/classGStar_small_1.png",
+        "./textures/classGStar_small_2.png",
+        "./textures/classKStar_large_1.png",
+        "./textures/classKStar_large_2.png",
+        "./textures/classKStar_small_1.png",
+        "./textures/classKStar_small_2.png",
+        "./textures/classMStar_large_1.png",
+        "./textures/classMStar_large_2.png",
+        "./textures/classMStar_small_1.png",
+        "./textures/classMStar_small_2.png"
+
     ];
     // This function is defined in load.js. It loads the files specified by
     // the lists of needed text and image files. After loading the files,
@@ -81,27 +160,11 @@ function main() {
     addModelFromPath("cylinder", "./models/cylinder.obj");
     addModelFromPath("orbit", "./models/orbit.obj");
     // Load the textures. addTextureFromPath() is defined in texture.js.
-    addTextureFromPath("lavaRock1", "./textures/lavaRock1.png");
-    addTextureFromPath("lavaRock2", "./textures/lavaRock2.png");
-    addTextureFromPath("ice1", "./textures/ice1.png");
-    addTextureFromPath("ice2", "./textures/ice2.png");
-    addTextureFromPath("iceAndWater1", "./textures/iceAndWater1.png");
-    addTextureFromPath("iceAndWater2", "./textures/iceAndWater2.png");
-    addTextureFromPath("gasGiant01", "./textures/gasGiant01.png");
-    addTextureFromPath("gasGiant02", "./textures/gasGiant02.png");
-    addTextureFromPath("gasGiant03", "./textures/gasGiant03.png");
-    addTextureFromPath("gasGiant04", "./textures/gasGiant04.png");
-    addTextureFromPath("gasGiant05", "./textures/gasGiant05.png");
-    addTextureFromPath("gasGiant06", "./textures/gasGiant06.png");
-    addTextureFromPath("gasGiant07", "./textures/gasGiant07.png");
-    addTextureFromPath("gasGiant08", "./textures/gasGiant08.png");
-    addTextureFromPath("gasGiant09", "./textures/gasGiant09.png");
-    addTextureFromPath("gasGiant10", "./textures/gasGiant10.png");
-    addTextureFromPath("gasGiant11", "./textures/gasGiant11.png");
-    addTextureFromPath("gasGiant12", "./textures/gasGiant12.png");
-    addTextureFromPath("gasGiant13", "./textures/gasGiant13.png");
-    addTextureFromPath("gasGiant14", "./textures/gasGiant14.png");
-    addTextureFromPath("gasGiant15", "./textures/gasGiant15.png");
+    // @ToDo
+    const textureData = parseTextureData(getDataMap("./textures/textureData.csv"));
+    for (let i = 0; i < textureData[0].length; i++) {
+        addTextureFromPath(textureData[0][i],textureData[1][i]);
+    }
     // Get gaia data. parseStarData() is defined in load.js. It returns the
     // gaia data in form of an array [positions, colors, sizes], where
     // positions, colors and sizes are arrays as well.
