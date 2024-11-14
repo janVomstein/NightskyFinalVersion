@@ -995,7 +995,7 @@ function sunSystem() {
 
                     for (let i = 0; i < amount; i++) {
                         if (classId < 4) {
-                            lastDistance = lastDistance * (Math.random() + 1.7)
+                            lastDistance = lastDistance * (1.5 + (Math.round(Math.random() * 10) / 20));
                             let planetId = Math.round(Math.random() * 4);
                             let planetSize = Math.round(Math.random() * 2);
 
@@ -1093,7 +1093,7 @@ function sunSystem() {
                                         getModel("sphere"),
                                         planetTexture,
                                         [0,0,lastDistance],
-                                        [2 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1)],
+                                        [3 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1)],
                                         basicMaterials.all,
                                         [1,1,1],
                                         [1,1,1],
@@ -1179,7 +1179,7 @@ function sunSystem() {
                                         getModel("sphere"),
                                         planetTexture,
                                         [0,0,lastDistance],
-                                        [2 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1)],
+                                        [3 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1)],
                                         basicMaterials.all,
                                         [1,1,1],
                                         [1,1,1],
@@ -1265,7 +1265,7 @@ function sunSystem() {
                                         getModel("sphere"),
                                         planetTexture,
                                         [0,0,lastDistance],
-                                        [2 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1)],
+                                        [3 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1)],
                                         basicMaterials.all,
                                         [1,1,1],
                                         [1,1,1],
