@@ -333,8 +333,16 @@
     }
 
     /**
+    * (Done by Jan)
     * This function parses the data for loading the textures.
-    * @ToDo
+    * For this it needs a file containing the names and paths of each texture
+    * This data should be of form:
+    * texture_name | texture_path
+    * The function returns an arrays of names and paths in the following form:
+    *[
+    *       names: names[] - all the texture names in an array
+    *       paths: paths[] - all the texture paths in an array
+    *]
     */
 
     function parseTextureData(data) {

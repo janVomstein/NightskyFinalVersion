@@ -1,4 +1,6 @@
 public class Main {
+
+    //this class is used to run the program and edit the settings
     public static void main(String[] args) {
 
         System.out.println("starting");

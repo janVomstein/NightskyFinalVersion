@@ -77,12 +77,20 @@ function main() {
     },
   };
 
+  //State Array stores the following values for each object:
+  //mass: the objects mass
+  //X: the X-coordinate of the objects center
+  //Y: the Y-coordinate of the objects center
+  //XVec: the X-Value of the current movement-vector of the object
+  //YVec: the Y-Value of the current movement-vector of the object
+  let state = [/*mass*/360000000.0,/*X*/ 1.0,/*Y*/ 1.0,/*XVec*/ 0.0,/*YVec*/ -0.1 /**/, 360000000.0, 1.0, 0.0, -0.1, 0.0 /**/, 360000000.0, -1.0, -1.0, 0.0, 0.1];
+
+  //this variable stores the time value of the last calculation
+  let then = 0;
+
   // Here's where we call the routine that builds all the
   // objects we'll be drawing.
-  //[mass,X,Y,Xvec,Yvec]
 
-  let state = [360000000.0, 1.0, 1.0, 0.0, -0.1 /**/, 360000000.0, 1.0, 0.0, -0.1, 0.0 /**/, 360000000.0, -1.0, -1.0, 0.0, 0.1];
-  let then = 0;
   let buffers = initBuffers(gl, getCenterPoints(deltaTime, state));
 
   // Draw the scene repeatedly
@@ -159,13 +167,17 @@ function loadShader(gl, type, source) {
   return shader;
 }
 
+//this function is used to calculate the new positions of the objects after every time step
+
 function getCenterPoints(deltaTime, state) {
     const G = 6.674 * math.pow(10, -11);
     let accelerationVectors = [];
+    //calculate the gravitational forces as vectors affecting each object
     for (let i = 0; i < 3; i++) {
         accelerationVectors.push(calculateAccelerationVectorX(G, state, i));
         accelerationVectors.push(calculateAccelerationVectorY(G, state, i));
     }
+    //calculate the new position and movement vector
     for (let i = 0; i < 3; i++) {
         calculateNewPosition(state, i, deltaTime);
         calculateNewVelocity(state, i, deltaTime, accelerationVectors);
@@ -173,6 +185,8 @@ function getCenterPoints(deltaTime, state) {
     let centerPoints = [state[1], state[2], state[6], state[7], state[11], state[12]];
     return centerPoints;
 }
+
+//this function calculates the X value of the vector representing the gravitational forces affecting an object
 
 function calculateAccelerationVectorX(G, state, i) {
     let sumX = 0;
@@ -185,6 +199,8 @@ function calculateAccelerationVectorX(G, state, i) {
     return Fx;
 }
 
+//this function calculates the Y value of the vector representing the gravitational forces affecting an object
+
 function calculateAccelerationVectorY(G, state, i) {
     let sumY = 0;
     for (let j = 0; j < 3; j++) {
@@ -196,9 +212,13 @@ function calculateAccelerationVectorY(G, state, i) {
     return Fy;
 }
 
+//this function calculates the current distance between two objects
+
 function calculateDistance(state, i, j) {
     return 1000 * math.sqrt(math.pow(state[i*5 + 1] - state[j*5 + 1], 2) + math.pow(state[i*5 + 2] - state[j*5 + 2], 2));
 }
+
+//this function calculates the new position of an object using its movement vector
 
 function calculateNewPosition(state, i, deltaTime) {
     let newX = state[i*5 + 1] + deltaTime * state[i*5 + 3];
@@ -206,6 +226,9 @@ function calculateNewPosition(state, i, deltaTime) {
     state[i*5 + 1] = newX;
     state[i*5 + 2] = newY;
 }
+
+//this function calculates the new movement vector of an object using the old movement vector and the vector representing
+//the gravitational forces affecting the object
 
 function calculateNewVelocity(state, i, deltaTime, accelerationVectors) {
     let newDeltaX = state[i*5 + 3] + deltaTime * accelerationVectors[i*2];

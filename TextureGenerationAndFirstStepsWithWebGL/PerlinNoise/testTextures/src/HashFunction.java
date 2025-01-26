@@ -1,4 +1,7 @@
 public class HashFunction {
+    //this class is a custom hash-function with that projects an integer onto an integer between 0 and 255
+
+    //the "hash array" thats used to get the hash result
     private static int[] permutation = { 151,160,137,91,90,15,
             131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,8,99,37,240,21,10,23,
             190, 6,148,247,120,234,75,0,26,197,62,94,252,219,203,117,35,11,32,57,177,33,
@@ -14,9 +17,12 @@ public class HashFunction {
             138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180
     };
 
+    //the "size" of the noise until it repeats
     private int repeat = 0;
+    //a seed for the hash function
     private int seed = 0;
 
+    //constructors
     public HashFunction(int r, int s) {
         this.repeat = r; this.seed = s;
     }
@@ -24,10 +30,13 @@ public class HashFunction {
     public HashFunction() {
     }
 
+    //a function that increases an integer by one
     private int inc(int i) {
         return i + 1;
     }
 
+    //the hash function, it uses the repeat and seed value to select an entry to chose from the hash map
+    //it then returns this entry
     private int hash(int i) {
         i %= 255;
         if (repeat > 0) {
@@ -39,6 +48,9 @@ public class HashFunction {
         return permutation[i];
     }
 
+    //this functions is used to chose the direction vectors from a unit point
+    //These vectors are needed to calculate the perlin noise
+    //By using the hash function we make sure, that the same point returns the same vector every time
     public HashResult hash(UnitPoint p) {
         HashResult result = new HashResult();
         result.setAaa(hash(p.getZ() + hash(p.getY() + hash(p.getX()))));

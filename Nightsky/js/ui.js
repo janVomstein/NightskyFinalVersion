@@ -26,10 +26,13 @@ let searchMap;
     const pauseImg = document.getElementById("pauseImg");
     // Current pause state - true if paused.
     let pause = false;
-    //@ToDo
+    //(Done by Jan)
+    // button to enable and disable realistic mode
     const realisticButton = document.getElementById("realistic");
     realisticButton.onclick = onRealistic.bind(this);
+    // image for the realistic button
     const realisticImg = document.getElementById("realisticImg");
+    // current state: disabled
     let realistic = false;
 
     //(Done by Eric)
@@ -184,19 +187,29 @@ let searchMap;
     }
 
     /**
-    * @ToDo
+    * (Done by Jan)
+    * Gets called by the onClick event of the realistic mode button
+    * the function changes the button image, enables / disables realistic mode
+    * and reloads the scene with the sun as star in the center
     */
 
     function onRealistic() {
+                //change the image
                 if (realistic) {
                     realisticImg.src = "./images/realisticOff.png";
                 } else {
                     realisticImg.src = "./images/realisticOn.png";
                 }
-                // Change the pause state.
+                // Change the state.
                 realistic = !realistic;
+                //reload the scene
                 sunSystem();
         }
+    /*
+    *(Done by Jan)
+    * Getter-function for the realistic state
+    * @returns {boolean} current realistic mode state
+    */
 
         function getRealistic() {
             return realistic;

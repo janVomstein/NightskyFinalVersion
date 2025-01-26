@@ -1,4 +1,6 @@
 public class HashResult {
+
+    //this class is used to represent the resulting direction vectors when hashing a unit point
     private int aaa, aba, aab, abb, baa, bba, bab, bbb;
 
     public int getAaa() {

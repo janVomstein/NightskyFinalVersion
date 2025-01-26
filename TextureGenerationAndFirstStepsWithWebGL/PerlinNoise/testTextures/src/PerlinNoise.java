@@ -2,9 +2,15 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class PerlinNoise {
 
+    //this class calculates the perlin noise values
+    //it was implemented using the guide on https://adrianb.io/2014/08/09/perlinnoise.html
+
+    //"size" of the noise until it repeats
     private int repeat = 0;
+    //the hash function used for the perlin noise
     private HashFunction hashFunction = new HashFunction();
 
+    //constructors
     public PerlinNoise() {}
     public PerlinNoise(int r) {
         this.repeat = r;
@@ -14,6 +20,7 @@ public class PerlinNoise {
         hashFunction = new HashFunction(r, seed);
     }
 
+    //this function calculates the perlin noise value
     public double perlin(Point pStart) {
         Point p = pStart;
         if (repeat > 0) {
@@ -42,10 +49,12 @@ public class PerlinNoise {
         return (interpolate(y1, y2, rpf.getZ())+1)/2;
     }
 
+    // this function is used to bring the result into the interval [0;1]
     private double interpolate(double a, double b, double x) {
         return a + x * (b - a);
     }
 
+    // the gradient function used to calculate the perlin noise
     private double grad(int hash, double x, double y, double z) {
         switch (hash & 0xF) {
             case 0x0:

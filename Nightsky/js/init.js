@@ -160,7 +160,10 @@ function main() {
     addModelFromPath("cylinder", "./models/cylinder.obj");
     addModelFromPath("orbit", "./models/orbit.obj");
     // Load the textures. addTextureFromPath() is defined in texture.js.
-    // @ToDo
+    // (Done by Jan)
+    // parseTextureData() is defined in load.js. It returns the names and paths
+    //of all textures in an array of form [names[],paths[]].
+    //This is then used to load each texture from its path and assign its name
     const textureData = parseTextureData(getDataMap("./textures/textureData.csv"));
     for (let i = 0; i < textureData[0].length; i++) {
         addTextureFromPath(textureData[0][i],textureData[1][i]);

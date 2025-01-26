@@ -619,8 +619,9 @@ class OrbitingObject extends CelestialBody {
     }
 
     /**
-    * @ToDo
-    * Use this method to rotate the Object Space
+    * (Done by Jan)
+    * Use this method to rotate the object space of an object
+    * in relation to the object space of its root object
     * @param {!number} x - rotation around X-axis
     * @param {!number} y - rotation around Y-axis
     * @param {!number} z - rotation around Z-axis

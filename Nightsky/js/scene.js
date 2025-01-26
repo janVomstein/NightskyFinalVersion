@@ -146,14 +146,12 @@
      * The used classes and class-methods are defined in celestial.js.
      * It creates the objects and sets the lists needed for the scene
      * to be rendered.
-     * @todo The sun and objects around the sun use random textures. For a more
-     * realistic representation of our solar system, separate textures are
-     * required for these objects.
      */
 function sunSystem() {
         // Empty the backgroundObjects list and the connectors list.
         backgroundObjects = [];
         connectors = [];
+        //if realistic mode disabled, use "old" arbitrary values for creating planets
         if (!getRealistic()) {
             // First define our sun.
             sun = new Star(
@@ -324,6 +322,7 @@ function sunSystem() {
             ).addDynamicOrbit();
 
             sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(3.63587,0,0);
+        //if realistic mode enabled, use scaled values for sizes, distances, axial tilt, rotation- and orbit times
         } else{
             // First define our sun.
             sun = new Star(
@@ -856,7 +855,6 @@ function sunSystem() {
         );
 
         // Build the new scene:
-        // @ToDo
         // If the index belongs to our sun, call sunSystem.
         // Else build a randomized scene around the new sun.
         if (index == gaia[0].length-1) {
@@ -864,6 +862,7 @@ function sunSystem() {
             // Make sure the texture matches.
             sun.updateTexture(tex);
         } else {
+            // if realistic mode disabled, use "old" arbitrary values
             if(!getRealistic()) {
                 // Create the new sun.
                         sun = new Star(
@@ -961,13 +960,24 @@ function sunSystem() {
                             ).addDynamicOrbit(); // Add the orbit.
                         }
                     }
+            /*
+            * If realistic mode enabled, use more realistic values for creating the random planetary system
+            * This includes:
+            * randomizing star class
+            * depending on that, randomize amount and type of possible planets
+            */
             }else {
+                //The sizes, planets and classes arrays are used to select the correct textures by name
                 let sizes = ["large","medium","small"];
                 let planets = ["gasBlack_","gasBlue_","gasOrange_","gasPink_","gasPurple_","stone_","ice_","iceWater_","waterLand_","lavaRock_"];
                 let classes = ["O","B","A","F","G","K","M"];
+                // randomize star class
                 let classId = Math.round(Math.random() * 6);
+                // randomize star size, this effects the texture chosen
                 let starSize = Math.round(Math.random());
+                // randomize the chosen texture
                 let textureId = Math.round(Math.random()) + 1;
+                // create a small star with "small texture"
                 if (starSize == 0 ) {
                     let starTexture = getTexture("class" + classes[classId] + "Star_small_" + textureId);
                     sun = new Star(
@@ -978,6 +988,7 @@ function sunSystem() {
                           1,
                           index
                           );
+                // create a large star with "large texture"
                 } else {
                     let starTexture = getTexture("class" + classes[classId] + "Star_large_" + textureId);
                     sun = new Star(
@@ -990,62 +1001,93 @@ function sunSystem() {
                           );
                 }
                     // The amount of objects to orbit the new sun.
+                    // the "higher" the class and therefore larger the star (in reality) the less planets
                     let amount = Math.round(Math.random() * 2) + Math.round(classId / 2); // Min: 0 | Max: 8
+                    // start value for the distance from the star that a planet is created at
                     let lastDistance = 20;
 
+                    //create the planets
                     for (let i = 0; i < amount; i++) {
+                        //high star classes only get gas giants
                         if (classId < 4) {
+                            //increase distance by random factor
                             lastDistance = lastDistance * (1.5 + (Math.round(Math.random() * 10) / 20));
+                            // chose random texture
                             let planetId = Math.round(Math.random() * 4);
+                            // chose random planet size
                             let planetSize = Math.round(Math.random() * 2);
-
+                            // select correct texture
                             let planetTexture = getTexture(planets[planetId] + sizes[planetSize]);
+                            //add the object
                             sun.addObject(
                                 getModel("sphere"),
+                                //texture
                                 planetTexture,
+                                //position
                                 [0,0,lastDistance],
+                                //size, depending on size chosen for the planet
                                 [3 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1),3 + 2 * (planetSize + 1)],
                                 basicMaterials.all,
                                 [1,1,1],
                                 [1,1,1],
                                 1,
+                                //rotate around Y-Axis
                                 [0,1,0],
-                                [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                //orbital tilt, randomized
+                                [(-0.5 + Math.random())* 5, 0, (-0.5+Math.random()) * 5],
+                                // rotation speed, randomized
                                 1 + Math.round(Math.random() * 2),
+                                // orbital speed, randomized but slower the further away
                                 1 + Math.random() - 0.2 * i
                             ).addDynamicOrbit();
+                            //axial tilt, randomized
                             sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(Math.random() * 3.14,0,0);
 
+                            //create a moon
                             if (Math.round(Math.random()) == 1) {
+                                // randomize texture
                                 let moonTexVar = Math.round(Math.random() * 2) + 1;
+                                // select "type" of texture, stone or ice
                                 let moonTexId = Math.round(Math.random()) + 5;
+                                // select correct texture
                                 let moonTexture = getTexture(planets[moonTexId]+ "small_" + moonTexVar);
+                                // randomize size
                                 let moonScale = Math.round(Math.random() * 2) + 1;
 
                                 sun.objects[sun.objects.length-1].addObject(
                                     getModel("sphere"),
+                                    //texture
                                     moonTexture,
+                                    // position, using planet size to make sure planet doesnt "swallow" moon
                                     [0,0,3 + 6 * (planetSize + 1)],
+                                    // size of the moon
                                     [moonScale, moonScale, moonScale],
                                     basicMaterials.all,
                                     [1,1,1],
                                     [1,1,1],
                                     1,
+                                    //rotates around Y-Axis
                                     [0,1,0],
+                                    // orbital tilt, randomized
                                     [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                    //rotation speed, randomized
                                     0.3 + Math.random(),
+                                    //orbit speed, randomized
                                     0.1 + Math.random()
                                 ).addDynamicOrbit();
 
                             }
 
+                        // "lower" star classes can get all types of planet
                         }else {
                             lastDistance = lastDistance * (1.5 + (Math.round(Math.random() * 10) / 20));
-                            //hot planet
+                            //hot planet, distance smaller than 40
                             if (lastDistance < 40) {
-                                if (Math.random() < 0.4) { //Gesteinsplanet
+                                // terrestrial planet
+                                if (Math.random() < 0.4) {
                                     let planetSize = Math.round(Math.random() * 2);
                                     let planetVar = Math.round(Math.random()*2) + 1;
+                                    // randomize texture type, stone or lavaRock
                                     let planetId = (Math.round(Math.random()) * 4) + 5;
                                     let planetTexture = getTexture(planets[planetId] + sizes[planetSize] + "_" + planetVar);
                                     sun.addObject(
@@ -1058,11 +1100,12 @@ function sunSystem() {
                                         [1,1,1],
                                         1,
                                         [0,1,0],
-                                        [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                        [(-0.5 + Math.random())* 5, 0, (-0.5+Math.random()) * 5],
                                         0.5 + Math.random(),
                                         1.4 + Math.random()/2 - 0.15 * i
                                     ).addDynamicOrbit();
                                     sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(Math.random() * 3.14,0,0);
+                                    //create a moon
                                     if (Math.round(Math.random()*3) == 2) {
                                         let moonTexVar = Math.round(Math.random() * 2) + 1;
                                         let moonTexId = Math.round(Math.random()) + 5;
@@ -1084,7 +1127,8 @@ function sunSystem() {
                                         ).addDynamicOrbit();
 
                                     }
-                                }else { //Gasplanet
+                                // gas giant
+                                }else {
                                     let planetId = Math.round(Math.random() * 4);
                                     let planetSize = Math.round(Math.random() * 2);
 
@@ -1099,12 +1143,13 @@ function sunSystem() {
                                         [1,1,1],
                                         1,
                                         [0,1,0],
-                                        [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                        [(-0.5 + Math.random())* 5, 0, (-0.5+Math.random()) * 5],
                                         1 + Math.round(Math.random() * 2),
                                         1 + Math.random() - 0.2 * i
                                     ).addDynamicOrbit();
                                     sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(Math.random() * 3.14,0,0);
 
+                                    //create a moon
                                     if (Math.round(Math.random()) == 1) {
                                         let moonTexVar = Math.round(Math.random() * 2) + 1;
                                         let moonTexId = Math.round(Math.random()) + 5;
@@ -1128,10 +1173,13 @@ function sunSystem() {
 
                                     }
                                 }
-                            }else if (lastDistance < 50) { //habitable zone
-                                if (Math.random() < 0.4) { //Gesteinsplanet
+                            // goldilocks zone, distance between 40 and 50
+                            }else if (lastDistance < 50) {
+                                // terrestrial planet
+                                if (Math.random() < 0.4) {
                                     let planetSize = Math.round(Math.random() * 2);
                                     let planetVar = Math.round(Math.random()*2) + 1;
+                                    //randomize texture type, stone, ice, iceWater, waterLand or lavaRock
                                     let planetId = (Math.round(Math.random()*4)) + 5;
                                     let planetTexture = getTexture(planets[planetId] + sizes[planetSize] + "_" + planetVar);
                                     sun.addObject(
@@ -1144,11 +1192,12 @@ function sunSystem() {
                                         [1,1,1],
                                         1,
                                         [0,1,0],
-                                        [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                        [(-0.5 + Math.random())* 5, 0, (-0.5+Math.random()) * 5],
                                         0.5 + Math.random(),
                                         1.4 + Math.random()/2 - 0.15 * i
                                     ).addDynamicOrbit();
                                     sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(Math.random() * 3.14,0,0);
+                                    //create a moon
                                     if (Math.round(Math.random()*3) == 2) {
                                         let moonTexVar = Math.round(Math.random() * 2) + 1;
                                         let moonTexId = Math.round(Math.random()) + 5;
@@ -1170,7 +1219,8 @@ function sunSystem() {
                                         ).addDynamicOrbit();
 
                                     }
-                                }else { //Gasplanet
+                                //gas giant
+                                }else {
                                     let planetId = Math.round(Math.random() * 4);
                                     let planetSize = Math.round(Math.random() * 2);
 
@@ -1185,14 +1235,16 @@ function sunSystem() {
                                         [1,1,1],
                                         1,
                                         [0,1,0],
-                                        [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                        [(-0.5 + Math.random())* 5, 0, (-0.5+Math.random()) * 5],
                                         1 + Math.round(Math.random() * 2),
                                         1 + Math.random() - 0.2 * i
                                     ).addDynamicOrbit();
                                     sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(Math.random() * 3.14,0,0);
 
+                                    //create a moon
                                     if (Math.round(Math.random()) == 1) {
                                         let moonTexVar = Math.round(Math.random() * 2) + 1;
+                                        //randomize moon texture type, stone, ice, iceWater, waterLand or lavaRock
                                         let moonTexId = Math.round(Math.random() * 4) + 5;
                                         let moonTexture = getTexture(planets[moonTexId]+ "small_" + moonTexVar);
                                         let moonScale = Math.round(Math.random() * 2) + 1;
@@ -1214,10 +1266,13 @@ function sunSystem() {
 
                                     }
                                 }
-                            }else { //kalter planet
-                                if (Math.random() < 0.2) { //Gesteinsplanet
+                            // cold planet, distance larger than 50
+                            }else {
+                                // terrestrial planet
+                                if (Math.random() < 0.2) {
                                     let planetSize = Math.round(Math.random() * 2);
                                     let planetVar = Math.round(Math.random()*2) + 1;
+                                    //randomize planet texture type, stone or ice
                                     let planetId = (Math.round(Math.random())) + 5;
                                     let planetTexture = getTexture(planets[planetId] + sizes[planetSize] + "_" + planetVar);
                                     sun.addObject(
@@ -1230,11 +1285,12 @@ function sunSystem() {
                                         [1,1,1],
                                         1,
                                         [0,1,0],
-                                        [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                        [(-0.5 + Math.random())* 5, 0, (-0.5+Math.random()) * 5],
                                         0.5 + Math.random(),
                                         1.4 + Math.random()/2 - 0.15 * i
                                     ).addDynamicOrbit();
                                     sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(Math.random() * 3.14,0,0);
+                                    //create a moon
                                     if (Math.round(Math.random()*3) == 2) {
                                         let moonTexVar = Math.round(Math.random() * 2) + 1;
                                         let moonTexId = Math.round(Math.random()) + 5;
@@ -1256,7 +1312,8 @@ function sunSystem() {
                                         ).addDynamicOrbit();
 
                                     }
-                                }else { //Gasplanet
+                                // gas giant
+                                }else {
                                     let planetId = Math.round(Math.random() * 4);
                                     let planetSize = Math.round(Math.random() * 2);
 
@@ -1271,14 +1328,16 @@ function sunSystem() {
                                         [1,1,1],
                                         1,
                                         [0,1,0],
-                                        [(-0.5 + Math.random())* 10, 0, (-0.5+Math.random()) * 10],
+                                        [(-0.5 + Math.random())* 5, 0, (-0.5+Math.random()) * 5],
                                         1 + Math.round(Math.random() * 2),
                                         1 + Math.random() - 0.2 * i
                                     ).addDynamicOrbit();
                                     sun.objects[sun.objects.length-1].rotateObjectSpaceAxis(Math.random() * 3.14,0,0);
 
+                                    //create a moon
                                     if (Math.round(Math.random()) == 1) {
                                         let moonTexVar = Math.round(Math.random() * 2) + 1;
+                                        //randomize moon texture type, stone or ice
                                         let moonTexId = Math.round(Math.random()) + 5;
                                         let moonTexture = getTexture(planets[moonTexId]+ "small_" + moonTexVar);
                                         let moonScale = Math.round(Math.random() * 2) + 1;
